@@ -150,3 +150,55 @@ describe('remessa CNAB 240', () => {
     expect(r.inconsistencias).toHaveLength(1);
   });
 });
+
+describe('regime por tipo de contrato', () => {
+  const folhaDe = (tipo: Colaborador['tipoContrato'], salario: number) =>
+    calcularFolhaMensal({
+      competencia: '2025-08',
+      colaborador: { ...base, tipoContrato: tipo, salarioBase: salario, valeTransporte: true },
+      faltas: [],
+      comissoesAdiantadas: 0,
+    });
+
+  it('CLT sofre INSS progressivo, FGTS e desconto de VT', () => {
+    const r = folhaDe('CLT', 5000);
+    expect(r.inss).toBe(calcularINSS(5000, '2025-08-31').valor);
+    expect(r.fgts).toBe(400);
+    expect(r.descontoValeTransporte).toBe(300); // 6% de 5000
+  });
+
+  it('socio recolhe pro-labore de 11% e nao gera FGTS nem VT', () => {
+    const r = folhaDe('SOCIO', 10000);
+    expect(r.inss).toBe(897.32); // 11% do teto de 8157,41
+    expect(r.fgts).toBe(0);
+    expect(r.descontoValeTransporte).toBe(0);
+  });
+
+  it('PJ e pago bruto, sem retencao na folha', () => {
+    const r = folhaDe('PJ', 5000);
+    expect(r.inss).toBe(0);
+    expect(r.irrf).toBe(0);
+    expect(r.fgts).toBe(0);
+    expect(r.valorTransferir).toBe(5000);
+  });
+
+  it('estagiario nao tem INSS nem FGTS, mas o IRRF continua aplicavel', () => {
+    const r = folhaDe('ESTAGIO', 938);
+    expect(r.inss).toBe(0);
+    expect(r.fgts).toBe(0);
+    expect(r.irrf).toBe(0); // abaixo da faixa de isencao
+    expect(r.valorTransferir).toBe(938);
+  });
+
+  it('intermitente nao perde DSR por nao ter jornada fixa', () => {
+    const r = calcularFolhaMensal({
+      competencia: '2025-08',
+      colaborador: { ...base, tipoContrato: 'INTERMITENTE', salarioBase: 0, salarioHora: 8.94 },
+      faltas: [{ id: 'f1', tenantId: 't1', colaboradorId: 'c1', data: '2025-08-12', tipo: 'FALTA', criadoEm: '' }],
+      comissoesAdiantadas: 0,
+      horasTrabalhadas: 105.5,
+    });
+    expect(r.descontoDSR).toBe(0);
+    expect(r.totalProventos).toBeCloseTo(943.17, 2); // 105,5h x 8,94
+  });
+});

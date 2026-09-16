@@ -1,0 +1,222 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------ *
+ * Tokens de superficie e de grafico. Os graficos leem estes papeis em
+ * vez de hex cru, entao claro/escuro trocam num lugar so.
+ * ------------------------------------------------------------------ */
+:root,
+:root[data-tema='claro'] {
+  color-scheme: light;
+  --plano: #eef2f6;
+  --superficie: #fbfcfd;
+  --superficie-alta: #ffffff;
+  --superficie-sutil: #f4f7fa;
+  --borda: rgba(16, 21, 28, 0.11);
+  --borda-forte: rgba(16, 21, 28, 0.2);
+  --texto: #10151c;
+  --texto-2: #3d4a5c;
+  --texto-3: #5c6b7e;
+  --grade: #e2e8ee;
+  --eixo: #b3bfcc;
+  --serie-1: #2a78d6;
+  --serie-2: #eb6834;
+  --serie-3: #1baf7a;
+  --serie-4: #eda100;
+  --serie-5: #e87ba4;
+  --serie-6: #008300;
+  --serie-7: #4a3aa7;
+  --serie-8: #e34948;
+  --seq-1: #cde2fb;
+  --seq-2: #9ec5f4;
+  --seq-3: #5598e7;
+  --seq-4: #2a78d6;
+  --seq-5: #1c5cab;
+  --seq-6: #0d366b;
+  --positivo: #006300;
+  --negativo: #d03b3b;
+}
+
+:root[data-tema='escuro'] {
+  color-scheme: dark;
+  --plano: #0b0f14;
+  --superficie: #141a21;
+  --superficie-alta: #1b232c;
+  --superficie-sutil: #10161d;
+  --borda: rgba(255, 255, 255, 0.1);
+  --borda-forte: rgba(255, 255, 255, 0.2);
+  --texto: #eef3f8;
+  --texto-2: #b3bfcc;
+  --texto-3: #8393a6;
+  --grade: #232c36;
+  --eixo: #3d4a5c;
+  --serie-1: #3987e5;
+  --serie-2: #d95926;
+  --serie-3: #199e70;
+  --serie-4: #c98500;
+  --serie-5: #d55181;
+  --serie-6: #008300;
+  --serie-7: #9085e9;
+  --serie-8: #e66767;
+  --seq-1: #0d366b;
+  --seq-2: #184f95;
+  --seq-3: #256abf;
+  --seq-4: #3987e5;
+  --seq-5: #86b6ef;
+  --seq-6: #cde2fb;
+  --positivo: #0ca30c;
+  --negativo: #e66767;
+}
+
+@layer base {
+  * {
+    border-color: var(--borda);
+  }
+  html,
+  body {
+    height: 100%;
+  }
+  body {
+    @apply bg-[var(--plano)] text-[var(--texto)] font-sans text-base antialiased;
+    font-feature-settings: 'cv05', 'ss01';
+  }
+  #raiz {
+    min-height: 100%;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-tight;
+  }
+  /* Foco sempre visivel: a ferramenta e operada muito no teclado. */
+  :focus-visible {
+    outline: 2px solid var(--serie-1);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  ::selection {
+    background: #cde2fb;
+    color: #0d366b;
+  }
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}
+
+@layer components {
+  .superficie {
+    @apply bg-[var(--superficie)] border border-[var(--borda)] rounded-lg;
+  }
+  .cartao {
+    @apply superficie shadow-carta;
+  }
+
+  /* Rotulo estrutural: sobrancelha em maiusculas que nomeia um bloco. */
+  .sobrancelha {
+    @apply font-mono text-2xs uppercase tracking-[0.12em] text-[var(--texto-3)];
+  }
+
+  .num {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+  }
+
+  /* --- Trilho de pagamento: a assinatura do produto. ----------------
+     Marca em ouro tudo que e caminho do dinheiro saindo da empresa:
+     coluna "valor a transferir", botoes de remessa e a tela do banco. */
+  .trilho {
+    @apply border-l-2 border-ouro-300 bg-ouro-50/70;
+  }
+  :root[data-tema='escuro'] .trilho {
+    @apply bg-ouro-700/20 border-ouro-500;
+  }
+
+  .campo {
+    @apply w-full rounded-md border border-[var(--borda)] bg-[var(--superficie-alta)] px-2.5 py-1.5 text-base
+           text-[var(--texto)] placeholder:text-[var(--texto-3)]
+           transition-colors focus:border-arara-500 disabled:opacity-55 disabled:cursor-not-allowed;
+  }
+  .campo-invalido {
+    @apply border-critico focus:border-critico;
+  }
+
+  .rotulo {
+    @apply block text-xs font-medium text-[var(--texto-2)] mb-1;
+  }
+
+  .botao {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-semibold
+           transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap;
+  }
+  .botao-primario {
+    @apply botao bg-arara-700 text-white hover:bg-arara-800;
+  }
+  .botao-secundario {
+    @apply botao border border-[var(--borda-forte)] bg-[var(--superficie-alta)] text-[var(--texto)] hover:bg-[var(--superficie-sutil)];
+  }
+  .botao-fantasma {
+    @apply botao text-[var(--texto-2)] hover:bg-[var(--superficie-sutil)];
+  }
+  .botao-perigo {
+    @apply botao bg-critico text-white hover:brightness-95;
+  }
+  /* Botao do trilho: leva dinheiro ao banco. */
+  .botao-trilho {
+    @apply botao bg-ouro-500 text-white hover:bg-ouro-600 dark:bg-ouro-400 dark:text-tinta-950 dark:hover:bg-ouro-300;
+  }
+
+  .tabela-rolagem {
+    @apply overflow-x-auto overscroll-x-contain;
+  }
+  .celula-num {
+    @apply num text-right tabular-nums;
+  }
+
+  .link-sutil {
+    @apply text-arara-700 dark:text-arara-300 hover:underline underline-offset-2;
+  }
+}
+
+/* Barra de rolagem discreta — muitas tabelas largas. */
+@layer utilities {
+  .rolagem-fina::-webkit-scrollbar {
+    height: 9px;
+    width: 9px;
+  }
+  .rolagem-fina::-webkit-scrollbar-thumb {
+    background: var(--eixo);
+    border-radius: 9px;
+  }
+  .rolagem-fina::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+/* Recharts: o grid e os eixos devem recuar. */
+.recharts-cartesian-grid line {
+  stroke: var(--grade);
+}
+.recharts-cartesian-axis-line,
+.recharts-cartesian-axis-tick-line {
+  stroke: var(--eixo);
+}
+.recharts-text {
+  fill: var(--texto-3);
+}
+.recharts-surface:focus {
+  outline: none;
+}

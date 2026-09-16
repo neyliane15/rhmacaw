@@ -126,3 +126,20 @@ export function calcularSalarioFamilia(remuneracao: number, dependentes: number,
 export function calcularINSSDecimoTerceiro(baseDecimo: number, competenciaData: DataISO): ResultadoINSS {
   return calcularINSS(baseDecimo, competenciaData);
 }
+
+/**
+ * INSS do contribuinte individual (pro-labore de socio/administrador):
+ * aliquota unica de 11% sobre o valor declarado, limitada ao teto
+ * (art. 4o da Lei 10.666/2003). Nao usa as faixas progressivas do empregado.
+ */
+export function calcularINSSProLabore(base: number, competenciaData: DataISO, tabela?: TabelaVigente): ResultadoINSS {
+  const tab = tabela ?? tabelaVigente(competenciaData);
+  const baseLimitada = Math.min(naoNegativo(base), tab.tetoINSS);
+  const valor = arredondar(baseLimitada * 0.11);
+  return {
+    base: arredondar(baseLimitada),
+    valor,
+    aliquotaEfetiva: baseLimitada > 0 ? arredondar(valor / baseLimitada, 4) : 0,
+    faixas: [{ ate: tab.tetoINSS, aliquota: 0.11, parcela: arredondar(baseLimitada), valor }],
+  };
+}

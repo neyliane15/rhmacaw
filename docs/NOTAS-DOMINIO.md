@@ -88,3 +88,47 @@ da semana em que houve falta injustificada.
 No sistema: `apurarFaltas` agrupa as faltas por semana ISO e desconta um DSR
 por semana atingida — o que a planilha não fazia. A diferença aparece como
 `descontoDSR`, em linha própria do contracheque, para ficar conferível.
+
+## 9. Cada tipo de contrato tem um regime de encargos diferente
+
+A primeira versão do motor rodava os 40 colaboradores pelo cálculo celetista,
+descontando INSS progressivo e IRRF até de PJ e estagiário. Está corrigido:
+`REGIMES_CONTRATO` (em `payroll/folha.ts`) declara o que se aplica a cada
+vínculo.
+
+| Contrato | INSS | IRRF | FGTS | VT 6% | DSR | 13º/Férias |
+|---|---|---|---|---|---|---|
+| CLT | progressivo | sim | sim | sim | sim | sim |
+| Intermitente | progressivo | sim | sim | sim | **não** | sim |
+| Sócio (pró-labore) | **11% até o teto** | sim | não | não | não | não |
+| Estágio | **nenhum** | sim | não | não | não | não |
+| PJ | **nenhum** | **não** | não | não | não | não |
+
+O intermitente não perde DSR porque não tem jornada fixa — não há semana de
+referência da qual descontar o repouso.
+
+Depois da correção, **ARTHUR** (estágio, R$ 938,00) e **GABRIEL** (PJ,
+R$ 5.000,00) passaram a bater exatamente com a planilha.
+
+## 10. Divergências que restam — e que são decisão do contador
+
+Três linhas ainda não batem com a planilha, e nenhuma é erro de cálculo:
+
+**Sócios com "comissão".** `GABRIEL HAURET` (R$ 10.000 de pró-labore +
+R$ 10.000 lançados como comissão) e `PEDRO LANNES` (R$ 7.298,20 +
+R$ 1.512,06). O sistema trata comissão como remuneração tributável, então
+retém INSS e IRRF. Se esses valores forem **distribuição de lucros**, são
+isentos de IR e de INSS (art. 10 da Lei 9.249/95) e devem ser lançados como
+evento avulso com `baseINSS: false` e `baseIRRF: false` — a folha já suporta
+isso. É uma decisão de classificação contábil, não de software, e por isso o
+sistema não escolhe sozinho.
+
+**ALINE PORTO SENRA** (intermitente): a planilha mostra líquido de
+R$ 1.485,46 para 105,5 horas a R$ 8,94 — R$ 943,17 de horas mais R$ 164,86 de
+comissão não chegam lá. Há cerca de R$ 517 de proventos que não aparecem em
+nenhuma coluna do arquivo de origem. Sem esse dado, o sistema calcula o que
+consegue comprovar.
+
+Nos dois casos a postura é a mesma: o sistema não inventa o número que falta
+nem força o resultado a imitar a planilha. Ele calcula o que os dados
+sustentam e deixa a diferença visível.

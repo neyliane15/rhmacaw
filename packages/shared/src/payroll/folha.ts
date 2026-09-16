@@ -17,9 +17,9 @@ import {
   type Competencia,
   type DataISO,
 } from '../util/datas.js';
-import type { Colaborador, Falta, Verba } from '../domain/tipos.js';
+import type { Colaborador, Falta, TipoContrato, Verba } from '../domain/tipos.js';
 import { FALTAS_DESCONTAVEIS } from '../domain/tipos.js';
-import { calcularFGTS, calcularINSS, calcularIRRF, calcularSalarioFamilia } from './encargos.js';
+import { calcularFGTS, calcularINSS, calcularINSSProLabore, calcularIRRF, calcularSalarioFamilia } from './encargos.js';
 import { ADICIONAL_HORA_EXTRA, ADICIONAL_NOTURNO, LIMITE_DESCONTO_VT, tabelaVigente } from './tabelas.js';
 
 /** Jornada mensal padrao de 220 horas (44h semanais). */
@@ -27,6 +27,84 @@ export const HORAS_MENSAIS_PADRAO = 220;
 
 /** A folha brasileira remunera o mes cheio como 30 dias, qualquer que seja o calendario. */
 export const DIAS_MES_FOLHA = 30;
+
+/**
+ * Regime de encargos por tipo de contrato.
+ *
+ * Nem todo vinculo gera os mesmos descontos: so o empregado celetista tem
+ * INSS progressivo, FGTS, salario-familia e desconto de vale-transporte. O
+ * socio recolhe como contribuinte individual, o estagiario nao gera
+ * contribuicao previdenciaria e o PJ emite nota — nada e retido na folha.
+ */
+export interface RegimeContrato {
+  /** Como o INSS do segurado e apurado. */
+  inss: 'PROGRESSIVO' | 'PRO_LABORE' | 'NENHUM';
+  /** Se ha retencao de IRRF na fonte pela folha. */
+  retemIRRF: boolean;
+  /** Se o empregador deposita FGTS. */
+  temFGTS: boolean;
+  /** Se o desconto de vale-transporte de 6% se aplica. */
+  descontaValeTransporte: boolean;
+  temSalarioFamilia: boolean;
+  /** Se falta injustificada derruba o descanso semanal remunerado. */
+  perdeDSR: boolean;
+  /** Se o vinculo gera 13o salario e ferias. */
+  temDecimoTerceiroEFerias: boolean;
+  fundamento: string;
+}
+
+export const REGIMES_CONTRATO: Record<TipoContrato, RegimeContrato> = {
+  CLT: {
+    inss: 'PROGRESSIVO',
+    retemIRRF: true,
+    temFGTS: true,
+    descontaValeTransporte: true,
+    temSalarioFamilia: true,
+    perdeDSR: true,
+    temDecimoTerceiroEFerias: true,
+    fundamento: 'Empregado celetista: regime integral da CLT.',
+  },
+  INTERMITENTE: {
+    inss: 'PROGRESSIVO',
+    retemIRRF: true,
+    temFGTS: true,
+    descontaValeTransporte: true,
+    temSalarioFamilia: true,
+    perdeDSR: false, // sem jornada fixa nao ha semana de referencia para o DSR
+    temDecimoTerceiroEFerias: true,
+    fundamento: 'Art. 452-A da CLT: empregado com todos os direitos, pago por periodo convocado.',
+  },
+  SOCIO: {
+    inss: 'PRO_LABORE',
+    retemIRRF: true,
+    temFGTS: false,
+    descontaValeTransporte: false,
+    temSalarioFamilia: false,
+    perdeDSR: false,
+    temDecimoTerceiroEFerias: false,
+    fundamento: 'Pro-labore: contribuinte individual, 11% ate o teto (Lei 10.666/2003). Sem FGTS, 13o ou ferias.',
+  },
+  ESTAGIO: {
+    inss: 'NENHUM',
+    retemIRRF: true,
+    temFGTS: false,
+    descontaValeTransporte: false, // o auxilio-transporte do estagiario nao comporta o desconto de 6%
+    temSalarioFamilia: false,
+    perdeDSR: false,
+    temDecimoTerceiroEFerias: false,
+    fundamento: 'Lei 11.788/2008: estagio nao cria vinculo empregaticio. Bolsa sem INSS e sem FGTS; recesso no lugar de ferias.',
+  },
+  PJ: {
+    inss: 'NENHUM',
+    retemIRRF: false,
+    temFGTS: false,
+    descontaValeTransporte: false,
+    temSalarioFamilia: false,
+    perdeDSR: false,
+    temDecimoTerceiroEFerias: false,
+    fundamento: 'Prestador pessoa juridica: paga-se contra nota fiscal, sem retencao na folha.',
+  },
+};
 
 export interface EventoAvulso {
   codigo: string;
@@ -106,7 +184,7 @@ export interface ApuracaoFaltas {
  * (art. 6o, par. unico, Lei 605/49): cada semana com ao menos uma falta
  * descontavel perde um dia de repouso remunerado.
  */
-export function apurarFaltas(faltas: Falta[], competencia: Competencia): ApuracaoFaltas {
+export function apurarFaltas(faltas: Falta[], competencia: Competencia, perdeDSR = true): ApuracaoFaltas {
   const inicio = primeiroDiaDaCompetencia(competencia);
   const fim = ultimoDiaDaCompetencia(competencia);
   const doMes = faltas.filter((f) => f.data >= inicio && f.data <= fim);
@@ -129,9 +207,10 @@ export function apurarFaltas(faltas: Falta[], competencia: Competencia): Apuraca
     }
   }
 
-  // O DSR so e perdido se houver domingo dentro da competencia naquela semana.
+  // O DSR so e perdido se houver domingo dentro da competencia naquela semana,
+  // e apenas nos regimes com jornada fixa.
   let diasDSR = 0;
-  for (const segunda of semanasComFalta) {
+  for (const segunda of (perdeDSR ? semanasComFalta : [])) {
     const domingo = new Date(`${segunda}T00:00:00.000Z`);
     domingo.setUTCDate(domingo.getUTCDate() + 6);
     const iso = domingo.toISOString().slice(0, 10);
@@ -197,6 +276,7 @@ export function calcularFolhaMensal(entrada: EntradaFolha): ResultadoFolha {
 
   const cargaHoraria = colaborador.cargaHorariaMensal > 0 ? colaborador.cargaHorariaMensal : HORAS_MENSAIS_PADRAO;
   const intermitente = colaborador.tipoContrato === 'INTERMITENTE';
+  const regime = REGIMES_CONTRATO[colaborador.tipoContrato];
 
   /* ---------- Salario do periodo ---------- */
   const diasSalario = diasDeSalario(colaborador, competencia);
@@ -218,7 +298,7 @@ export function calcularFolhaMensal(entrada: EntradaFolha): ResultadoFolha {
   }
 
   /* ---------- Faltas e DSR ---------- */
-  const apuracao = apurarFaltas(entrada.faltas, competencia);
+  const apuracao = apurarFaltas(entrada.faltas, competencia, regime.perdeDSR);
   const valorDia = intermitente ? 0 : arredondar(colaborador.salarioBase / DIAS_MES_FOLHA);
   const valorHora = intermitente
     ? naoNegativo(colaborador.salarioHora ?? 0)
@@ -302,17 +382,26 @@ export function calcularFolhaMensal(entrada: EntradaFolha): ResultadoFolha {
   const baseFGTS = naoNegativo(somarBase('baseFGTS'));
   const baseTributavel = naoNegativo(somarBase('baseIRRF'));
 
-  const resultadoINSS = calcularINSS(baseINSS, dataCalculo, tabela);
+  // Cada regime apura o INSS de um jeito; PJ e estagio nao tem retencao.
+  const resultadoINSS =
+    regime.inss === 'PROGRESSIVO'
+      ? calcularINSS(baseINSS, dataCalculo, tabela)
+      : regime.inss === 'PRO_LABORE'
+        ? calcularINSSProLabore(baseINSS, dataCalculo, tabela)
+        : { base: 0, valor: 0, aliquotaEfetiva: 0, faixas: [] };
   if (resultadoINSS.valor > 0) {
-    verbas.push(verba('110', 'INSS', 'DESCONTO', `${(resultadoINSS.aliquotaEfetiva * 100).toFixed(2)}%`, resultadoINSS.valor));
+    const rotulo = regime.inss === 'PRO_LABORE' ? 'INSS pro-labore' : 'INSS';
+    verbas.push(verba('110', rotulo, 'DESCONTO', `${(resultadoINSS.aliquotaEfetiva * 100).toFixed(2)}%`, resultadoINSS.valor));
   }
 
   const pensao = naoNegativo(entrada.pensaoAlimenticia ?? 0);
-  const resultadoIRRF = calcularIRRF(
-    { rendimentoBruto: baseTributavel, inss: resultadoINSS.valor, dependentes: colaborador.dependentesIRRF, pensaoAlimenticia: pensao },
-    dataCalculo,
-    tabela,
-  );
+  const resultadoIRRF = regime.retemIRRF
+    ? calcularIRRF(
+        { rendimentoBruto: baseTributavel, inss: resultadoINSS.valor, dependentes: colaborador.dependentesIRRF, pensaoAlimenticia: pensao },
+        dataCalculo,
+        tabela,
+      )
+    : { base: 0, valor: 0, aliquota: 0, deducao: 0, usouDescontoSimplificado: false, deducoesAplicadas: 0 };
   if (resultadoIRRF.valor > 0) {
     verbas.push(verba('111', 'IRRF', 'DESCONTO', `${(resultadoIRRF.aliquota * 100).toFixed(1)}%`, resultadoIRRF.valor));
   }
@@ -320,7 +409,7 @@ export function calcularFolhaMensal(entrada: EntradaFolha): ResultadoFolha {
   /* ---------- Vale transporte ---------- */
   // O desconto e o menor entre o custo real do beneficio e 6% do salario base.
   let descontoVT = 0;
-  if (colaborador.valeTransporte && salarioPeriodo > 0) {
+  if (regime.descontaValeTransporte && colaborador.valeTransporte && salarioPeriodo > 0) {
     const tetoLegal = arredondar(salarioPeriodo * LIMITE_DESCONTO_VT);
     const custoReal = colaborador.valeTransporteValorDiario
       ? arredondar(colaborador.valeTransporteValorDiario * Math.max(0, diasRemunerados - apuracao.diasDescontaveis))
@@ -330,7 +419,9 @@ export function calcularFolhaMensal(entrada: EntradaFolha): ResultadoFolha {
   }
 
   /* ---------- Salario-familia ---------- */
-  const salarioFamilia = calcularSalarioFamilia(baseINSS, colaborador.dependentesSalarioFamilia, dataCalculo, tabela);
+  const salarioFamilia = regime.temSalarioFamilia
+    ? calcularSalarioFamilia(baseINSS, colaborador.dependentesSalarioFamilia, dataCalculo, tabela)
+    : 0;
   if (salarioFamilia > 0) {
     verbas.push(verba('040', 'Salario-familia', 'PROVENTO', `${colaborador.dependentesSalarioFamilia} dep.`, salarioFamilia));
   }
@@ -348,8 +439,8 @@ export function calcularFolhaMensal(entrada: EntradaFolha): ResultadoFolha {
   // As comissoes ja foram pagas semanalmente: o banco so transfere a diferenca.
   const valorTransferir = arredondar(salarioLiquido - comissoesAdiantadas);
 
-  const fgts = calcularFGTS(baseFGTS);
-  verbas.push(verba('900', 'FGTS do mes (informativo)', 'INFORMATIVA', '8%', fgts));
+  const fgts = regime.temFGTS ? calcularFGTS(baseFGTS) : 0;
+  if (regime.temFGTS) verbas.push(verba('900', 'FGTS do mes (informativo)', 'INFORMATIVA', '8%', fgts));
 
   if (valorTransferir < 0) {
     alertas.push(

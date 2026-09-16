@@ -4,7 +4,7 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "jsx": "react-jsx",
     "rootDir": "./src",
-    "outDir": "./dist",
+    "outDir": "./.tsbuild",
     "noEmit": false,
     "types": ["vite/client"]
   },
