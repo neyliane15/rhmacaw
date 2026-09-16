@@ -129,12 +129,15 @@ export function Comissoes(): JSX.Element {
   }
 
   async function aplicarParametros(): Promise<void> {
+    if (!periodo) return;
+    // A semana ja existe: `POST /periodos` devolveria 409. Quem altera valor
+    // arrecadado, retencao e criterio de um periodo aberto e o PUT.
     const atualizado = await acao.executar(() =>
-      apiComissoes.criarPeriodo({ ano, semana, valorArrecadado, percentualRetencao, criterioRateio: criterio }),
+      apiComissoes.atualizarPeriodo(periodo.id, { valorArrecadado, percentualRetencao, criterioRateio: criterio }),
     );
     if (atualizado) {
       detalhe.definir(atualizado);
-      setAviso('Parametros da semana atualizados.');
+      setAviso('Parametros da semana atualizados. Clique em "Ratear" para redistribuir.');
     }
   }
 

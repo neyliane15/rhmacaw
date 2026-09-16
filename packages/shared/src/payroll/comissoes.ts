@@ -92,6 +92,8 @@ export function ratearComissoes(entrada: EntradaRateio): ResultadoRateio {
   };
 
   let linhas: LinhaRateio[];
+  /** `true` so quando houve rateio proporcional de verdade — e o que autoriza realocar a sobra. */
+  let rateouProporcional = false;
 
   if (entrada.criterio === 'MANUAL') {
     linhas = participantes.map((p) => {
@@ -127,6 +129,7 @@ export function ratearComissoes(entrada: EntradaRateio): ResultadoRateio {
         valor: arredondar(p.ajuste ?? 0),
       }));
     } else {
+      rateouProporcional = true;
       linhas = participantes.map((p) => {
         const valorRateado = arredondar((distribuivel * pesoDe(p)) / pesoTotal);
         const ajuste = arredondar(p.ajuste ?? 0);
@@ -144,8 +147,12 @@ export function ratearComissoes(entrada: EntradaRateio): ResultadoRateio {
   }
 
   // Aloca a sobra de centavos no maior valor rateado.
+  //
+  // So quando o rateio proporcional aconteceu: sem peso valido nenhuma linha foi
+  // calculada, e a "sobra" seria o valor distribuivel inteiro — jogar isso no
+  // primeiro participante pagaria a semana toda a uma pessoa so.
   let diferenca = 0;
-  if (entrada.criterio !== 'MANUAL' && linhas.length > 0) {
+  if (rateouProporcional && linhas.length > 0) {
     const somaRateada = arredondar(linhas.reduce((a, l) => a + l.valorRateado, 0));
     diferenca = arredondar(distribuivel - somaRateada);
     if (diferenca !== 0) {

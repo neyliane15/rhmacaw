@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { formatarBRL, rotuloCompetencia, type Alerta as AlertaDominio, type Competencia } from '@rhmacaw/shared';
+import { formatarBRL, rotuloCompetencia, type Alerta as AlertaDominio } from '@rhmacaw/shared';
 import * as apiRelatorios from '../api/relatorios.js';
 import { Alerta } from '../componentes/Alerta.js';
 import { CabecalhoPagina, Indicador } from '../componentes/Cartoes.js';
@@ -34,29 +34,15 @@ export function Dashboard(): JSX.Element {
 
   const resumo = useRequisicao(() => apiRelatorios.dashboard(competencia), [competencia]);
 
-  // Evolucao mensal: o dashboard entrega o mes corrente, entao a serie historica
-  // vem dos ultimos meses de custo por centro de custo somados.
-  const competenciasHistorico = useMemo<Competencia[]>(
-    () => Array.from({ length: MESES_HISTORICO }, (_, i) => deslocarCompetencia(competencia, i - (MESES_HISTORICO - 1))),
-    [competencia],
-  );
-
+  // Evolucao mensal: uma unica chamada a `/relatorios/evolucao-folha`, que ja
+  // devolve a serie de 12 meses com zero nos meses sem folha. Antes o painel
+  // disparava uma requisicao por mes e engolia os 404 num try/catch.
   const historico = useRequisicao(
     async () => {
-      const resultados = await Promise.all(
-        competenciasHistorico.map(async (c) => {
-          try {
-            const relatorio = await apiRelatorios.custoCentroCusto(c);
-            return { competencia: c, custo: relatorio.total };
-          } catch {
-            // Mes sem folha processada nao e erro: entra como zero na serie.
-            return { competencia: c, custo: 0 };
-          }
-        }),
-      );
-      return resultados;
+      const serie = await apiRelatorios.evolucaoFolha(competencia);
+      return serie.slice(-MESES_HISTORICO);
     },
-    [competenciasHistorico.join('|')],
+    [competencia],
   );
 
   const dados = resumo.dados;

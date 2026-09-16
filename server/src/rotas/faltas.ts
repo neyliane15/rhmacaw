@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import type { FaltaEntrada } from '@rhmacaw/shared';
-import { arredondar, competenciaDe, somar } from '@rhmacaw/shared';
+import type { FaltaEntrada, TipoFalta } from '@rhmacaw/shared';
+import { REGIMES_CONTRATO, apurarFaltas, arredondar, competenciaDe, ehCompetencia } from '@rhmacaw/shared';
 import { autenticar, exigirPermissao, sessaoDe } from '../auth/middleware.js';
 import { registrar } from '../db/repositorios/auditoria.js';
 import * as repoColaboradores from '../db/repositorios/colaboradores.js';
@@ -31,40 +31,48 @@ rotasFaltas.get('/', exigirPermissao('faltas:ler'), (req, res) => {
 });
 
 /**
- * Resumo do absenteismo da competencia: dias, DSR perdido e valor estimado do
- * desconto — util para conferir antes de processar a folha.
+ * Resumo do absenteismo da competencia, por colaborador: dias descontaveis,
+ * DSR perdido e valor estimado do desconto.
+ *
+ * O DSR vem de `apurarFaltas` — a mesma funcao que a folha usa — para que o
+ * numero conferido aqui seja exatamente o que sera descontado no contracheque.
  */
 rotasFaltas.get('/resumo', exigirPermissao('faltas:ler'), (req, res) => {
   const { identidade } = sessaoDe(req);
   const competencia = query(req, 'competencia');
   if (!competencia) throw erroValidacao('Informe a competencia (YYYY-MM).');
+  if (!ehCompetencia(competencia)) {
+    throw erroValidacao('Competencia invalida.', [{ campo: 'competencia', mensagem: 'Use o formato YYYY-MM.' }]);
+  }
 
   const cadastros = new Map(repoColaboradores.listarTodos(identidade.tenantId).map((c) => [c.id, c]));
   const porColaborador = repoFaltas.faltasPorColaboradorNaCompetencia(identidade.tenantId, competencia);
 
   const linhas = [...porColaborador.entries()].map(([colaboradorId, faltas]) => {
     const colaborador = cadastros.get(colaboradorId);
+    const perdeDSR = colaborador ? REGIMES_CONTRATO[colaborador.tipoContrato].perdeDSR : true;
+    const apuracao = apurarFaltas(faltas, competencia, perdeDSR);
     const valorDia = colaborador ? arredondar(colaborador.salarioBase / 30) : 0;
-    const descontaveis = faltas.filter((f) => f.tipo === 'FALTA' || f.tipo === 'SUSPENSAO').length;
-    // Uma falta injustificada derruba o DSR da semana; aproximamos uma semana
-    // por falta, que e o pior caso e o que o motor apura na folha.
-    const dsr = descontaveis > 0 ? Math.min(descontaveis, 5) : 0;
-    const horasAtraso = somar(...faltas.filter((f) => f.tipo === 'ATRASO').map((f) => f.horas ?? 0));
+
+    const porTipo: Partial<Record<TipoFalta, number>> = {};
+    for (const falta of faltas) porTipo[falta.tipo] = (porTipo[falta.tipo] ?? 0) + 1;
 
     return {
       colaboradorId,
       colaboradorNome: colaborador?.nome ?? colaboradorId,
+      funcao: colaborador?.funcao ?? '-',
       centroCusto: colaborador?.centroCusto ?? '-',
-      diasDescontaveis: descontaveis,
-      diasJustificados: faltas.length - descontaveis - faltas.filter((f) => f.tipo === 'ATRASO').length,
-      horasAtraso,
-      diasDSR: dsr,
-      valorEstimado: arredondar(valorDia * (descontaveis + dsr)),
+      dias: apuracao.diasDescontaveis,
+      diasJustificados: apuracao.diasJustificados,
+      horas: apuracao.horasAtraso,
+      diasDSR: apuracao.diasDSR,
+      valorEstimado: arredondar(valorDia * (apuracao.diasDescontaveis + apuracao.diasDSR)),
+      porTipo,
     };
   });
 
   linhas.sort((a, b) => b.valorEstimado - a.valorEstimado);
-  res.json({ competencia, linhas, totalEstimado: somar(...linhas.map((l) => l.valorEstimado)) });
+  res.json(linhas);
 });
 
 rotasFaltas.post('/', exigirPermissao('faltas:escrever'), (req, res) => {

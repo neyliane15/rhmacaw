@@ -1,6 +1,7 @@
 import type { Competencia, ResumoDashboard } from '@rhmacaw/shared';
 import { requisitar } from './cliente.js';
 import type {
+  PontoEvolucaoFolha,
   RelatorioAbsenteismo,
   RelatorioCentroCusto,
   RelatorioComissoes,
@@ -35,4 +36,12 @@ export function movimentacao(ano: number): Promise<RelatorioMovimentacao> {
 
 export function provisoes(competencia: Competencia): Promise<RelatorioProvisoes> {
   return requisitar<RelatorioProvisoes>('/relatorios/provisoes', { query: { competencia } });
+}
+
+/**
+ * Serie de 12 meses ate a competencia informada, numa unica chamada. Substitui
+ * o leque de requisicoes paralelas a `custo-centro-custo` que o painel fazia.
+ */
+export function evolucaoFolha(competencia: Competencia): Promise<PontoEvolucaoFolha[]> {
+  return requisitar<PontoEvolucaoFolha[]>('/relatorios/evolucao-folha', { query: { competencia } });
 }

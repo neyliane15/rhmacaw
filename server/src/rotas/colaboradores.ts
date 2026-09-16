@@ -39,7 +39,12 @@ rotasColaboradores.get('/:id', exigirPermissao('colaboradores:ler'), (req, res) 
   res.json(colaborador);
 });
 
-/** Linha do tempo do colaborador: admissao, faltas, ferias, folhas e rescisao. */
+/**
+ * Linha do tempo do colaborador: admissao, faltas, ferias, folhas e rescisao.
+ *
+ * Devolve um array ordenado do mais recente para o mais antigo — a tela desenha
+ * a lista direto, sem desembrulhar envelope.
+ */
 rotasColaboradores.get('/:id/historico', exigirPermissao('colaboradores:ler'), (req, res) => {
   const { identidade } = sessaoDe(req);
   const tenantId = identidade.tenantId;
@@ -48,10 +53,11 @@ rotasColaboradores.get('/:id/historico', exigirPermissao('colaboradores:ler'), (
 
   interface Evento {
     data: string;
-    tipo: string;
+    tipo: 'ADMISSAO' | 'FALTA' | 'FERIAS' | 'FOLHA' | 'RESCISAO';
     titulo: string;
-    detalhe: string;
-    referenciaId?: string;
+    detalhe: string | null;
+    valor: number | null;
+    referencia: string | null;
   }
   const eventos: Evento[] = [
     {
@@ -59,6 +65,8 @@ rotasColaboradores.get('/:id/historico', exigirPermissao('colaboradores:ler'), (
       tipo: 'ADMISSAO',
       titulo: 'Admissao',
       detalhe: `${colaborador.funcao} - ${colaborador.centroCusto}`,
+      valor: colaborador.salarioBase,
+      referencia: colaborador.id,
     },
   ];
 
@@ -68,7 +76,8 @@ rotasColaboradores.get('/:id/historico', exigirPermissao('colaboradores:ler'), (
       tipo: 'FALTA',
       titulo: falta.tipo,
       detalhe: falta.justificativa ?? (falta.horas ? `${falta.horas}h` : 'sem justificativa'),
-      referenciaId: falta.id,
+      valor: null,
+      referencia: falta.id,
     });
   }
   for (const ferias of repoFerias.listarFerias(tenantId, { colaboradorId: colaborador.id })) {
@@ -77,7 +86,8 @@ rotasColaboradores.get('/:id/historico', exigirPermissao('colaboradores:ler'), (
       tipo: 'FERIAS',
       titulo: `Ferias (${ferias.status})`,
       detalhe: `${ferias.diasGozo} dias de gozo ate ${ferias.fimGozo}`,
-      referenciaId: ferias.id,
+      valor: ferias.liquido,
+      referencia: ferias.id,
     });
   }
   for (const item of repoFolhas.itensDoColaborador(tenantId, colaborador.id)) {
@@ -86,7 +96,8 @@ rotasColaboradores.get('/:id/historico', exigirPermissao('colaboradores:ler'), (
       tipo: 'FOLHA',
       titulo: `Folha ${item.tipo} (${item.status})`,
       detalhe: `Liquido ${item.salarioLiquido.toFixed(2)} / transferir ${item.valorTransferir.toFixed(2)}`,
-      referenciaId: item.folhaId,
+      valor: item.valorTransferir,
+      referencia: item.folhaId,
     });
   }
   for (const rescisao of repoRescisoes.listarRescisoes(tenantId, colaborador.id)) {
@@ -95,12 +106,13 @@ rotasColaboradores.get('/:id/historico', exigirPermissao('colaboradores:ler'), (
       tipo: 'RESCISAO',
       titulo: `Rescisao - ${rescisao.motivo}`,
       detalhe: `Liquido ${rescisao.liquido.toFixed(2)}`,
-      referenciaId: rescisao.id,
+      valor: rescisao.liquido,
+      referencia: rescisao.id,
     });
   }
 
   eventos.sort((a, b) => b.data.localeCompare(a.data));
-  res.json({ colaborador, eventos });
+  res.json(eventos);
 });
 
 rotasColaboradores.post('/', exigirPermissao('colaboradores:escrever'), (req, res) => {
@@ -142,15 +154,19 @@ rotasColaboradores.put('/:id', exigirPermissao('colaboradores:escrever'), (req, 
 /**
  * Previa do TRCT. Nao grava nada: o desligamento so acontece em
  * `POST /rescisoes`, depois de o RH conferir os numeros.
+ *
+ * Devolve o TRCT calculado direto (mesmo corpo de `POST /rescisoes/simular`),
+ * e nao um envelope: quem chama esta rota quer as verbas, nao o eco do pedido.
  */
 rotasColaboradores.post('/:id/demitir', exigirPermissao('rescisoes:escrever'), (req, res) => {
   const { identidade } = sessaoDe(req);
   const dados = validar(esquemaDemissao, req.body);
-  const resultado = rescisaoServico.simularRescisao(identidade.tenantId, {
-    ...dados,
-    colaboradorId: param(req, 'id'),
-  });
-  res.json({ colaboradorId: param(req, 'id'), ...dados, simulacao: resultado });
+  res.json(
+    rescisaoServico.simularRescisao(identidade.tenantId, {
+      ...dados,
+      colaboradorId: param(req, 'id'),
+    }),
+  );
 });
 
 rotasColaboradores.delete('/:id', exigirPermissao('colaboradores:escrever'), (req, res) => {

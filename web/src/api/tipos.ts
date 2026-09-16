@@ -85,6 +85,13 @@ export interface EntradaPrevia {
 
 /* ----------------------------- Relatorios ----------------------------- */
 
+/** Um ponto de `GET /relatorios/evolucao-folha`. */
+export interface PontoEvolucaoFolha {
+  competencia: Competencia;
+  custo: number;
+  transferir: number;
+}
+
 export interface RelatorioFolhaAnalitica {
   competencia: Competencia;
   folhaId?: ID | null;

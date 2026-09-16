@@ -43,6 +43,10 @@ export interface PedidoRescisao {
   /** Sobrescreve o saldo apurado no banco (quando o RH ja conferiu o extrato). */
   diasFeriasVencidas?: number | undefined;
   saldoComissoes?: number | undefined;
+  /** Sobrescreve a media de comissoes dos 12 meses calculada a partir do banco. */
+  mediaComissoes?: number | undefined;
+  /** Sobrescreve a contagem de faltas injustificadas do periodo aquisitivo. */
+  faltasInjustificadasNoPeriodo?: number | undefined;
 }
 
 /**
@@ -65,8 +69,11 @@ export function simularRescisao(tenantId: string, pedido: PedidoRescisao): Resul
     'SUSPENSAO',
   ]);
 
+  // O RH pode ter conferido a ficha e discordar da contagem do sistema.
+  const faltasConsideradas = pedido.faltasInjustificadasNoPeriodo ?? faltasNoPeriodo;
+
   const gozados = repoFerias.diasGozadosPorColaborador(tenantId).get(colaborador.id) ?? 0;
-  const saldo = calcularSaldoFerias(colaborador, faltasNoPeriodo, gozados, pedido.dataDesligamento);
+  const saldo = calcularSaldoFerias(colaborador, faltasConsideradas, gozados, pedido.dataDesligamento);
 
   // Comissoes ainda nao pagas da competencia do desligamento entram no TRCT.
   const comissoesPendentes =
@@ -80,9 +87,9 @@ export function simularRescisao(tenantId: string, pedido: PedidoRescisao): Resul
     dataDesligamento: pedido.dataDesligamento,
     motivo: pedido.motivo,
     tipoAviso: pedido.tipoAviso,
-    mediaComissoes: mediasDeComissoes(tenantId, competencia).get(colaborador.id) ?? 0,
+    mediaComissoes: pedido.mediaComissoes ?? mediasDeComissoes(tenantId, competencia).get(colaborador.id) ?? 0,
     diasFeriasVencidas: pedido.diasFeriasVencidas ?? saldo.diasSaldo,
-    faltasInjustificadasNoPeriodo: faltasNoPeriodo,
+    faltasInjustificadasNoPeriodo: faltasConsideradas,
     saldoFGTS: pedido.saldoFGTS ?? estimarSaldoFGTS(colaborador, pedido.dataDesligamento),
     decimoTerceiroAdiantado: pedido.decimoTerceiroAdiantado ?? 0,
     saldoComissoes: comissoesPendentes,

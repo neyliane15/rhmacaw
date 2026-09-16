@@ -3,10 +3,12 @@
  * faltas, comissoes) — nenhum deles recalcula a folha, para que o numero do
  * relatorio seja exatamente o que foi pago.
  */
-import type { Competencia, ItemFolha } from '@rhmacaw/shared';
+import type { Competencia, Folha, ItemFolha, StatusFolha, StatusPeriodo } from '@rhmacaw/shared';
 import {
   arredondar,
   calcularFGTS,
+  diaDaSemana,
+  diasNoMes,
   primeiroDiaDaCompetencia,
   rotuloCompetencia,
   somar,
@@ -19,62 +21,59 @@ import * as repoFolhas from '../db/repositorios/folhas.js';
 import { erroNaoEncontrado } from '../erros.js';
 import { competenciasAnteriores, mediasDeComissoes } from './comum.js';
 
-function itensDaCompetencia(tenantId: string, competencia: Competencia): ItemFolha[] {
+function folhaDaCompetencia(tenantId: string, competencia: Competencia): Folha {
   const folha = repoFolhas.buscarFolhaAtiva(tenantId, competencia, 'MENSAL');
   if (!folha) throw erroNaoEncontrado(`Folha mensal de ${rotuloCompetencia(competencia)}`);
-  return repoFolhas.listarItens(tenantId, folha.id);
+  return folha;
 }
 
-export interface LinhaAnalitica {
-  colaboradorId: string;
-  colaboradorNome: string;
-  funcao: string;
-  centroCusto: string;
-  salarioBase: number;
-  proventos: number;
-  descontos: number;
-  inss: number;
-  irrf: number;
-  fgts: number;
-  liquido: number;
-  comissoesAdiantadas: number;
-  valorTransferir: number;
+function itensDaCompetencia(tenantId: string, competencia: Competencia): ItemFolha[] {
+  return repoFolhas.listarItens(tenantId, folhaDaCompetencia(tenantId, competencia).id);
 }
 
-export function folhaAnalitica(
-  tenantId: string,
-  competencia: Competencia,
-): { competencia: Competencia; linhas: LinhaAnalitica[]; totais: Omit<LinhaAnalitica, 'colaboradorId' | 'colaboradorNome' | 'funcao' | 'centroCusto'> } {
-  const itens = itensDaCompetencia(tenantId, competencia);
-  const linhas = itens.map((i) => ({
-    colaboradorId: i.colaboradorId,
-    colaboradorNome: i.colaboradorNome,
-    funcao: i.funcao,
-    centroCusto: i.centroCusto,
-    salarioBase: i.salarioBase,
-    proventos: i.totalProventos,
-    descontos: i.totalDescontos,
-    inss: i.inss,
-    irrf: i.irrf,
-    fgts: i.fgts,
-    liquido: i.salarioLiquido,
-    comissoesAdiantadas: i.comissoesAdiantadas,
-    valorTransferir: i.valorTransferir,
-  }));
+export interface TotaisFolhaAnalitica {
+  totalProventos: number;
+  totalDescontos: number;
+  totalLiquido: number;
+  totalTransferir: number;
+  totalComissoesAdiantadas: number;
+  totalINSS: number;
+  totalIRRF: number;
+  totalFGTS: number;
+}
+
+export interface RelatorioFolhaAnalitica {
+  competencia: Competencia;
+  folhaId: string;
+  status: StatusFolha;
+  itens: ItemFolha[];
+  totais: TotaisFolhaAnalitica;
+}
+
+/**
+ * Folha analitica: os itens gravados, sem recalculo, mais os totais.
+ *
+ * Devolve `ItemFolha` inteiro (e nao uma projecao): a tela mostra colunas
+ * diferentes conforme o que o usuario escolhe, e o CSV exporta tudo.
+ */
+export function folhaAnalitica(tenantId: string, competencia: Competencia): RelatorioFolhaAnalitica {
+  const folha = folhaDaCompetencia(tenantId, competencia);
+  const itens = repoFolhas.listarItens(tenantId, folha.id);
 
   return {
     competencia,
-    linhas,
+    folhaId: folha.id,
+    status: folha.status,
+    itens,
     totais: {
-      salarioBase: somar(...linhas.map((l) => l.salarioBase)),
-      proventos: somar(...linhas.map((l) => l.proventos)),
-      descontos: somar(...linhas.map((l) => l.descontos)),
-      inss: somar(...linhas.map((l) => l.inss)),
-      irrf: somar(...linhas.map((l) => l.irrf)),
-      fgts: somar(...linhas.map((l) => l.fgts)),
-      liquido: somar(...linhas.map((l) => l.liquido)),
-      comissoesAdiantadas: somar(...linhas.map((l) => l.comissoesAdiantadas)),
-      valorTransferir: somar(...linhas.map((l) => l.valorTransferir)),
+      totalProventos: somar(...itens.map((i) => i.totalProventos)),
+      totalDescontos: somar(...itens.map((i) => i.totalDescontos)),
+      totalLiquido: somar(...itens.map((i) => i.salarioLiquido)),
+      totalTransferir: somar(...itens.map((i) => i.valorTransferir)),
+      totalComissoesAdiantadas: somar(...itens.map((i) => i.comissoesAdiantadas)),
+      totalINSS: somar(...itens.map((i) => i.inss)),
+      totalIRRF: somar(...itens.map((i) => i.irrf)),
+      totalFGTS: somar(...itens.map((i) => i.fgts)),
     },
   };
 }
@@ -97,7 +96,7 @@ const ENCARGO_PATRONAL = 0.268;
 export function custoPorCentroCusto(
   tenantId: string,
   competencia: Competencia,
-): { competencia: Competencia; linhas: LinhaCentroCusto[]; custoTotal: number } {
+): { competencia: Competencia; linhas: LinhaCentroCusto[]; total: number } {
   const itens = itensDaCompetencia(tenantId, competencia);
   const mapa = new Map<string, ItemFolha[]>();
   for (const item of itens) {
@@ -123,22 +122,45 @@ export function custoPorCentroCusto(
     })
     .sort((a, b) => b.custoTotal - a.custoTotal);
 
-  return { competencia, linhas, custoTotal: somar(...linhas.map((l) => l.custoTotal)) };
+  return { competencia, linhas, total: somar(...linhas.map((l) => l.custoTotal)) };
 }
 
 export interface LinhaComissao {
   colaboradorId: string;
   colaboradorNome: string;
+  funcao: string;
   centroCusto: string;
+  /** Quantidade de semanas em que o colaborador recebeu alguma comissao. */
+  semanas: number;
+  pontos: number;
   total: number;
   porCompetencia: Record<string, number>;
+}
+
+export interface LinhaSemanaComissao {
+  ano: number;
+  semana: number;
+  competencia: Competencia;
+  arrecadado: number;
+  distribuido: number;
+  status: StatusPeriodo;
+}
+
+export interface RelatorioComissoes {
+  ano: number;
+  competencia: Competencia | null;
+  linhas: LinhaComissao[];
+  porSemana: LinhaSemanaComissao[];
+  totalArrecadado: number;
+  totalDistribuido: number;
+  periodos: number;
 }
 
 export function relatorioComissoes(
   tenantId: string,
   ano: number,
   competencia?: Competencia,
-): { ano: number; linhas: LinhaComissao[]; totalGeral: number; periodos: number } {
+): RelatorioComissoes {
   const periodos = repoComissoes.listarPeriodos(tenantId, competencia ? { competencia } : { ano });
   const cadastros = new Map(repoColaboradores.listarTodos(tenantId).map((c) => [c.id, c]));
 
@@ -149,10 +171,16 @@ export function relatorioComissoes(
       const linha = acumulado.get(lancamento.colaboradorId) ?? {
         colaboradorId: lancamento.colaboradorId,
         colaboradorNome: cadastro?.nome ?? lancamento.colaboradorId,
+        funcao: cadastro?.funcao ?? '-',
         centroCusto: cadastro?.centroCusto ?? '-',
+        semanas: 0,
+        pontos: 0,
         total: 0,
         porCompetencia: {},
       };
+      // Semana sem valor nao conta como semana participada.
+      if (lancamento.valor !== 0) linha.semanas += 1;
+      linha.pontos = arredondar(Math.max(linha.pontos, lancamento.pontos), 4);
       linha.total = somar(linha.total, lancamento.valor);
       linha.porCompetencia[periodo.competencia] = somar(
         linha.porCompetencia[periodo.competencia] ?? 0,
@@ -162,28 +190,67 @@ export function relatorioComissoes(
     }
   }
 
+  const porSemana: LinhaSemanaComissao[] = periodos
+    .map((p) => ({
+      ano: p.ano,
+      semana: p.semana,
+      competencia: p.competencia,
+      arrecadado: p.valorArrecadado,
+      distribuido: p.totalDistribuido,
+      status: p.status,
+    }))
+    .sort((a, b) => a.ano - b.ano || a.semana - b.semana);
+
   const linhas = [...acumulado.values()].sort((a, b) => b.total - a.total);
-  return { ano, linhas, totalGeral: somar(...linhas.map((l) => l.total)), periodos: periodos.length };
+  return {
+    ano,
+    competencia: competencia ?? null,
+    linhas,
+    porSemana,
+    totalArrecadado: somar(...porSemana.map((p) => p.arrecadado)),
+    totalDistribuido: somar(...linhas.map((l) => l.total)),
+    periodos: periodos.length,
+  };
 }
 
 export interface LinhaAbsenteismo {
   colaboradorId: string;
   colaboradorNome: string;
+  funcao: string;
   centroCusto: string;
+  /** Dias uteis estimados da competencia, denominador do percentual. */
+  diasUteis: number;
   faltas: number;
   faltasJustificadas: number;
   atestados: number;
   atrasosHoras: number;
   descontoFaltas: number;
   descontoDSR: number;
+  /** Faltas injustificadas sobre os dias uteis do mes, em percentual. */
+  percentual: number;
 }
 
-export function absenteismo(
-  tenantId: string,
-  competencia: Competencia,
-): { competencia: Competencia; linhas: LinhaAbsenteismo[]; taxaAbsenteismo: number } {
+export interface RelatorioAbsenteismo {
+  competencia: Competencia;
+  diasUteis: number;
+  linhas: LinhaAbsenteismo[];
+  percentualGeral: number;
+}
+
+/** Dias uteis (segunda a sabado) da competencia — denominador do absenteismo. */
+function diasUteisDaCompetencia(competencia: Competencia): number {
+  const total = diasNoMes(competencia);
+  let uteis = 0;
+  for (let dia = 1; dia <= total; dia += 1) {
+    if (diaDaSemana(`${competencia}-${String(dia).padStart(2, '0')}`) !== 0) uteis += 1;
+  }
+  return uteis;
+}
+
+export function absenteismo(tenantId: string, competencia: Competencia): RelatorioAbsenteismo {
   const faltas = repoFaltas.listarFaltas(tenantId, { competencia });
   const cadastros = new Map(repoColaboradores.listarTodos(tenantId).map((c) => [c.id, c]));
+  const diasUteis = diasUteisDaCompetencia(competencia);
 
   // Os valores descontados vem da folha quando ela ja existe; sem folha
   // processada o relatorio mostra apenas a contagem de ocorrencias.
@@ -198,13 +265,16 @@ export function absenteismo(
     const linha = mapa.get(falta.colaboradorId) ?? {
       colaboradorId: falta.colaboradorId,
       colaboradorNome: cadastro?.nome ?? falta.colaboradorId,
+      funcao: cadastro?.funcao ?? '-',
       centroCusto: cadastro?.centroCusto ?? '-',
+      diasUteis,
       faltas: 0,
       faltasJustificadas: 0,
       atestados: 0,
       atrasosHoras: 0,
       descontoFaltas: itens.get(falta.colaboradorId)?.descontoFaltas ?? 0,
       descontoDSR: itens.get(falta.colaboradorId)?.descontoDSR ?? 0,
+      percentual: 0,
     };
     if (falta.tipo === 'FALTA' || falta.tipo === 'SUSPENSAO') linha.faltas += 1;
     else if (falta.tipo === 'ATESTADO') linha.atestados += 1;
@@ -213,33 +283,59 @@ export function absenteismo(
     mapa.set(falta.colaboradorId, linha);
   }
 
-  const linhas = [...mapa.values()].sort((a, b) => b.faltas - a.faltas);
-  const ativos = [...cadastros.values()].filter((c) => c.situacao !== 'DEMITIDO').length;
-  const diasUteisEstimados = 26;
-  const taxa = ativos > 0 ? arredondar((somar(...linhas.map((l) => l.faltas)) / (ativos * diasUteisEstimados)) * 100, 2) : 0;
+  const linhas = [...mapa.values()]
+    .map((l) => ({ ...l, percentual: diasUteis > 0 ? arredondar((l.faltas / diasUteis) * 100, 2) : 0 }))
+    .sort((a, b) => b.faltas - a.faltas);
 
-  return { competencia, linhas, taxaAbsenteismo: taxa };
+  const ativos = [...cadastros.values()].filter((c) => c.situacao !== 'DEMITIDO').length;
+  const percentualGeral =
+    ativos > 0 && diasUteis > 0
+      ? arredondar((linhas.reduce((a, l) => a + l.faltas, 0) / (ativos * diasUteis)) * 100, 2)
+      : 0;
+
+  return { competencia, diasUteis, linhas, percentualGeral };
 }
 
-export function movimentacao(
-  tenantId: string,
-  ano: number,
-): { ano: number; meses: { competencia: Competencia; admissoes: number; demissoes: number; saldo: number }[]; admissoes: number; demissoes: number } {
+export interface MesMovimentacao {
+  competencia: Competencia;
+  admissoes: number;
+  demissoes: number;
+  saldo: number;
+  /** Headcount vivo no ultimo dia do mes. */
+  ativosFimDoMes: number;
+}
+
+export interface RelatorioMovimentacao {
+  ano: number;
+  meses: MesMovimentacao[];
+  totalAdmissoes: number;
+  totalDemissoes: number;
+  /** Turnover do ano: media entre admissoes e demissoes sobre o headcount medio. */
+  turnover: number;
+}
+
+export function movimentacao(tenantId: string, ano: number): RelatorioMovimentacao {
   const colaboradores = repoColaboradores.listarTodos(tenantId);
-  const meses = Array.from({ length: 12 }, (_, i) => {
+  const meses: MesMovimentacao[] = Array.from({ length: 12 }, (_, i) => {
     const competencia: Competencia = `${ano}-${String(i + 1).padStart(2, '0')}`;
     const inicio = primeiroDiaDaCompetencia(competencia);
     const fim = ultimoDiaDaCompetencia(competencia);
     const admissoes = colaboradores.filter((c) => c.admissao >= inicio && c.admissao <= fim).length;
     const demissoes = colaboradores.filter((c) => c.demissao && c.demissao >= inicio && c.demissao <= fim).length;
-    return { competencia, admissoes, demissoes, saldo: admissoes - demissoes };
+    const ativosFimDoMes = colaboradores.filter((c) => c.admissao <= fim && (!c.demissao || c.demissao > fim)).length;
+    return { competencia, admissoes, demissoes, saldo: admissoes - demissoes, ativosFimDoMes };
   });
+
+  const totalAdmissoes = meses.reduce((a, m) => a + m.admissoes, 0);
+  const totalDemissoes = meses.reduce((a, m) => a + m.demissoes, 0);
+  const headcountMedio = meses.reduce((a, m) => a + m.ativosFimDoMes, 0) / 12;
 
   return {
     ano,
     meses,
-    admissoes: meses.reduce((a, m) => a + m.admissoes, 0),
-    demissoes: meses.reduce((a, m) => a + m.demissoes, 0),
+    totalAdmissoes,
+    totalDemissoes,
+    turnover: headcountMedio > 0 ? arredondar(((totalAdmissoes + totalDemissoes) / 2 / headcountMedio) * 100, 2) : 0,
   };
 }
 
@@ -248,12 +344,25 @@ export interface LinhaProvisao {
   colaboradorNome: string;
   centroCusto: string;
   remuneracaoBase: number;
-  /** 1/12 da remuneracao por mes trabalhado no periodo aquisitivo + 1/3. */
+  /** 1/12 da remuneracao por mes trabalhado no periodo aquisitivo. */
   provisaoFerias: number;
+  /** 1/3 constitucional sobre a provisao de ferias, em linha propria. */
+  provisaoTercoFerias: number;
   provisaoDecimoTerceiro: number;
-  /** FGTS e INSS patronal incidentes sobre as duas provisoes. */
+  /** FGTS e INSS patronal incidentes sobre as tres provisoes. */
   encargosSobreProvisoes: number;
   total: number;
+}
+
+export type TotaisProvisao = Pick<
+  LinhaProvisao,
+  'provisaoFerias' | 'provisaoTercoFerias' | 'provisaoDecimoTerceiro' | 'encargosSobreProvisoes' | 'total'
+>;
+
+export interface RelatorioProvisoes {
+  competencia: Competencia;
+  linhas: LinhaProvisao[];
+  totais: TotaisProvisao;
 }
 
 /**
@@ -261,37 +370,46 @@ export interface LinhaProvisao {
  *
  * O regime de competencia exige reconhecer 1/12 de ferias (+1/3) e 1/12 de 13o
  * a cada mes, com os encargos patronais correspondentes — mesmo que o
- * desembolso so ocorra la na frente.
+ * desembolso so ocorra la na frente. Ferias e o terco saem em linhas separadas
+ * porque a contabilidade os lanca em contas diferentes.
  */
-export function provisoes(
-  tenantId: string,
-  competencia: Competencia,
-): { competencia: Competencia; linhas: LinhaProvisao[]; total: number } {
+export function provisoes(tenantId: string, competencia: Competencia): RelatorioProvisoes {
   const medias = mediasDeComissoes(tenantId, competencia);
-  const linhas = repoColaboradores
+  const linhas: LinhaProvisao[] = repoColaboradores
     .listarTodos(tenantId)
     .filter((c) => c.situacao !== 'DEMITIDO' && c.admissao <= ultimoDiaDaCompetencia(competencia))
     .map((c) => {
       const remuneracao = arredondar(c.salarioBase + (medias.get(c.id) ?? 0));
-      const provisaoFerias = arredondar((remuneracao / 12) * (4 / 3));
+      const provisaoFerias = arredondar(remuneracao / 12);
+      const provisaoTercoFerias = arredondar(provisaoFerias / 3);
       const provisaoDecimo = arredondar(remuneracao / 12);
-      const encargos = arredondar(
-        calcularFGTS(provisaoFerias + provisaoDecimo) + (provisaoFerias + provisaoDecimo) * ENCARGO_PATRONAL,
-      );
+      const baseEncargos = provisaoFerias + provisaoTercoFerias + provisaoDecimo;
+      const encargos = arredondar(calcularFGTS(baseEncargos) + baseEncargos * ENCARGO_PATRONAL);
       return {
         colaboradorId: c.id,
         colaboradorNome: c.nome,
         centroCusto: c.centroCusto,
         remuneracaoBase: remuneracao,
         provisaoFerias,
+        provisaoTercoFerias,
         provisaoDecimoTerceiro: provisaoDecimo,
         encargosSobreProvisoes: encargos,
-        total: arredondar(provisaoFerias + provisaoDecimo + encargos),
+        total: arredondar(baseEncargos + encargos),
       };
     })
     .sort((a, b) => b.total - a.total);
 
-  return { competencia, linhas, total: somar(...linhas.map((l) => l.total)) };
+  return {
+    competencia,
+    linhas,
+    totais: {
+      provisaoFerias: somar(...linhas.map((l) => l.provisaoFerias)),
+      provisaoTercoFerias: somar(...linhas.map((l) => l.provisaoTercoFerias)),
+      provisaoDecimoTerceiro: somar(...linhas.map((l) => l.provisaoDecimoTerceiro)),
+      encargosSobreProvisoes: somar(...linhas.map((l) => l.encargosSobreProvisoes)),
+      total: somar(...linhas.map((l) => l.total)),
+    },
+  };
 }
 
 /** Evolucao do custo da folha nos ultimos 12 meses — usado nos graficos do painel. */

@@ -42,7 +42,7 @@ import * as repoFerias from '../db/repositorios/ferias.js';
 import * as repoFolhas from '../db/repositorios/folhas.js';
 import * as repoRemessas from '../db/repositorios/remessas.js';
 import * as repoRescisoes from '../db/repositorios/rescisoes.js';
-import { erroConflito, erroNaoEncontrado, erroNaoProcessavel } from '../erros.js';
+import { ErroDominio, erroConflito, erroNaoEncontrado, erroNaoProcessavel } from '../erros.js';
 import * as comissaoServico from './comissaoServico.js';
 import * as folhaServico from './folhaServico.js';
 import * as rescisaoServico from './rescisaoServico.js';
@@ -57,6 +57,18 @@ export interface PedidoRemessa {
   usarPix?: boolean | undefined;
 }
 
+/**
+ * Favorecido da previa: o cadastro bancario mais o veredito da validacao.
+ *
+ * Os invalidos continuam na lista (marcados com `valido: false` e o motivo)
+ * porque a tela precisa mostrar QUEM vai ficar de fora e POR QUE — sumir com
+ * eles seria esconder exatamente o que o financeiro precisa corrigir.
+ */
+export interface FavorecidoPrevia extends FavorecidoRemessa {
+  valido: boolean;
+  motivos: string[];
+}
+
 export interface PreviaRemessa {
   origem: OrigemRemessa;
   origemId: string;
@@ -64,7 +76,7 @@ export interface PreviaRemessa {
   layout: LayoutBancario;
   bancoCodigo: string;
   dataPagamento: DataISO;
-  favorecidos: FavorecidoRemessa[];
+  favorecidos: FavorecidoPrevia[];
   inconsistencias: string[];
   quantidadePagamentos: number;
   valorTotal: number;
@@ -251,10 +263,13 @@ export function gerarPrevia(tenantId: string, pedido: PedidoRemessa): PreviaReme
   const usarPix = pedido.layout === 'PIX_CSV' || Boolean(pedido.usarPix);
 
   const validacoes = validarFavorecidos(dados.favorecidos, usarPix);
-  const validos = validacoes.filter((v) => v.erros.length === 0).map((v) => v.favorecido);
-  const problemas = validacoes
-    .filter((v) => v.erros.length > 0)
-    .map((v) => `${v.favorecido.nome}: ${v.erros.join('; ')}`);
+  const favorecidos: FavorecidoPrevia[] = validacoes.map((v) => ({
+    ...v.favorecido,
+    valido: v.erros.length === 0,
+    motivos: v.erros,
+  }));
+  const validos = favorecidos.filter((f) => f.valido);
+  const problemas = favorecidos.filter((f) => !f.valido).map((f) => `${f.nome}: ${f.motivos.join('; ')}`);
 
   return {
     origem: pedido.origem,
@@ -263,7 +278,7 @@ export function gerarPrevia(tenantId: string, pedido: PedidoRemessa): PreviaReme
     layout: pedido.layout,
     bancoCodigo: pedido.bancoCodigo,
     dataPagamento: pedido.dataPagamento,
-    favorecidos: validos,
+    favorecidos,
     inconsistencias: [...dados.inconsistencias, ...problemas],
     quantidadePagamentos: validos.length,
     valorTotal: somar(...validos.map((f) => f.valor)),
@@ -278,6 +293,19 @@ interface ArquivoGerado {
   inconsistencias: string[];
 }
 
+/**
+ * Converte a recusa do gerador do shared (um `Error` comum) em 422. Sem isso
+ * "nenhum favorecido valido" chegaria ao cliente como 500.
+ */
+function executarGeracao<T>(operacao: () => T): T {
+  try {
+    return operacao();
+  } catch (erro) {
+    if (erro instanceof ErroDominio) throw erro;
+    throw erroNaoProcessavel(erro instanceof Error ? erro.message : 'Nao foi possivel gerar o arquivo da remessa.');
+  }
+}
+
 function gerarArquivo(
   pedido: PedidoRemessa,
   pagador: ContaPagadora,
@@ -287,14 +315,25 @@ function gerarArquivo(
 ): ArquivoGerado {
   switch (pedido.layout) {
     case 'CNAB240': {
-      const resultado = gerarCNAB240({
-        pagador: { ...pagador, bancoCodigo: pedido.bancoCodigo },
-        favorecidos,
-        dataPagamento: pedido.dataPagamento,
-        numeroRemessa,
-        historico: descricao,
-        ...(pedido.usarPix ? { usarPix: true } : {}),
-      });
+      // O gerador do shared recusa (com `Error` puro) banco sem PIX e lote sem
+      // nenhum favorecido valido. Sao recusas de regra de negocio, nao falhas do
+      // servidor: traduzimos para 422 antes que virem 500 no handler central.
+      const banco = bancoPorCodigo(pedido.bancoCodigo);
+      if (pedido.usarPix && banco && !banco.suportaPix) {
+        throw erroNaoProcessavel(
+          `${banco.nome} nao aceita lote PIX no CNAB 240. ${banco.observacao ?? ''}`.trim(),
+        );
+      }
+      const resultado = executarGeracao(() =>
+        gerarCNAB240({
+          pagador: { ...pagador, bancoCodigo: pedido.bancoCodigo },
+          favorecidos,
+          dataPagamento: pedido.dataPagamento,
+          numeroRemessa,
+          historico: descricao,
+          ...(pedido.usarPix ? { usarPix: true } : {}),
+        }),
+      );
       return {
         conteudo: resultado.conteudo,
         nomeArquivo: resultado.nomeArquivo,

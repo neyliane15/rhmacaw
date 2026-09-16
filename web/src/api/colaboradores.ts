@@ -1,4 +1,4 @@
-import type { Colaborador, ColaboradorEntrada, ID, Paginado, Rescisao, Situacao, TipoContrato } from '@rhmacaw/shared';
+import type { Colaborador, ColaboradorEntrada, ID, Paginado, ResultadoRescisao, Situacao, TipoContrato } from '@rhmacaw/shared';
 import { requisitar } from './cliente.js';
 import type { EntradaRescisaoApi, EventoHistorico } from './tipos.js';
 
@@ -31,9 +31,9 @@ export function remover(id: ID): Promise<void> {
   return requisitar<void>(`/colaboradores/${id}`, { metodo: 'DELETE' });
 }
 
-/** Simula o desligamento: devolve a rescisao calculada sem gravar a demissao. */
-export function demitir(id: ID, dados: Omit<EntradaRescisaoApi, 'colaboradorId'>): Promise<Rescisao> {
-  return requisitar<Rescisao>(`/colaboradores/${id}/demitir`, { metodo: 'POST', corpo: dados });
+/** Simula o desligamento: devolve o TRCT calculado sem gravar a demissao. */
+export function demitir(id: ID, dados: Omit<EntradaRescisaoApi, 'colaboradorId'>): Promise<ResultadoRescisao> {
+  return requisitar<ResultadoRescisao>(`/colaboradores/${id}/demitir`, { metodo: 'POST', corpo: dados });
 }
 
 export function historico(id: ID): Promise<EventoHistorico[]> {

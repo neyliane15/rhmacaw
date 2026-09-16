@@ -159,6 +159,10 @@ export const esquemaDemissao = z.object({
   dataDesligamento: dataISO,
   motivo: motivoRescisao,
   tipoAviso,
+  /** Sobrescreve a media apurada no banco; o RH pode ter o numero do contador. */
+  mediaComissoes: dinheiro.min(0).optional(),
+  /** Sobrescreve a contagem de faltas do periodo aquisitivo (art. 130). */
+  faltasInjustificadasNoPeriodo: z.number().int().min(0).max(365).optional(),
   saldoFGTS: dinheiro.min(0).optional(),
   decimoTerceiroAdiantado: dinheiro.min(0).optional(),
   diasFeriasVencidas: z.number().int().min(0).max(60).optional(),

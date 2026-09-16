@@ -45,6 +45,18 @@ export function criarPeriodo(dados: EntradaPeriodo): Promise<PeriodoComissaoDeta
   return requisitar<PeriodoComissaoDetalhado>('/comissoes/periodos', { metodo: 'POST', corpo: dados });
 }
 
+/**
+ * Altera os parametros de um periodo que ja existe. `POST /periodos` cria e
+ * devolve 409 na segunda chamada da mesma semana — trocar arrecadacao,
+ * retencao ou criterio e este PUT.
+ */
+export function atualizarPeriodo(
+  id: ID,
+  dados: { valorArrecadado: number; percentualRetencao: number; criterioRateio?: CriterioRateio; observacoes?: string },
+): Promise<PeriodoComissaoDetalhado> {
+  return requisitar<PeriodoComissaoDetalhado>(`/comissoes/periodos/${id}`, { metodo: 'PUT', corpo: dados });
+}
+
 export function ratear(id: ID): Promise<PeriodoComissaoDetalhado> {
   return requisitar<PeriodoComissaoDetalhado>(`/comissoes/periodos/${id}/ratear`, { metodo: 'POST', corpo: {} });
 }
