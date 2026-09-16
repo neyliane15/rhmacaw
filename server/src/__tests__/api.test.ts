@@ -130,7 +130,7 @@ describe('ciclo da folha ate o banco', () => {
       .send({ layout: 'CNAB240', bancoCodigo: '341', dataPagamento: '2025-09-05' })
       .expect(201);
 
-    expect(remessa.body.quantidadePagamentos).toBe(40);
+    expect(remessa.body.quantidadePagamentos).toBe(37);
     expect(remessa.body.status).toBe('GERADA');
 
     const arquivo = await request(app)
@@ -139,7 +139,7 @@ describe('ciclo da folha ate o banco', () => {
       .expect(200);
 
     const linhas = arquivo.text.split('\r\n').filter((l: string) => l.length > 0);
-    expect(linhas.length).toBe(84); // header + lote + 40x(A+B) + trailers
+    expect(linhas.length).toBe(78); // header + lote + 37x(A+B) + trailers
     expect(linhas.every((l: string) => l.length === 240)).toBe(true);
   });
 

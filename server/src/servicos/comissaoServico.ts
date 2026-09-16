@@ -276,6 +276,17 @@ export function reabrirPeriodo(
 export function marcarComoPago(tenantId: string, periodo: PeriodoComissao, dataPagamento: DataISO): void {
   repoComissoes.atualizarPeriodo(tenantId, { ...periodo, status: 'PAGO', pagoEm: agora(), dataPagamento });
 }
+/**
+ * Devolve o periodo semanal de PAGO para FECHADO quando a remessa que o pagou
+ * e cancelada — mesmo motivo da folha: sem isso a semana fica quitada no
+ * sistema e sem pagamento nenhum no banco.
+ */
+export function reverterPagamento(tenantId: string, periodoId: string): void {
+  const periodo = repoComissoes.buscarPeriodo(tenantId, periodoId);
+  if (!periodo || periodo.status !== 'PAGO') return;
+  repoComissoes.atualizarPeriodo(tenantId, { ...periodo, status: 'FECHADO', pagoEm: null, dataPagamento: null });
+}
+
 
 export function detalharPeriodo(tenantId: string, periodoId: string): PeriodoComissaoDetalhado {
   return detalhar(tenantId, periodoId);

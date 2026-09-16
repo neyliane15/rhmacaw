@@ -343,6 +343,20 @@ export function marcarComoPaga(tenantId: string, folha: Folha): void {
   repoFolhas.atualizarFolha(tenantId, { ...folha, status: 'PAGA', pagoEm: agora() });
 }
 
+/**
+ * Devolve a folha de PAGA para FECHADA quando a remessa que a pagou e
+ * cancelada.
+ *
+ * Sem isso a folha ficaria presa: gerar remessa exige FECHADA, entao uma
+ * rejeicao do banco deixaria a competencia paga no sistema e sem arquivo
+ * nenhum no banco — impossivel de reemitir.
+ */
+export function reverterPagamento(tenantId: string, folhaId: string): void {
+  const folha = repoFolhas.buscarFolha(tenantId, folhaId);
+  if (!folha || folha.status !== 'PAGA') return;
+  repoFolhas.atualizarFolha(tenantId, { ...folha, status: 'FECHADA', pagoEm: null });
+}
+
 export function exportarFolha(tenantId: string, folhaId: string, formato: 'csv' | 'json'): { conteudo: string; nomeArquivo: string; tipoConteudo: string } {
   const detalhada = repoFolhas.detalharFolha(tenantId, folhaId);
   if (!detalhada) throw erroNaoEncontrado('Folha');

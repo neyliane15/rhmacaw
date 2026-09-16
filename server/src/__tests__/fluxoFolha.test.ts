@@ -45,14 +45,25 @@ describe('folha da competencia do seed ate o banco', () => {
     expect(folha.body.totalTransferir).toBe(soma('valorTransferir'));
   });
 
-  it('fecha a folha do seed sem pendencia, porque nenhum item tem alerta critico', async () => {
+  it('fecha a folha do seed sem reconhecer alerta, porque nenhum item tem alerta critico', async () => {
     const resposta = await request(api.app)
       .post(`/api/folhas/${folhaId}/fechar`)
       .set('Authorization', auth())
       .send({ reconhecerAlertas: false })
       .expect(200);
     expect(resposta.body.status).toBe('FECHADA');
-    expect(resposta.body.itens.every((i: { alertas: string[] }) => i.alertas.length === 0)).toBe(true);
+
+    // Os unicos alertas do seed sao informativos: os tres contratos suspensos
+    // (um afastado e dois sub judice), que a folha apura zerados de proposito.
+    // Alerta critico — liquido ou valor a transferir negativo — nao existe aqui,
+    // e e por isso que `reconhecerAlertas: false` fecha.
+    const comAlerta = resposta.body.itens.filter((i: { alertas: string[] }) => i.alertas.length > 0);
+    expect(comAlerta).toHaveLength(3);
+    expect(
+      comAlerta.every((i: { alertas: string[] }) =>
+        i.alertas.every((a) => a.includes('suspenso') || a.includes('sub judice')),
+      ),
+    ).toBe(true);
   });
 
   it('gera a remessa CNAB com um pagamento por colaborador', async () => {
@@ -65,8 +76,12 @@ describe('folha da competencia do seed ate o banco', () => {
     remessaId = resposta.body.id;
     expect(resposta.body.status).toBe('GERADA');
     expect(resposta.body.origem).toBe('FOLHA');
-    expect(resposta.body.quantidadePagamentos).toBe(40);
-    expect(resposta.body.inconsistencias).toEqual([]);
+    // 40 no quadro, 37 no arquivo: os tres contratos suspensos fecham zerados
+    // e nao geram credito em conta.
+    expect(resposta.body.quantidadePagamentos).toBe(37);
+    // Os tres contratos suspensos aparecem como inconsistencia: nao e defeito,
+    // e o sistema dizendo QUEM ficou de fora do arquivo e por que.
+    expect(resposta.body.inconsistencias).toHaveLength(3);
   });
 
   it('marca a folha como PAGA ao gerar a remessa', async () => {
@@ -86,15 +101,15 @@ describe('folha da competencia do seed ate o banco', () => {
     expect(arquivo.headers['content-disposition']).toBe(`attachment; filename="${remessa.body.nomeArquivo}"`);
   });
 
-  it('entrega 84 linhas de 240 caracteres para os 40 pagamentos', async () => {
+  it('entrega 78 linhas de 240 caracteres para os 37 pagamentos', async () => {
     const arquivo = await request(api.app)
       .get(`/api/banco/remessas/${remessaId}/arquivo`)
       .set('Authorization', auth())
       .expect(200);
 
     const linhas = arquivo.text.split('\r\n').filter((l: string) => l.length > 0);
-    // header + header de lote + 40x(A+B) + trailer de lote + trailer de arquivo.
-    expect(linhas).toHaveLength(84);
+    // header + header de lote + 37x(A+B) + trailer de lote + trailer de arquivo.
+    expect(linhas).toHaveLength(78);
     expect(linhas.every((l: string) => l.length === 240)).toBe(true);
   });
 
@@ -108,7 +123,7 @@ describe('folha da competencia do seed ate o banco', () => {
     const { inspecionarCNAB240 } = await import('@rhmacaw/shared');
     const inspecao = inspecionarCNAB240(arquivo.text);
 
-    expect(inspecao.pagamentos).toHaveLength(40);
+    expect(inspecao.pagamentos).toHaveLength(37);
     expect(inspecao.totalCalculado).toBe(inspecao.totalDeclarado);
     expect(inspecao.totalDeclarado).toBe(remessa.body.valorTotal);
     // O resumo devolvido junto do recurso confere com a leitura do arquivo.
@@ -266,7 +281,7 @@ describe('item com valor a transferir negativo (regra 5 do contrato)', () => {
     const aPagar = (folha.body.itens as { valorTransferir: number }[]).filter((i) => i.valorTransferir > 0);
     // Alem do item negativo, o intermitente sem horas lancadas fecha em zero:
     // os dois ficam de fora do arquivo, e nenhum deles vira linha no banco.
-    expect(aPagar).toHaveLength(38);
+    expect(aPagar).toHaveLength(35);
 
     const remessa = await request(api.app)
       .post(`/api/folhas/${folhaNegativaId}/remessa`)
@@ -274,8 +289,10 @@ describe('item com valor a transferir negativo (regra 5 do contrato)', () => {
       .send({ layout: 'CNAB240', bancoCodigo: '341', dataPagamento: '2025-11-05' })
       .expect(201);
 
-    expect(remessa.body.quantidadePagamentos).toBe(38);
-    expect(remessa.body.inconsistencias).toHaveLength(2);
+    expect(remessa.body.quantidadePagamentos).toBe(35);
+    // 2 desta folha (o item negativo e o intermitente sem horas) mais os 3
+    // contratos suspensos do quadro.
+    expect(remessa.body.inconsistencias).toHaveLength(5);
     expect(remessa.body.inconsistencias.every((i: string) => i.includes('fora da remessa'))).toBe(true);
 
     const arquivo = await request(api.app)
@@ -284,7 +301,7 @@ describe('item com valor a transferir negativo (regra 5 do contrato)', () => {
       .expect(200);
     const { inspecionarCNAB240 } = await import('@rhmacaw/shared');
     const inspecao = inspecionarCNAB240(arquivo.text);
-    expect(inspecao.pagamentos).toHaveLength(38);
+    expect(inspecao.pagamentos).toHaveLength(35);
     expect(inspecao.pagamentos.every((p) => p.valor > 0)).toBe(true);
     expect(inspecao.consistente).toBe(true);
   });

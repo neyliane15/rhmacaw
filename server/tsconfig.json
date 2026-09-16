@@ -6,6 +6,6 @@
     "types": ["node"],
     "moduleResolution": "Bundler"
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/**/*.json"],
   "references": [{ "path": "../packages/shared" }]
 }

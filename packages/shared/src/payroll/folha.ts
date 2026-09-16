@@ -18,7 +18,7 @@ import {
   type DataISO,
 } from '../util/datas.js';
 import type { Colaborador, Falta, TipoContrato, Verba } from '../domain/tipos.js';
-import { FALTAS_DESCONTAVEIS } from '../domain/tipos.js';
+import { FALTAS_DESCONTAVEIS, SITUACOES_SUSPENSAS } from '../domain/tipos.js';
 import { calcularFGTS, calcularINSS, calcularINSSProLabore, calcularIRRF, calcularSalarioFamilia } from './encargos.js';
 import { ADICIONAL_HORA_EXTRA, ADICIONAL_NOTURNO, LIMITE_DESCONTO_VT, tabelaVigente } from './tabelas.js';
 
@@ -279,7 +279,21 @@ export function calcularFolhaMensal(entrada: EntradaFolha): ResultadoFolha {
   const regime = REGIMES_CONTRATO[colaborador.tipoContrato];
 
   /* ---------- Salario do periodo ---------- */
-  const diasSalario = diasDeSalario(colaborador, competencia);
+  // Contrato suspenso por afastamento nao gera salario: a partir do 16o dia o
+  // beneficio e pago pelo INSS (art. 476 da CLT c/c art. 60 da Lei 8.213/91).
+  // Os 15 primeiros dias, quando o afastamento comeca na competencia, sao do
+  // empregador e devem ser lancados como evento avulso — o alerta abaixo
+  // lembra o RH disso, em vez de o sistema adivinhar a data do atestado.
+  const contratoSuspenso = SITUACOES_SUSPENSAS.includes(colaborador.situacao);
+  if (contratoSuspenso) {
+    alertas.push(
+      colaborador.situacao === 'AFASTADO'
+        ? 'Contrato suspenso por afastamento: nenhum salario foi apurado. Se o afastamento comecou nesta competencia, lance os 15 primeiros dias como evento avulso.'
+        : 'Vinculo sub judice ou com desligamento em tramite: pagamento sobrestado. Libere a situacao para ATIVO ou processe a rescisao quando houver definicao.',
+    );
+  }
+
+  const diasSalario = contratoSuspenso ? 0 : diasDeSalario(colaborador, competencia);
   const diasFerias = Math.min(naoNegativo(entrada.diasFerias ?? 0), diasSalario);
   const diasRemunerados = naoNegativo(diasSalario - diasFerias);
 

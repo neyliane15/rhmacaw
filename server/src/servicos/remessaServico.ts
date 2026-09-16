@@ -468,6 +468,15 @@ export function alterarStatus(
     confirmadoEm: novoStatus === 'CONFIRMADA' ? agora() : remessa.confirmadoEm,
   };
   repoRemessas.atualizarStatusRemessa(tenantId, atualizada);
+
+  // Cancelar a remessa desfaz o pagamento da origem. E o caminho de volta
+  // quando o banco rejeita o lote: a folha volta a FECHADA (e a semana a
+  // FECHADO) para que um novo arquivo possa ser gerado. Sem isso a competencia
+  // ficaria marcada como paga sem nunca ter havido credito na conta de ninguem.
+  if (novoStatus === 'CANCELADA') {
+    if (remessa.origem === 'FOLHA') folhaServico.reverterPagamento(tenantId, remessa.origemId);
+    if (remessa.origem === 'COMISSAO_SEMANAL') comissaoServico.reverterPagamento(tenantId, remessa.origemId);
+  }
   registrar(tenantId, usuarioId, 'banco:status-remessa', 'remessa', remessaId, {
     de: remessa.status,
     para: novoStatus,

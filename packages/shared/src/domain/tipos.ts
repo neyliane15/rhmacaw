@@ -55,8 +55,20 @@ export interface SessaoUsuario {
 export const TIPOS_CONTRATO = ['CLT', 'INTERMITENTE', 'ESTAGIO', 'PJ', 'SOCIO'] as const;
 export type TipoContrato = (typeof TIPOS_CONTRATO)[number];
 
+/**
+ * Situacao do vinculo.
+ *
+ * `AFASTADO` e `PROCESSO` sao situacoes de contrato suspenso: o colaborador
+ * continua no cadastro (para ferias, 13o e uma eventual rescisao futura) mas a
+ * folha nao apura salario para ele. `AFASTADO` e o afastamento previdenciario
+ * (art. 476 da CLT); `PROCESSO` cobre o vinculo sub judice ou com desligamento
+ * em tramite, em que o pagamento fica sobrestado ate a definicao juridica.
+ */
 export const SITUACOES = ['ATIVO', 'AFASTADO', 'FERIAS', 'PROCESSO', 'DEMITIDO'] as const;
 export type Situacao = (typeof SITUACOES)[number];
+
+/** Situacoes em que o contrato esta suspenso e a folha nao apura salario. */
+export const SITUACOES_SUSPENSAS: readonly Situacao[] = ['AFASTADO', 'PROCESSO'];
 
 export const TIPOS_CONTA = ['CORRENTE', 'POUPANCA', 'PAGAMENTO'] as const;
 export type TipoConta = (typeof TIPOS_CONTA)[number];
