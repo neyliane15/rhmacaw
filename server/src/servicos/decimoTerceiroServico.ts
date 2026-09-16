@@ -6,7 +6,7 @@
  * `calcularDecimoTerceiro`; aqui so montamos a folha correspondente.
  */
 import type { Colaborador, Competencia, DataISO, DecimoTerceiro, Folha, Verba } from '@rhmacaw/shared';
-import { arredondar, calcularDecimoTerceiro, somar } from '@rhmacaw/shared';
+import { REGIMES_CONTRATO, arredondar, calcularDecimoTerceiro, somar } from '@rhmacaw/shared';
 import { emTransacao } from '../db/conexao.js';
 import { registrar } from '../db/repositorios/auditoria.js';
 import * as repoColaboradores from '../db/repositorios/colaboradores.js';
@@ -29,9 +29,19 @@ function faltasPorMes(tenantId: string, colaboradorId: string, ano: number): Rec
   return mapa;
 }
 
+/**
+ * Quem tem direito a 13o no ano.
+ *
+ * O filtro por tipo de contrato nao e cosmetico: socio (pro-labore), PJ e
+ * estagiario NAO tem 13o salario — e o que `REGIMES_CONTRATO` ja declarava e
+ * o que a Lei 4.090/62, a Lei 11.788/2008 e a natureza do contrato de PJ
+ * impoem. Sem esse filtro a folha de 13o pagava essas pessoas, e pagar 13o a
+ * um PJ ainda serve de prova de vinculo empregaticio numa reclamatoria.
+ */
 function elegiveis(tenantId: string, ano: number): Colaborador[] {
   return repoColaboradores
     .listarTodos(tenantId)
+    .filter((c) => REGIMES_CONTRATO[c.tipoContrato].temDecimoTerceiroEFerias)
     .filter((c) => c.admissao <= `${ano}-12-31`)
     .filter((c) => !c.demissao || c.demissao >= `${ano}-01-01`);
 }
@@ -133,8 +143,8 @@ export function processarParcela(
       inss: parcela === 2 ? decimo.inss : 0,
       baseIRRF: parcela === 2 ? decimo.valorIntegral : 0,
       irrf: parcela === 2 ? decimo.irrf : 0,
-      baseFGTS: proventos,
-      fgts: arredondar(proventos * 0.08),
+      baseFGTS: REGIMES_CONTRATO[colaborador.tipoContrato].temFGTS ? proventos : 0,
+      fgts: REGIMES_CONTRATO[colaborador.tipoContrato].temFGTS ? arredondar(proventos * 0.08) : 0,
       salarioFamilia: 0,
       totalProventos: proventos,
       totalDescontos: descontos,

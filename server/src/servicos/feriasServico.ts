@@ -4,11 +4,13 @@
  */
 import type { Ferias, FeriasEntrada, ResultadoFerias, SaldoFerias, StatusFerias } from '@rhmacaw/shared';
 import {
+  REGIMES_CONTRATO,
   calcularFerias,
   calcularSaldoFerias,
   competenciaDe,
   hojeISO,
   periodoAquisitivoAtual,
+  periodoAquisitivoVencido,
   somarDias,
 } from '@rhmacaw/shared';
 import { registrar } from '../db/repositorios/auditoria.js';
@@ -25,14 +27,21 @@ function faltasNoPeriodo(tenantId: string, colaboradorId: string, inicio: string
 }
 
 export function listarSaldos(tenantId: string, referencia = hojeISO()): SaldoFerias[] {
-  const gozados = repoFerias.diasGozadosPorColaborador(tenantId);
+  const gozados = repoFerias.diasGozadosPorPeriodo(tenantId);
   return repoColaboradores
     .listarTodos(tenantId)
     .filter((c) => c.situacao !== 'DEMITIDO')
+    // Socio, PJ e estagiario nao adquirem ferias (REGIMES_CONTRATO): manter o
+    // saldo deles na lista transformava o alerta de vencimento em ruido e
+    // sugeria uma verba que a empresa nao deve.
+    .filter((c) => REGIMES_CONTRATO[c.tipoContrato].temDecimoTerceiroEFerias)
     .map((c) => {
       const periodo = periodoAquisitivoAtual(c.admissao, referencia);
       const faltas = faltasNoPeriodo(tenantId, c.id, periodo.inicio, periodo.fim);
-      return calcularSaldoFerias(c, faltas, gozados.get(c.id) ?? 0, referencia);
+      // So o gozo lancado NAQUELE periodo aquisitivo abate o saldo dele.
+      const vencido = periodoAquisitivoVencido(c.admissao, referencia);
+      const diasDoPeriodo = repoFerias.diasGozadosNoPeriodo(gozados, c.id, vencido);
+      return calcularSaldoFerias(c, faltas, diasDoPeriodo, referencia);
     })
     .sort((a, b) => a.limiteConcessivo.localeCompare(b.limiteConcessivo));
 }
@@ -94,7 +103,13 @@ function garantirCompetenciaAberta(tenantId: string, ...datas: string[]): void {
 }
 
 export function programarFerias(tenantId: string, entrada: FeriasEntrada, usuarioId: string | null): Ferias {
-  exigirColaborador(tenantId, entrada.colaboradorId);
+  const colaborador = exigirColaborador(tenantId, entrada.colaboradorId);
+  const regime = REGIMES_CONTRATO[colaborador.tipoContrato];
+  if (!regime.temDecimoTerceiroEFerias) {
+    throw erroNaoProcessavel(
+      `${colaborador.nome} tem contrato ${colaborador.tipoContrato}, que nao adquire ferias remuneradas. ${regime.fundamento}`,
+    );
+  }
   const resultado = simularFerias(tenantId, entrada);
   garantirCompetenciaAberta(tenantId, entrada.inicioGozo, resultado.fimGozo);
 

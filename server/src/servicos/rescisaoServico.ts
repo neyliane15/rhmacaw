@@ -19,6 +19,7 @@ import {
   competenciaDe,
   diasEntre,
   periodoAquisitivoAtual,
+  periodoAquisitivoVencido,
 } from '@rhmacaw/shared';
 import { emTransacao } from '../db/conexao.js';
 import { registrar } from '../db/repositorios/auditoria.js';
@@ -72,7 +73,15 @@ export function simularRescisao(tenantId: string, pedido: PedidoRescisao): Resul
   // O RH pode ter conferido a ficha e discordar da contagem do sistema.
   const faltasConsideradas = pedido.faltasInjustificadasNoPeriodo ?? faltasNoPeriodo;
 
-  const gozados = repoFerias.diasGozadosPorColaborador(tenantId).get(colaborador.id) ?? 0;
+  // Somente o gozo lancado no periodo aquisitivo que esta sendo apurado abate o
+  // saldo: somar o gozo do vinculo inteiro zerava as ferias vencidas do TRCT de
+  // qualquer empregado que ja tivesse tirado ferias alguma vez.
+  const vencido = periodoAquisitivoVencido(colaborador.admissao, pedido.dataDesligamento);
+  const gozados = repoFerias.diasGozadosNoPeriodo(
+    repoFerias.diasGozadosPorPeriodo(tenantId),
+    colaborador.id,
+    vencido,
+  );
   const saldo = calcularSaldoFerias(colaborador, faltasConsideradas, gozados, pedido.dataDesligamento);
 
   // Comissoes ainda nao pagas da competencia do desligamento entram no TRCT.

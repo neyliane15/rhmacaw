@@ -92,15 +92,55 @@ export function buscarFerias(tenantId: string, id: string): Ferias | null {
 }
 
 /** Dias ja gozados (ou em gozo) por colaborador, usados no calculo do saldo. */
-export function diasGozadosPorColaborador(tenantId: string): Map<string, number> {
-  const linhas = obterBanco()
-    .prepare<[string], { colaborador_id: string; dias: number }>(
-      `SELECT colaborador_id, SUM(dias_gozo + dias_abono) AS dias FROM ferias
+export interface GozoPorPeriodo {
+  colaboradorId: string;
+  /** Inicio do periodo aquisitivo a que o gozo foi lancado. */
+  periodoAquisitivoInicio: string;
+  dias: number;
+}
+
+/**
+ * Dias ja gozados agrupados por periodo aquisitivo.
+ *
+ * O agrupamento por periodo e essencial: somar o gozo do vinculo inteiro faz o
+ * saldo do periodo corrente zerar para quem ja tirou ferias alguma vez, o que
+ * apagava a verba de ferias vencidas da rescisao.
+ */
+export function diasGozadosPorPeriodo(tenantId: string): GozoPorPeriodo[] {
+  return obterBanco()
+    .prepare<[string], { colaborador_id: string; periodo_aquisitivo_inicio: string; dias: number }>(
+      `SELECT colaborador_id, periodo_aquisitivo_inicio, SUM(dias_gozo + dias_abono) AS dias FROM ferias
        WHERE tenant_id = ? AND status IN ('PROGRAMADA', 'EM_GOZO', 'CONCLUIDA')
-       GROUP BY colaborador_id`,
+       GROUP BY colaborador_id, periodo_aquisitivo_inicio`,
     )
-    .all(tenantId);
-  return new Map(linhas.map((l) => [l.colaborador_id, l.dias]));
+    .all(tenantId)
+    .map((l) => ({
+      colaboradorId: l.colaborador_id,
+      periodoAquisitivoInicio: l.periodo_aquisitivo_inicio,
+      dias: l.dias,
+    }));
+}
+
+/**
+ * Dias gozados de um colaborador dentro de um periodo aquisitivo.
+ *
+ * Considera lancado no periodo todo registro cujo inicio do aquisitivo caia
+ * dentro da janela — tolera o RH digitar a data com alguns dias de diferenca
+ * sem misturar periodos vizinhos.
+ */
+export function diasGozadosNoPeriodo(
+  gozos: GozoPorPeriodo[],
+  colaboradorId: string,
+  periodo: { inicio: string; fim: string },
+): number {
+  return gozos
+    .filter(
+      (g) =>
+        g.colaboradorId === colaboradorId &&
+        g.periodoAquisitivoInicio >= periodo.inicio &&
+        g.periodoAquisitivoInicio <= periodo.fim,
+    )
+    .reduce((total, g) => total + g.dias, 0);
 }
 
 export type DadosFerias = Omit<Ferias, 'id' | 'tenantId' | 'criadoEm' | 'atualizadoEm'>;

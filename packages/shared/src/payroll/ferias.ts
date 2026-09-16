@@ -37,8 +37,30 @@ export function periodoAquisitivoAtual(admissao: DataISO, referencia: DataISO = 
 }
 
 /**
+ * Periodo aquisitivo ja fechado cuja fruicao esta em aberto na data de
+ * referencia — e sobre ele que o saldo de ferias e apurado.
+ *
+ * Exportado porque quem consulta o banco precisa saber de QUAL periodo somar
+ * os dias ja gozados: somar o gozo da vida inteira zera o saldo de quem tirou
+ * ferias uma vez, e isso derruba a verba de ferias vencidas da rescisao.
+ */
+export function periodoAquisitivoVencido(
+  admissao: DataISO,
+  referencia: DataISO = hojeISO(),
+): { inicio: DataISO; fim: DataISO } {
+  const periodo = periodoAquisitivoAtual(admissao, referencia);
+  // O saldo em aberto e o do periodo anterior enquanto o atual ainda corre.
+  return periodo.numero > 1
+    ? { inicio: somarMeses(periodo.inicio, -12), fim: somarDias(periodo.inicio, -1) }
+    : { inicio: periodo.inicio, fim: periodo.fim };
+}
+
+/**
  * Saldo de ferias do colaborador. O periodo concessivo termina 12 meses apos
  * o fim do aquisitivo; passado esse prazo as ferias sao devidas em dobro.
+ *
+ * `diasJaGozados` deve ser o gozo DAQUELE periodo aquisitivo, nao o acumulado
+ * do vinculo — use `periodoAquisitivoVencido` para filtrar.
  */
 export function calcularSaldoFerias(
   colaborador: Colaborador,
@@ -46,9 +68,7 @@ export function calcularSaldoFerias(
   diasJaGozados: number,
   referencia: DataISO = hojeISO(),
 ): SaldoFerias {
-  const periodo = periodoAquisitivoAtual(colaborador.admissao, referencia);
-  // O saldo em aberto e o do periodo anterior enquanto o atual ainda corre.
-  const periodoVencido = periodo.numero > 1 ? { inicio: somarMeses(periodo.inicio, -12), fim: somarDias(periodo.inicio, -1) } : periodo;
+  const periodoVencido = periodoAquisitivoVencido(colaborador.admissao, referencia);
   const limiteConcessivo = somarDias(somarMeses(periodoVencido.fim, 12), 0);
   const diasDireito = diasDeDireito(faltasInjustificadasNoPeriodo);
   const diasSaldo = Math.max(0, diasDireito - diasJaGozados);

@@ -60,6 +60,45 @@ describe('os quatro criterios de rateio', () => {
     expect(resultado.linhas.map((l) => l.valor)).toEqual([750, 250]);
   });
 
+  /**
+   * REGRESSAO: o peso do rateio nao e dinheiro e nao pode passar por
+   * `naoNegativo`, que arredonda para centavos. Com pontos de 4 casas
+   * (1,6764 virava 1,68) a proporcao saia distorcida e cada pessoa recebia
+   * alguns centavos a mais ou a menos por semana, ainda que o total fechasse.
+   */
+  it('PONTOS respeita as casas decimais do peso, sem arredondar para centavos', () => {
+    const resultado = ratearComissoes({
+      valorArrecadado: 10000,
+      percentualRetencao: 0,
+      criterio: 'PONTOS',
+      // Somam 100,0000 exatos; arredondar cada peso para 2 casas daria 99,99.
+      participantes: [p('a', 1.6764, 40), p('b', 39.7234, 40), p('c', 0.6549, 40), p('d', 57.9453, 40)],
+    });
+    const valores = resultado.linhas.map((l) => l.valorRateado);
+    // 10000 x peso / 100 = peso x 100, arredondado ao centavo.
+    expect(valores).toEqual([167.64, 3972.34, 65.49, 5794.53]);
+    expect(resultado.totalDistribuido).toBe(10000);
+  });
+
+  it('PONTOS com peso fracionario nao perde nem cria centavos no total', () => {
+    const participantes = [p('a', 1.6764, 55), p('b', 2.302, 55), p('c', 0.6549, 55), p('d', 3.2229, 55)];
+    const resultado = ratearComissoes({
+      valorArrecadado: 9000,
+      percentualRetencao: 0,
+      criterio: 'PONTOS',
+      participantes,
+    });
+    const pesoTotal = participantes.reduce((a, x) => a + x.pontos, 0);
+    // Cada linha bate com a proporcao exata calculada fora do motor.
+    const esperado = participantes.map((x) => Math.round((9000 * x.pontos * 100) / pesoTotal) / 100);
+    const soma = esperado.reduce((a, v) => a + v, 0);
+    expect(resultado.linhas.map((l) => l.valorRateado)).toEqual(
+      // a sobra de centavos vai para o maior beneficiario
+      esperado.map((v, i) => (i === 3 ? Number((v + Math.round((9000 - soma) * 100) / 100).toFixed(2)) : v)),
+    );
+    expect(resultado.totalDistribuido).toBe(9000);
+  });
+
   it('HORAS distribui na proporcao das horas trabalhadas na semana', () => {
     const resultado = ratearComissoes({
       valorArrecadado: 1000,

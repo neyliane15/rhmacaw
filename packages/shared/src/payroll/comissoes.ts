@@ -78,12 +78,16 @@ export function ratearComissoes(entrada: EntradaRateio): ResultadoRateio {
     };
   }
 
+  // Peso nao e dinheiro: `naoNegativo` arredondaria para centavos e distorceria
+  // a proporcao (1,6764 ponto viraria 1,68). Aqui so se descarta o invalido.
+  const pesoValido = (valor: number): number => (Number.isFinite(valor) && valor > 0 ? valor : 0);
+
   const pesoDe = (p: ParticipanteRateio): number => {
     switch (entrada.criterio) {
       case 'PONTOS':
-        return naoNegativo(p.pontos);
+        return pesoValido(p.pontos);
       case 'HORAS':
-        return naoNegativo(p.horas);
+        return pesoValido(p.horas);
       case 'IGUALITARIO':
         return 1;
       case 'MANUAL':

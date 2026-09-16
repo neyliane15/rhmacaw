@@ -29,9 +29,15 @@ cai automaticamente no segundo caso.
 
 ## 3. Adiantamento pode superar o líquido
 
-`MANOEL VICTOR` fecha agosto com `−205,78`: recebeu R$ 205,78 de comissão na
-semana e o líquido da folha não cobriu (faltas, afastamento ou saída no meio do
-mês).
+Na planilha de origem `MANOEL VICTOR` fecha agosto com `−205,78`: recebeu
+R$ 205,78 de comissão na semana e o líquido da folha ficou zerado.
+
+O seed **não** reproduz esse número. A planilha mostra o líquido em zero mas não
+diz por quê, e inventar um motivo — falta, afastamento, saída no meio do mês —
+seria fabricar dado do cliente. No seed ele entra como ativo normal e fecha
+positivo. O comportamento em si, o que o sistema faz quando o adiantamento supera
+o líquido, está coberto por teste próprio com uma folha construída para o caso,
+em `server/src/__tests__/fluxoFolha.test.ts`.
 
 No sistema: o valor negativo **não** vira pagamento nem some da tela. O item
 carrega um alerta, a folha não fecha sem reconhecimento, e o favorecido entra
@@ -43,10 +49,10 @@ evento avulso na competência seguinte.
 | Centro | Pessoas | Regime |
 |---|---|---|
 | FOLHA TOKITO | 31 | CLT da operação do salão e cozinha |
-| FOLHA CENTRAL | 4 | CLT da cozinha central |
-| ADMINISTRATIVO | 5 | Sócios (pró-labore), PJ e estagiário |
+| FOLHA CENTRAL | 5 | CLT da cozinha central |
+| ADMINISTRATIVO | 4 | Sócios (pró-labore), PJ e estagiário |
 
-As 5 linhas do administrativo não têm coluna de líquido preenchida: não passam
+As 4 linhas do administrativo não têm coluna de líquido preenchida: não passam
 pelo cálculo CLT. Pró-labore tem INSS próprio (11% sobre o teto, sem faixas de
 empregado) e não tem FGTS, férias ou 13º; PJ é nota fiscal; estagiário (Lei
 11.788/2008) tem bolsa sem encargos trabalhistas.
@@ -132,3 +138,44 @@ consegue comprovar.
 Nos dois casos a postura é a mesma: o sistema não inventa o número que falta
 nem força o resultado a imitar a planilha. Ele calcula o que os dados
 sustentam e deixa a diferença visível.
+
+## 11. Limitação conhecida: o controle de férias é de um período só
+
+O sistema deriva o período aquisitivo da data de admissão e acompanha **um**
+período em aberto por vez. Quem tem três períodos vencidos aparece com 30 dias
+de saldo, não 90, e o sistema nunca sinaliza férias em dobro (art. 137 da CLT).
+
+Isso importa neste cliente em particular: há gente com cinco e seis anos de casa
+e nenhum registro de férias. O passivo real é maior do que o painel mostra, e o
+TRCT de um desligamento desses sai a menor.
+
+**Enquanto isso não for modelado**, a rescisão aceita o campo
+`diasFeriasVencidas` para o RH informar o número correto depois de conferir a
+ficha — o valor informado prevalece sobre o que o sistema calcula.
+
+**O conserto de verdade** é modelar período aquisitivo como entidade própria,
+com os dias gozados vinculados a cada período, em vez de derivá-los da admissão.
+É a próxima peça de trabalho relevante do sistema, e está registrada aqui para
+não se perder.
+
+## 12. Por que 289 testes verdes não bastaram
+
+A auditoria final encontrou duas verbas erradas convivendo com uma suíte
+inteiramente verde:
+
+- 13º, férias e provisões eram calculados para sócio, PJ e estagiário. A flag
+  `temDecimoTerceiroEFerias` existia em `REGIMES_CONTRATO` e **nenhuma linha de
+  código de produção a lia**. Eram R$ 11.358,49 na 1ª parcela do 13º — 24% da
+  folha — para quem não tem direito. Pagar 13º a um PJ, além do prejuízo, é
+  prova clássica de vínculo empregatício numa reclamatória.
+- Férias vencidas sumiam do TRCT de quem já tinha gozado férias alguma vez,
+  porque os dias gozados eram somados de todos os períodos e comparados com o
+  direito de um só.
+
+O que os dois têm em comum: o teste que os "cobria" era **tautológico** —
+afirmava que a constante contém o que a constante contém, sem nunca executar o
+caminho que usa a constante. Dá aparência de cobertura sobre código morto.
+
+A lição ficou: contagem de teste não é evidência de correção. Ao revisar esta
+suíte, desconfie de todo teste que não executa o código de produção que diz
+cobrir.

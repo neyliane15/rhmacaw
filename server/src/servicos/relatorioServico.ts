@@ -5,6 +5,7 @@
  */
 import type { Competencia, Folha, ItemFolha, StatusFolha, StatusPeriodo } from '@rhmacaw/shared';
 import {
+  REGIMES_CONTRATO,
   arredondar,
   calcularFGTS,
   diaDaSemana,
@@ -378,6 +379,9 @@ export function provisoes(tenantId: string, competencia: Competencia): Relatorio
   const linhas: LinhaProvisao[] = repoColaboradores
     .listarTodos(tenantId)
     .filter((c) => c.situacao !== 'DEMITIDO' && c.admissao <= ultimoDiaDaCompetencia(competencia))
+    // So se provisiona o que a empresa vai mesmo dever: socio, PJ e estagiario
+    // nao geram ferias nem 13o, e provisiona-los inflava o passivo do balanco.
+    .filter((c) => REGIMES_CONTRATO[c.tipoContrato].temDecimoTerceiroEFerias)
     .map((c) => {
       const remuneracao = arredondar(c.salarioBase + (medias.get(c.id) ?? 0));
       const provisaoFerias = arredondar(remuneracao / 12);
