@@ -67,7 +67,7 @@ export function Colaboradores(): JSX.Element {
         </div>
       ),
     },
-    { chave: 'funcao', titulo: 'Funcao', valor: (c) => c.funcao, render: (c) => <span className="text-[var(--texto-2)]">{c.funcao}</span> },
+    { chave: 'funcao', titulo: 'Função', valor: (c) => c.funcao, render: (c) => <span className="text-[var(--texto-2)]">{c.funcao}</span> },
     {
       chave: 'centroCusto',
       titulo: 'Centro de custo',
@@ -83,7 +83,7 @@ export function Colaboradores(): JSX.Element {
     },
     {
       chave: 'salarioBase',
-      titulo: 'Salario',
+      titulo: 'Salário',
       alinhar: 'direita',
       valor: (c) => (c.tipoContrato === 'INTERMITENTE' ? (c.salarioHora ?? 0) : c.salarioBase),
       render: (c) =>
@@ -98,7 +98,7 @@ export function Colaboradores(): JSX.Element {
     },
     {
       chave: 'admissao',
-      titulo: 'Admissao',
+      titulo: 'Admissão',
       largura: '7rem',
       alinhar: 'direita',
       valor: (c) => c.admissao,
@@ -106,7 +106,7 @@ export function Colaboradores(): JSX.Element {
     },
     {
       chave: 'situacao',
-      titulo: 'Situacao',
+      titulo: 'Situação',
       largura: '8rem',
       valor: (c) => c.situacao,
       render: (c) => <Badge tom={TOM_SITUACAO[c.situacao]}>{ROTULO_SITUACAO[c.situacao]}</Badge>,
@@ -175,9 +175,9 @@ export function Colaboradores(): JSX.Element {
               />
             </label>
             <label>
-              <span className="sr-only">Situacao</span>
+              <span className="sr-only">Situação</span>
               <select value={situacao} onChange={(e) => aoFiltrar(setSituacao)(e.target.value as Situacao | '')} className="campo w-auto">
-                <option value="">Todas as situacoes</option>
+                <option value="">Todas as situações</option>
                 {SITUACOES.map((s) => (
                   <option key={s} value={s}>
                     {ROTULO_SITUACAO[s]}

@@ -28,7 +28,7 @@ import { ROTULO_STATUS_FERIAS, TOM_STATUS_FERIAS } from '../util/rotulos.js';
 
 export function Ferias(): JSX.Element {
   const { pode } = useAuth();
-  const podeEditar = pode('ferias:criar');
+  const podeEditar = pode('férias:criar');
   const anoAtual = Number(hojeISO().slice(0, 4));
   const [ano, setAno] = useState(anoAtual);
   const [status, setStatus] = useState<StatusFerias | ''>('');
@@ -51,7 +51,7 @@ export function Ferias(): JSX.Element {
     },
     {
       chave: 'aquisitivo',
-      titulo: 'Periodo aquisitivo',
+      titulo: 'Período aquisitivo',
       valor: (s) => s.periodoAquisitivoInicio,
       render: (s) => (
         <span className="font-mono text-xs text-[var(--texto-3)]">
@@ -93,9 +93,9 @@ export function Ferias(): JSX.Element {
       valor: (s) => s.diasSaldo,
       render: (s) => <span className="font-semibold">{s.diasSaldo}</span>,
     },
-    { chave: 'faltas', titulo: 'Faltas', alinhar: 'direita', largura: '5rem', valor: (s) => s.faltasNoPeriodo, titulo2: 'Faltas injustificadas no periodo aquisitivo' },
+    { chave: 'faltas', titulo: 'Faltas', alinhar: 'direita', largura: '5rem', valor: (s) => s.faltasNoPeriodo, titulo2: 'Faltas injustificadas no período aquisitivo' },
     {
-      chave: 'acoes',
+      chave: 'ações',
       titulo: '',
       largura: '7rem',
       ordenavel: false,
@@ -111,7 +111,7 @@ export function Ferias(): JSX.Element {
   const colunasProgramadas: Coluna<FeriasDominio>[] = [
     {
       chave: 'gozo',
-      titulo: 'Periodo de gozo',
+      titulo: 'Período de gozo',
       valor: (f) => f.inicioGozo,
       render: (f) => (
         <span className="font-mono text-xs">
@@ -120,14 +120,14 @@ export function Ferias(): JSX.Element {
       ),
     },
     { chave: 'dias', titulo: 'Dias', alinhar: 'direita', largura: '4.5rem', valor: (f) => f.diasGozo },
-    { chave: 'abono', titulo: 'Abono', alinhar: 'direita', largura: '5rem', valor: (f) => f.diasAbono, titulo2: 'Dias vendidos (abono pecuniario)' },
-    { chave: 'ferias', titulo: 'Ferias', alinhar: 'direita', valor: (f) => f.valorFerias, render: (f) => formatarBRL(f.valorFerias) },
-    { chave: 'terco', titulo: '1/3', alinhar: 'direita', valor: (f) => f.valorTerco, render: (f) => formatarBRL(f.valorTerco) },
+    { chave: 'abono', titulo: 'Abono', alinhar: 'direita', largura: '5rem', valor: (f) => f.diasAbono, titulo2: 'Dias vendidos (abono pecuniário)' },
+    { chave: 'férias', titulo: 'Férias', alinhar: 'direita', valor: (f) => f.valorFerias, render: (f) => formatarBRL(f.valorFerias) },
+    { chave: 'terço', titulo: '1/3', alinhar: 'direita', valor: (f) => f.valorTerco, render: (f) => formatarBRL(f.valorTerco) },
     { chave: 'inss', titulo: 'INSS', alinhar: 'direita', valor: (f) => f.inss, render: (f) => formatarBRL(f.inss) },
     { chave: 'irrf', titulo: 'IRRF', alinhar: 'direita', valor: (f) => f.irrf, render: (f) => formatarBRL(f.irrf) },
     {
-      chave: 'liquido',
-      titulo: 'Liquido',
+      chave: 'líquido',
+      titulo: 'Líquido',
       alinhar: 'direita',
       valor: (f) => f.liquido,
       render: (f) => <span className="font-semibold">{formatarBRL(f.liquido)}</span>,
@@ -140,7 +140,7 @@ export function Ferias(): JSX.Element {
       render: (f) => <Badge tom={TOM_STATUS_FERIAS[f.status]}>{ROTULO_STATUS_FERIAS[f.status]}</Badge>,
     },
     {
-      chave: 'acoes',
+      chave: 'ações',
       titulo: '',
       largura: '3rem',
       ordenavel: false,
@@ -170,20 +170,20 @@ export function Ferias(): JSX.Element {
     <div className="space-y-4">
       <CabecalhoPagina
         sobrancelha="Descanso anual"
-        titulo="Ferias"
+        titulo="Férias"
         descricao="Saldos por vencimento e programacao com recibo calculado antes de gravar."
       />
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <Indicador rotulo="Com saldo em aberto" valor={formatarNumero(linhasSaldo.filter((s) => s.diasSaldo > 0).length, 0)} />
         <Indicador
-          rotulo="Periodos vencidos"
+          rotulo="Períodos vencidos"
           valor={formatarNumero(vencidas.length, 0)}
           apoio="Pagamento em dobro, art. 137 da CLT"
           tom={vencidas.length > 0 ? 'critico' : 'neutro'}
         />
         <Indicador rotulo="Vencem em 90 dias" valor={formatarNumero(aVencer.length, 0)} apoio="Programe antes de virar dobro" />
-        <Indicador rotulo="Ferias programadas no ano" valor={formatarNumero((programadas.dados ?? []).length, 0)} />
+        <Indicador rotulo="Férias programadas no ano" valor={formatarNumero((programadas.dados ?? []).length, 0)} />
       </div>
 
       {acao.erro ? (
@@ -194,7 +194,7 @@ export function Ferias(): JSX.Element {
 
       {vencidas.length > 0 ? (
         <Alerta nivel="critico" titulo={`${vencidas.length} periodo(s) de ferias vencido(s)`}>
-          Passado o limite concessivo, a remuneracao das ferias e devida em dobro. Priorize:{' '}
+          Passado o limite concessivo, a remuneração das férias e devida em dobro. Priorize:{' '}
           {vencidas
             .slice(0, 3)
             .map((s) => s.colaboradorNome)
@@ -214,16 +214,16 @@ export function Ferias(): JSX.Element {
           busca
           placeholderBusca="Buscar colaborador"
           denso
-          legenda="Saldos de ferias por colaborador"
+          legenda="Saldos de férias por colaborador"
           ordemInicial={{ chave: 'limite', direcao: 'asc' }}
           classeLinha={(s) => (s.vencida ? 'bg-critico/[0.07]' : '')}
-          vazio={<EstadoVazio icone={<IconePalmeira />} titulo="Nenhum saldo apurado" descricao="Cadastre colaboradores ativos para ver os periodos aquisitivos." />}
+          vazio={<EstadoVazio icone={<IconePalmeira />} titulo="Nenhum saldo apurado" descricao="Cadastre colaboradores ativos para ver os períodos aquisitivos." />}
         />
       </section>
 
       <section className="space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="sobrancelha">Ferias programadas</h2>
+          <h2 className="sobrancelha">Férias programadas</h2>
           <div className="flex items-center gap-2">
             <label>
               <span className="sr-only">Ano</span>
@@ -256,9 +256,9 @@ export function Ferias(): JSX.Element {
           erro={programadas.erro}
           denso
           comRodape={false}
-          legenda="Ferias programadas no ano"
+          legenda="Férias programadas no ano"
           ordemInicial={{ chave: 'gozo', direcao: 'asc' }}
-          vazio={<EstadoVazio titulo="Nenhuma ferias programada" descricao="Use o botao Programar no painel de saldos para simular e agendar." />}
+          vazio={<EstadoVazio titulo="Nenhuma férias programada" descricao="Use o botao Programar no painel de saldos para simular e agendar." />}
         />
       </section>
 
@@ -340,7 +340,7 @@ function ModalProgramacao({
       }
     >
       <div className="space-y-4">
-        {acao.erro ? <Alerta nivel="critico" titulo="Nao foi possivel calcular">{acao.erro}</Alerta> : null}
+        {acao.erro ? <Alerta nivel="critico" titulo="Não foi possível calcular">{acao.erro}</Alerta> : null}
         {excedeSaldo ? (
           <Alerta nivel="atencao" titulo="Dias acima do saldo">
             Gozo e abono somam {diasGozo + diasAbono} dias, mas o saldo disponivel e de {saldo.diasSaldo}.
@@ -348,12 +348,12 @@ function ModalProgramacao({
         ) : null}
         {abonoAcimaDoLimite ? (
           <Alerta nivel="atencao" titulo="Abono acima do limite legal">
-            O abono pecuniario nao pode passar de 1/3 do direito ({Math.floor(saldo.diasDireito / 3)} dias).
+            O abono pecuniario não pode passar de 1/3 do direito ({Math.floor(saldo.diasDireito / 3)} dias).
           </Alerta>
         ) : null}
 
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <CampoTexto rotulo="Inicio do gozo" type="date" value={inicioGozo} onChange={(e) => setInicioGozo(e.target.value)} />
+          <CampoTexto rotulo="Início do gozo" type="date" value={inicioGozo} onChange={(e) => setInicioGozo(e.target.value)} />
           <CampoTexto
             rotulo="Dias de gozo"
             type="number"
@@ -369,7 +369,7 @@ function ModalProgramacao({
             max={10}
             value={diasAbono}
             onChange={(e) => setDiasAbono(Number(e.target.value))}
-            dica="Venda de ate 1/3 das ferias."
+            dica="Venda de até 1/3 das férias."
           />
           <div className="flex items-end">
             <CampoCheck
@@ -390,23 +390,23 @@ function ModalProgramacao({
             ))}
             <div className="overflow-hidden rounded-md border border-[var(--borda)]">
               <table className="w-full text-sm">
-                <caption className="sr-only">Recibo de ferias simulado</caption>
+                <caption className="sr-only">Recibo de férias simulado</caption>
                 <tbody>
-                  <LinhaRecibo rotulo="Base de calculo" valor={recibo.baseCalculo} />
-                  <LinhaRecibo rotulo="Ferias" valor={recibo.valorFerias} />
+                  <LinhaRecibo rotulo="Base de cálculo" valor={recibo.baseCalculo} />
+                  <LinhaRecibo rotulo="Férias" valor={recibo.valorFerias} />
                   <LinhaRecibo rotulo="1/3 constitucional" valor={recibo.valorTerco} />
-                  <LinhaRecibo rotulo="Abono pecuniario" valor={recibo.valorAbono} />
+                  <LinhaRecibo rotulo="Abono pecuniário" valor={recibo.valorAbono} />
                   <LinhaRecibo rotulo="1/3 sobre o abono" valor={recibo.valorTercoAbono} />
                   <LinhaRecibo rotulo="Adiantamento do 13o" valor={recibo.valorAdiantamentoDecimo} />
                   <LinhaRecibo rotulo="Total de proventos" valor={recibo.totalProventos} forte />
                   <LinhaRecibo rotulo="INSS" valor={-recibo.inss} />
                   <LinhaRecibo rotulo="IRRF" valor={-recibo.irrf} />
-                  <LinhaRecibo rotulo="Liquido a receber" valor={recibo.liquido} forte destaque />
+                  <LinhaRecibo rotulo="Líquido a receber" valor={recibo.liquido} forte destaque />
                 </tbody>
               </table>
             </div>
             <p className="text-xs text-[var(--texto-3)]">
-              Retorno ao trabalho em {formatarDataBR(somarDias(recibo.fimGozo, 1))}. Abono e 1/3 sobre o abono sao indenizatorios: nao
+              Retorno ao trabalho em {formatarDataBR(somarDias(recibo.fimGozo, 1))}. Abono e 1/3 sobre o abono sao indenizatorios: não
               sofrem INSS nem IRRF.
             </p>
           </div>

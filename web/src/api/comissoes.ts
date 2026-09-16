@@ -46,9 +46,9 @@ export function criarPeriodo(dados: EntradaPeriodo): Promise<PeriodoComissaoDeta
 }
 
 /**
- * Altera os parametros de um periodo que ja existe. `POST /periodos` cria e
- * devolve 409 na segunda chamada da mesma semana — trocar arrecadacao,
- * retencao ou criterio e este PUT.
+ * Altera os parametros de um período que ja existe. `POST /períodos` cria e
+ * devolve 409 na segunda chamada da mesma semana — trocar arrecadação,
+ * retencao ou critério e este PUT.
  */
 export function atualizarPeriodo(
   id: ID,

@@ -130,9 +130,9 @@ export function calcularFerias(entrada: EntradaRecibiFerias): ResultadoFerias {
   const diasGozo = Math.max(0, Math.round(entrada.diasGozo));
   const diasAbono = Math.max(0, Math.round(entrada.diasAbono));
 
-  if (diasGozo + diasAbono > 30) alertas.push('Total de dias (gozo + abono) excede os 30 dias do periodo aquisitivo.');
-  if (diasAbono > 10) alertas.push('Abono pecuniario limitado a 1/3 do periodo (10 dias) — art. 143 da CLT.');
-  if (diasGozo > 0 && diasGozo < 5) alertas.push('Nenhum periodo de ferias pode ser inferior a 5 dias corridos — art. 134, par. 1o.');
+  if (diasGozo + diasAbono > 30) alertas.push('Total de dias (gozo + abono) excede os 30 dias do período aquisitivo.');
+  if (diasAbono > 10) alertas.push('Abono pecuniário limitado a 1/3 do período (10 dias) — art. 143 da CLT.');
+  if (diasGozo > 0 && diasGozo < 5) alertas.push('Nenhum período de férias pode ser inferior a 5 dias corridos — art. 134, par. 1o.');
 
   const baseCalculo = arredondar(colaborador.salarioBase + naoNegativo(entrada.mediaComissoes));
   const valorDia = arredondar(baseCalculo / DIAS_MES_FOLHA);

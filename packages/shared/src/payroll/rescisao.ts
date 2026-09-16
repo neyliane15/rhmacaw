@@ -201,7 +201,7 @@ export function calcularRescisao(entrada: EntradaRescisao): ResultadoRescisao {
   /* ---------- Saldo de salario ---------- */
   const diasTrabalhadosNoMes = Number(dataDesligamento.slice(8, 10));
   const saldoSalario = arredondar(valorDia * diasTrabalhadosNoMes);
-  verbas.push(v('001', 'Saldo de salario', 'PROVENTO', `${diasTrabalhadosNoMes} dias`, saldoSalario, { baseINSS: true, baseIRRF: true, baseFGTS: true }));
+  verbas.push(v('001', 'Saldo de salário', 'PROVENTO', `${diasTrabalhadosNoMes} dias`, saldoSalario, { baseINSS: true, baseIRRF: true, baseFGTS: true }));
 
   /* ---------- Aviso previo ---------- */
   let avisoPrevioIndenizado = 0;
@@ -214,7 +214,7 @@ export function calcularRescisao(entrada: EntradaRescisao): ResultadoRescisao {
   if (regra.avisoDevidoPeloEmpregado && tipoAviso === 'INDENIZADO') {
     // Empregado pediu demissao e nao cumpriu o aviso: desconto de 30 dias.
     avisoPrevioDescontado = arredondar(valorDia * 30);
-    verbas.push(v('201', 'Aviso previo nao cumprido', 'DESCONTO', '30 dias', avisoPrevioDescontado));
+    verbas.push(v('201', 'Aviso previo não cumprido', 'DESCONTO', '30 dias', avisoPrevioDescontado));
   }
 
   // O aviso indenizado projeta o contrato e gera um avo extra de 13o e ferias.
@@ -229,7 +229,7 @@ export function calcularRescisao(entrada: EntradaRescisao): ResultadoRescisao {
     const bruto = arredondar((remuneracao / 12) * avos);
     decimoTerceiroProporcional = arredondar(bruto - naoNegativo(entrada.decimoTerceiroAdiantado ?? 0));
     if (decimoTerceiroProporcional > 0) {
-      verbas.push(v('003', '13o salario proporcional', 'PROVENTO', `${avos}/12`, decimoTerceiroProporcional, { baseINSS: true, baseFGTS: true }));
+      verbas.push(v('003', '13o salário proporcional', 'PROVENTO', `${avos}/12`, decimoTerceiroProporcional, { baseINSS: true, baseFGTS: true }));
     }
   }
 
@@ -239,8 +239,8 @@ export function calcularRescisao(entrada: EntradaRescisao): ResultadoRescisao {
   const tercoFeriasVencidas = arredondar(feriasVencidas / 3);
   if (feriasVencidas > 0) {
     verbas.push(v('004', 'Ferias vencidas', 'PROVENTO', `${diasVencidas} dias`, feriasVencidas));
-    verbas.push(v('005', '1/3 sobre ferias vencidas', 'PROVENTO', '1/3', tercoFeriasVencidas));
-    alertas.push('Ha ferias vencidas em aberto: conferir se ja estavam em dobro (art. 137 da CLT).');
+    verbas.push(v('005', '1/3 sobre férias vencidas', 'PROVENTO', '1/3', tercoFeriasVencidas));
+    alertas.push('Ha férias vencidas em aberto: conferir se ja estavam em dobro (art. 137 da CLT).');
   }
 
   /* ---------- Ferias proporcionais ---------- */
@@ -254,14 +254,14 @@ export function calcularRescisao(entrada: EntradaRescisao): ResultadoRescisao {
     tercoFeriasProporcionais = arredondar(feriasProporcionais / 3);
     if (feriasProporcionais > 0) {
       verbas.push(v('006', 'Ferias proporcionais', 'PROVENTO', `${avos}/12`, feriasProporcionais));
-      verbas.push(v('007', '1/3 sobre ferias proporcionais', 'PROVENTO', '1/3', tercoFeriasProporcionais));
+      verbas.push(v('007', '1/3 sobre férias proporcionais', 'PROVENTO', '1/3', tercoFeriasProporcionais));
     }
   }
 
   /* ---------- Comissoes e avulsos ---------- */
   const saldoComissoes = naoNegativo(entrada.saldoComissoes ?? 0);
   if (saldoComissoes > 0) {
-    verbas.push(v('010', 'Comissoes a pagar', 'PROVENTO', 'saldo', saldoComissoes, { baseINSS: true, baseIRRF: true, baseFGTS: true }));
+    verbas.push(v('010', 'Comissões a pagar', 'PROVENTO', 'saldo', saldoComissoes, { baseINSS: true, baseIRRF: true, baseFGTS: true }));
   }
   const outrosProventos = naoNegativo(entrada.outrosProventos ?? 0);
   if (outrosProventos > 0) verbas.push(v('019', 'Outros proventos', 'PROVENTO', 'avulso', outrosProventos, { baseINSS: true, baseIRRF: true }));
@@ -288,13 +288,13 @@ export function calcularRescisao(entrada: EntradaRescisao): ResultadoRescisao {
     verbas.push(v('901', `Multa FGTS ${Math.round(regra.percentualMultaFGTS * 100)}% (recolhida na guia)`, 'INFORMATIVA', 'rescisoria', multaFGTS));
   }
   if (saldoFGTS === 0 && regra.percentualMultaFGTS > 0) {
-    alertas.push('Saldo do FGTS nao informado: a multa rescisoria ficou zerada. Informe o extrato antes de homologar.');
+    alertas.push('Saldo do FGTS não informado: a multa rescisoria ficou zerada. Informe o extrato antes de homologar.');
   }
 
   const totalProventos = arredondar(verbas.filter((x) => x.natureza === 'PROVENTO').reduce((a, x) => a + x.valor, 0));
   const totalDescontos = arredondar(verbas.filter((x) => x.natureza === 'DESCONTO').reduce((a, x) => a + x.valor, 0));
   const liquido = arredondar(totalProventos - totalDescontos);
-  if (liquido < 0) alertas.push('Rescisao com liquido negativo: o desconto do aviso supera as verbas devidas.');
+  if (liquido < 0) alertas.push('Rescisão com líquido negativo: o desconto do aviso supera as verbas devidas.');
 
   return {
     diasAvisoPrevio: dias,

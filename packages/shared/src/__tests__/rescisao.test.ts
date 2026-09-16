@@ -215,7 +215,7 @@ describe('verbas do TRCT', () => {
   it('alerta quando a multa do FGTS fica zerada por falta de extrato', () => {
     const resultado = trct('SEM_JUSTA_CAUSA', { saldoFGTS: 0 });
     expect(resultado.multaFGTS).toBe(0);
-    expect(resultado.alertas.some((a) => a.includes('Saldo do FGTS nao informado'))).toBe(true);
+    expect(resultado.alertas.some((a) => a.includes('Saldo do FGTS não informado'))).toBe(true);
   });
 
   it('alerta quando o desconto do aviso deixa o TRCT negativo', () => {
@@ -235,7 +235,7 @@ describe('verbas do TRCT', () => {
     expect(resultado.avisoPrevioDescontado).toBe(3000);
     expect(resultado.inss).toBe(15); // 7,5% sobre os 200,00 de saldo
     expect(resultado.liquido).toBe(-2815);
-    expect(resultado.alertas.some((a) => a.includes('liquido negativo'))).toBe(true);
+    expect(resultado.alertas.some((a) => a.includes('líquido negativo'))).toBe(true);
   });
 
   it('fecha o liquido como proventos menos descontos', () => {

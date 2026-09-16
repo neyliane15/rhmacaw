@@ -9,21 +9,26 @@ export interface PropsSeletorCompetencia {
   compacto?: boolean;
 }
 
-/** Navegacao mes a mes com atalho para o mes corrente. */
-export function SeletorCompetencia({ valor, aoMudar, rotulo = 'Competencia', compacto = false }: PropsSeletorCompetencia): JSX.Element {
+/** Navegacao mês a mês com atalho para o mês corrente. */
+export function SeletorCompetencia({ valor, aoMudar, rotulo = 'Competência', compacto = false }: PropsSeletorCompetencia): JSX.Element {
   const atual = competenciaAtual();
   return (
     <div className="inline-flex items-stretch overflow-hidden rounded-md border border-[var(--borda-forte)] bg-[var(--superficie-alta)]">
       <button
         type="button"
-        aria-label="Mes anterior"
+        aria-label="Mês anterior"
         onClick={() => aoMudar(deslocarCompetencia(valor, -1))}
         className="px-2 text-[var(--texto-2)] hover:bg-[var(--superficie-sutil)]"
       >
         <IconeSetaEsq />
       </button>
-      <label className="flex min-w-0 flex-col justify-center border-x border-[var(--borda)] px-2.5 py-1">
+      <label className="relative flex min-w-0 cursor-pointer flex-col justify-center border-x border-[var(--borda)] px-2.5 py-1 focus-within:ring-2 focus-within:ring-arara-500">
         <span className={`sobrancelha leading-none ${compacto ? 'sr-only' : ''}`}>{rotulo}</span>
+        {/* O mes visivel vem de `rotuloCompetencia`, sempre em portugues. O input
+            nativo fica por cima, transparente, so para abrir o calendario:
+            `type="month"` desenha o nome do mes no idioma do NAVEGADOR, e num
+            navegador em ingles apareceria "August 2025". */}
+        <span className="w-[8.5rem] font-mono text-sm font-semibold text-[var(--texto)]">{rotuloCompetencia(valor)}</span>
         <input
           type="month"
           value={valor}
@@ -31,12 +36,12 @@ export function SeletorCompetencia({ valor, aoMudar, rotulo = 'Competencia', com
             if (/^\d{4}-\d{2}$/.test(e.target.value)) aoMudar(e.target.value);
           }}
           aria-label={`${rotulo}: ${rotuloCompetencia(valor)}`}
-          className="w-[8.5rem] bg-transparent font-mono text-sm font-semibold text-[var(--texto)] outline-none"
+          className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
         />
       </label>
       <button
         type="button"
-        aria-label="Proximo mes"
+        aria-label="Próximo mês"
         onClick={() => aoMudar(deslocarCompetencia(valor, 1))}
         className="px-2 text-[var(--texto-2)] hover:bg-[var(--superficie-sutil)]"
       >

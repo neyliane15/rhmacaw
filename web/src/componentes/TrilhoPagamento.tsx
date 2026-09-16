@@ -1,14 +1,14 @@
 import type { StatusRemessa } from '@rhmacaw/shared';
 import { IconeCheck } from './Icones.js';
 
-export type EtapaTrilho = 'origem' | 'previa' | 'gerada' | 'enviada' | 'confirmada';
+export type EtapaTrilho = 'origem' | 'prévia' | 'gerada' | 'enviada' | 'confirmada';
 
 const ORDEM: { chave: EtapaTrilho; rotulo: string; nota: string }[] = [
   { chave: 'origem', rotulo: 'Origem fechada', nota: 'Folha ou semana fechada' },
-  { chave: 'previa', rotulo: 'Previa conferida', nota: 'Favorecidos validados' },
+  { chave: 'prévia', rotulo: 'Prévia conferida', nota: 'Favorecidos validados' },
   { chave: 'gerada', rotulo: 'Remessa gerada', nota: 'Arquivo pronto' },
   { chave: 'enviada', rotulo: 'Enviada ao banco', nota: 'Upload no internet banking' },
-  { chave: 'confirmada', rotulo: 'Confirmada', nota: 'Credito nas contas' },
+  { chave: 'confirmada', rotulo: 'Confirmada', nota: 'Crédito nas contas' },
 ];
 
 export function etapaDaRemessa(status: StatusRemessa): EtapaTrilho {
@@ -24,8 +24,8 @@ export function etapaDaRemessa(status: StatusRemessa): EtapaTrilho {
 
 /**
  * O trilho de pagamento: a assinatura do produto. Mostra, sempre na mesma
- * ordem e sempre em ouro, onde o dinheiro esta no caminho ate a conta do
- * colaborador. Aparece no banco, na folha e na comissao semanal.
+ * ordem e sempre em ouro, onde o dinheiro esta no caminho até a conta do
+ * colaborador. Aparece no banco, na folha e na comissão semanal.
  */
 export function TrilhoPagamento({ etapa, compacto = false }: { etapa: EtapaTrilho; compacto?: boolean }): JSX.Element {
   const indiceAtual = ORDEM.findIndex((e) => e.chave === etapa);

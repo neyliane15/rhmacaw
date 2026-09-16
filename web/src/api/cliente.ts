@@ -1,7 +1,7 @@
 import type { RespostaErro } from '@rhmacaw/shared';
 
 const CHAVE_SESSAO = 'rhmacaw.sessao';
-export const EVENTO_NAO_AUTORIZADO = 'rhmacaw:nao-autorizado';
+export const EVENTO_NAO_AUTORIZADO = 'rhmacaw:não-autorizado';
 
 /** Erro de API com mensagem ja legivel em portugues e detalhes por campo. */
 export class ErroApi extends Error {
@@ -67,12 +67,12 @@ export function montarQuery(query: Opcoes['query']): string {
 }
 
 const MENSAGENS_PADRAO: Record<number, string> = {
-  400: 'Dados invalidos. Confira os campos destacados.',
+  400: 'Dados inválidos. Confira os campos destacados.',
   401: 'Sua sessao expirou. Entre novamente.',
-  403: 'Seu perfil nao tem permissao para esta acao.',
-  404: 'Registro nao encontrado.',
+  403: 'Seu perfil não tem permissao para esta acao.',
+  404: 'Registro não encontrado.',
   409: 'A operacao conflita com o estado atual do registro.',
-  422: 'Nao foi possivel processar os dados enviados.',
+  422: 'Não foi possível processar os dados enviados.',
   500: 'Erro interno do servidor. Tente novamente em instantes.',
 };
 
@@ -107,7 +107,7 @@ async function enviar(caminho: string, opcoes: Opcoes = {}): Promise<Response> {
     });
   } catch (erro) {
     if (erro instanceof DOMException && erro.name === 'AbortError') throw erro;
-    throw new ErroApi(0, 'REDE', 'Nao foi possivel falar com o servidor. Verifique se a API esta no ar.');
+    throw new ErroApi(0, 'REDE', 'Não foi possível falar com o servidor. Verifique se a API esta no ar.');
   }
 
   if (resposta.status === 401) {

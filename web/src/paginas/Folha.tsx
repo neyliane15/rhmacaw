@@ -45,7 +45,7 @@ export function Folha(): JSX.Element {
   const [aviso, setAviso] = useState<string | null>(null);
   const acao = useAcao();
 
-  // A data sugerida acompanha a competencia escolhida na topbar.
+  // A data sugerida acompanha a competência escolhida na topbar.
   useEffect(() => {
     setDataPagamento(ultimoDiaDaCompetencia(competencia));
   }, [competencia]);
@@ -100,7 +100,7 @@ export function Folha(): JSX.Element {
   function exportarLocal(): void {
     if (!folha) return;
     const csv = montarCSV(
-      ['Colaborador', 'Funcao', 'Centro de custo', 'Base', 'Faltas', 'Comissoes', 'INSS', 'IRRF', 'Liquido', 'Adiantado', 'A transferir'],
+      ['Colaborador', 'Função', 'Centro de custo', 'Base', 'Faltas', 'Comissões', 'INSS', 'IRRF', 'Líquido', 'Adiantado', 'A transferir'],
       itens.map((i) => [
         i.colaboradorNome,
         i.funcao,
@@ -147,8 +147,8 @@ export function Folha(): JSX.Element {
       },
     },
     {
-      chave: 'comissoes',
-      titulo: 'Comissoes',
+      chave: 'comissões',
+      titulo: 'Comissões',
       alinhar: 'direita',
       valor: (i) => i.comissoes,
       rodape: formatarBRL(soma((i) => i.comissoes)),
@@ -157,8 +157,8 @@ export function Folha(): JSX.Element {
     { chave: 'inss', titulo: 'INSS', alinhar: 'direita', valor: (i) => i.inss, render: (i) => formatarBRL(i.inss), rodape: formatarBRL(soma((i) => i.inss)) },
     { chave: 'irrf', titulo: 'IRRF', alinhar: 'direita', valor: (i) => i.irrf, render: (i) => (i.irrf > 0 ? formatarBRL(i.irrf) : <span className="text-[var(--texto-3)]">—</span>), rodape: formatarBRL(soma((i) => i.irrf)) },
     {
-      chave: 'liquido',
-      titulo: 'Liquido',
+      chave: 'líquido',
+      titulo: 'Líquido',
       alinhar: 'direita',
       valor: (i) => i.salarioLiquido,
       rodape: formatarBRL(soma((i) => i.salarioLiquido)),
@@ -169,7 +169,7 @@ export function Folha(): JSX.Element {
       titulo: 'Adiantado',
       alinhar: 'direita',
       valor: (i) => i.comissoesAdiantadas,
-      titulo2: 'Comissoes ja pagas nas semanas',
+      titulo2: 'Comissões já pagas nas semanas',
       rodape: formatarBRL(soma((i) => i.comissoesAdiantadas)),
       render: (i) =>
         i.comissoesAdiantadas > 0 ? <span className="text-[var(--texto-2)]">-{formatarBRL(i.comissoesAdiantadas)}</span> : <span className="text-[var(--texto-3)]">—</span>,
@@ -213,7 +213,7 @@ export function Folha(): JSX.Element {
       <CabecalhoPagina
         sobrancelha={rotuloCompetencia(competencia)}
         titulo="Folha de pagamento"
-        descricao="Da apuracao ao valor que sai da conta da empresa, colaborador a colaborador."
+        descricao="Da apuração ao valor que sai da conta da empresa, colaborador a colaborador."
         acoes={
           <>
             <SeletorCompetencia valor={competencia} aoMudar={definir} compacto />
@@ -224,9 +224,9 @@ export function Folha(): JSX.Element {
 
       {acao.erro ? <Alerta nivel="critico" titulo="Operacao recusada" aoFechar={acao.limparErro}>{acao.erro}</Alerta> : null}
       {aviso ? <Alerta nivel="sucesso" aoFechar={() => setAviso(null)}>{aviso}</Alerta> : null}
-      {lista.erro ? <Alerta nivel="critico" titulo="Nao foi possivel carregar a folha">{lista.erro}</Alerta> : null}
+      {lista.erro ? <Alerta nivel="critico" titulo="Não foi possível carregar a folha">{lista.erro}</Alerta> : null}
 
-      <section className="cartao p-4">
+      <section className="cartão p-4">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <CampoSelect
             rotulo="Tipo de folha"
@@ -249,11 +249,11 @@ export function Folha(): JSX.Element {
           <div className="flex items-end gap-2">
             {folha ? (
               <>
-                <button type="button" className="botao-secundario" onClick={exportar} title="Exportacao gerada pela API">
+                <button type="button" className="botao-secundario" onClick={exportar} title="Exportação gerada pela API">
                   <IconeBaixar /> CSV
                 </button>
-                <button type="button" className="botao-secundario" onClick={exportarLocal} title="Exportacao da tabela em tela">
-                  Analitica
+                <button type="button" className="botao-secundario" onClick={exportarLocal} title="Exportação da tabela em tela">
+                  Analítica
                 </button>
               </>
             ) : null}
@@ -268,15 +268,15 @@ export function Folha(): JSX.Element {
       </section>
 
       {detalhe.carregando && !folha ? (
-        <div className="cartao p-4">
+        <div className="cartão p-4">
           <Carregando linhas={8} />
         </div>
       ) : !folha ? (
-        <div className="cartao">
+        <div className="cartão">
           <EstadoVazio
             icone={<IconeFolha />}
             titulo={`Nenhuma folha ${ROTULO_TIPO_FOLHA[tipo].toLowerCase()} em ${rotuloCompetencia(competencia)}`}
-            descricao="Processe a competencia para apurar salarios, faltas, comissoes e encargos."
+            descricao="Processe a competência para apurar salários, faltas, comissões e encargos."
             acao={
               podeProcessar ? (
                 <button type="button" className="botao-primario" onClick={processar} disabled={acao.executando}>
@@ -293,14 +293,14 @@ export function Folha(): JSX.Element {
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
             <Indicador rotulo="Proventos" valor={formatarBRL(folha.totalProventos)} />
             <Indicador rotulo="Descontos" valor={formatarBRL(folha.totalDescontos)} />
-            <Indicador rotulo="Liquido" valor={formatarBRL(folha.totalLiquido)} />
-            <Indicador rotulo="Comissoes adiantadas" valor={formatarBRL(folha.totalComissoesAdiantadas)} apoio="Pagas nas semanas" />
+            <Indicador rotulo="Líquido" valor={formatarBRL(folha.totalLiquido)} />
+            <Indicador rotulo="Comissões adiantadas" valor={formatarBRL(folha.totalComissoesAdiantadas)} apoio="Pagas nas semanas" />
             <Indicador rotulo="Valor a transferir" valor={formatarBRL(folha.totalTransferir)} trilho apoio="O que sai da conta da empresa" />
           </div>
 
           {negativos.length > 0 ? (
             <Alerta nivel="atencao" titulo={`${negativos.length} colaborador(es) com valor a transferir zero ou negativo`}>
-              O adiantamento de comissoes superou o liquido do mes. Esses casos ficam de fora da remessa e precisam de acerto:{' '}
+              O adiantamento de comissões superou o líquido do mês. Esses casos ficam de fora da remessa e precisam de acerto:{' '}
               {negativos
                 .slice(0, 4)
                 .map((i) => i.colaboradorNome)
@@ -318,7 +318,7 @@ export function Folha(): JSX.Element {
             busca
             placeholderBusca="Buscar colaborador na folha"
             denso
-            legenda="Folha analitica por colaborador"
+            legenda="Folha analítica por colaborador"
             agruparPor={(i) => i.centroCusto}
             rodapeGrupo={rodapeGrupo}
             aoClicarLinha={(i) => setItemAberto(i)}
@@ -430,13 +430,13 @@ function Contracheque({
       }
     >
       <div className="space-y-4">
-        {acao.erro ? <Alerta nivel="critico" titulo="Nao foi possivel ajustar">{acao.erro}</Alerta> : null}
+        {acao.erro ? <Alerta nivel="critico" titulo="Não foi possível ajustar">{acao.erro}</Alerta> : null}
         {completo.erro ? <Alerta nivel="atencao" titulo="Detalhe parcial">{completo.erro}</Alerta> : null}
 
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           <Miniatura rotulo="Total de proventos" valor={formatarBRL(dados.totalProventos)} />
           <Miniatura rotulo="Total de descontos" valor={formatarBRL(dados.totalDescontos)} />
-          <Miniatura rotulo="Salario liquido" valor={formatarBRL(dados.salarioLiquido)} />
+          <Miniatura rotulo="Salário líquido" valor={formatarBRL(dados.salarioLiquido)} />
           <Miniatura rotulo="Valor a transferir" valor={formatarBRL(dados.valorTransferir)} trilho critico={dados.valorTransferir <= 0} />
         </div>
 
@@ -444,11 +444,11 @@ function Contracheque({
           <Par rotulo="Base INSS" valor={formatarBRL(dados.baseINSS)} />
           <Par rotulo="Base IRRF" valor={formatarBRL(dados.baseIRRF)} />
           <Par rotulo="Base FGTS" valor={formatarBRL(dados.baseFGTS)} />
-          <Par rotulo="FGTS do mes" valor={formatarBRL(dados.fgts)} />
-          <Par rotulo="Salario-familia" valor={formatarBRL(dados.salarioFamilia)} />
+          <Par rotulo="FGTS do mês" valor={formatarBRL(dados.fgts)} />
+          <Par rotulo="Salário-familia" valor={formatarBRL(dados.salarioFamilia)} />
           <Par rotulo="Vale-transporte" valor={formatarBRL(dados.descontoValeTransporte)} />
           <Par rotulo="Faltas" valor={`${formatarNumero(dados.faltasDias, 0)} dias`} />
-          <Par rotulo="Comissoes adiantadas" valor={formatarBRL(dados.comissoesAdiantadas)} />
+          <Par rotulo="Comissões adiantadas" valor={formatarBRL(dados.comissoesAdiantadas)} />
         </dl>
 
         {completo.carregando ? <Carregando linhas={5} /> : <TabelaVerbas verbas={dados.verbas} legenda="Verbas do contracheque" />}
@@ -461,7 +461,7 @@ function Contracheque({
               <MoedaInput rotulo="Outros descontos" valor={outrosDescontos} aoMudar={setOutrosDescontos} />
               <MoedaInput rotulo="Horas extras (valor)" valor={horasExtras} aoMudar={setHorasExtras} />
             </div>
-            <p className="mt-2 text-xs text-[var(--texto-3)]">O recalculo vale so para este colaborador; o restante da folha nao muda.</p>
+            <p className="mt-2 text-xs text-[var(--texto-3)]">O recalculo vale so para este colaborador; o restante da folha não muda.</p>
           </section>
         ) : null}
       </div>

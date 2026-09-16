@@ -23,7 +23,7 @@ export function Guarda({ permissao, children }: { permissao?: string; children: 
     return (
       <div className="mx-auto max-w-lg py-10">
         <Alerta nivel="atencao" titulo="Acesso restrito">
-          Seu perfil nao tem permissao para abrir esta tela. Fale com um administrador se precisar deste acesso.
+          Seu perfil não tem permissao para abrir esta tela. Fale com um administrador se precisar deste acesso.
         </Alerta>
       </div>
     );

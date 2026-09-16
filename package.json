@@ -4,8 +4,14 @@
   "version": "1.0.0",
   "description": "RH Macaw — Micro SaaS de gestao de pessoas e folha de pagamento",
   "type": "module",
-  "workspaces": ["packages/shared", "server", "web"],
-  "engines": { "node": ">=20" },
+  "workspaces": [
+    "packages/shared",
+    "server",
+    "web"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "build": "npm run build -w @rhmacaw/shared && npm run build -w @rhmacaw/server && npm run build -w @rhmacaw/web",
     "dev": "concurrently -n api,web -c cyan,magenta \"npm run dev -w @rhmacaw/server\" \"npm run dev -w @rhmacaw/web\"",

@@ -175,7 +175,7 @@ describe('os quatro criterios de rateio', () => {
     });
     expect(resultado.linhas).toEqual([]);
     expect(resultado.totalDistribuido).toBe(0);
-    expect(resultado.alertas).toEqual(['Nenhum participante no periodo: nada a distribuir.']);
+    expect(resultado.alertas).toEqual(['Nenhum participante no período: nada a distribuir.']);
   });
 });
 

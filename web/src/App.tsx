@@ -62,7 +62,7 @@ export function App(): JSX.Element {
         <Route
           path="/ferias"
           element={
-            <Guarda permissao="ferias:ler">
+            <Guarda permissao="férias:ler">
               <Ferias />
             </Guarda>
           }
@@ -70,7 +70,7 @@ export function App(): JSX.Element {
         <Route
           path="/comissoes"
           element={
-            <Guarda permissao="comissoes:ler">
+            <Guarda permissao="comissões:ler">
               <Comissoes />
             </Guarda>
           }
@@ -94,7 +94,7 @@ export function App(): JSX.Element {
         <Route
           path="/rescisoes"
           element={
-            <Guarda permissao="rescisoes:ler">
+            <Guarda permissao="rescisões:ler">
               <Rescisoes />
             </Guarda>
           }
@@ -110,7 +110,7 @@ export function App(): JSX.Element {
         <Route
           path="/relatorios"
           element={
-            <Guarda permissao="relatorios:ler">
+            <Guarda permissao="relatórios:ler">
               <Relatorios />
             </Guarda>
           }

@@ -10,7 +10,7 @@ export interface EstadoRequisicao<T> {
 }
 
 /**
- * Busca dados sempre que as dependencias mudam e entrega os tres estados que
+ * Busca dados sempre que as dependencias mudam e entrega os três estados que
  * toda tela precisa tratar: carregando, erro e vazio.
  */
 export function useRequisicao<T>(buscar: () => Promise<T>, deps: unknown[], ativo = true): EstadoRequisicao<T> {

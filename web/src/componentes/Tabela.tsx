@@ -202,7 +202,7 @@ export function Tabela<T>({
   const temControles = busca || filtros || acoes;
 
   return (
-    <div className="cartao overflow-hidden">
+    <div className="cartão overflow-hidden">
       {temControles ? (
         <div className="flex flex-wrap items-center gap-2 border-b border-[var(--borda)] bg-[var(--superficie-sutil)] px-3 py-2">
           {busca ? (
@@ -225,7 +225,7 @@ export function Tabela<T>({
 
       {erro ? (
         <div className="p-3">
-          <Alerta nivel="critico" titulo="Nao foi possivel carregar os dados">
+          <Alerta nivel="critico" titulo="Não foi possível carregar os dados">
             {erro}
           </Alerta>
         </div>

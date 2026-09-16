@@ -234,7 +234,7 @@ export const esquemaLancamentosComissao = z.object({
         observacao: z.string().max(200).optional(),
       }),
     )
-    .min(1, 'Informe ao menos um lancamento.'),
+    .min(1, 'Informe ao menos um lançamento.'),
 });
 
 /* ------------------------------------------------------------------ *

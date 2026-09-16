@@ -1,7 +1,7 @@
 /**
- * Formatos de resposta que o contrato descreve em prosa (relatorios, resumos,
- * previa bancaria) e que por isso nao tem tipo nominal em `@rhmacaw/shared`.
- * Ficam aqui, do lado do front, para nao duplicar o dominio.
+ * Formatos de resposta que o contrato descreve em prosa (relatórios, resumos,
+ * prévia bancaria) e que por isso não tem tipo nominal em `@rhmacaw/shared`.
+ * Ficam aqui, do lado do front, para não duplicar o dominio.
  */
 import type {
   Competencia,
@@ -31,7 +31,7 @@ export interface ResumoFaltasColaborador {
 
 /** `GET /colaboradores/:id/historico` */
 export interface EventoHistorico {
-  tipo: 'ADMISSAO' | 'FALTA' | 'FERIAS' | 'FOLHA' | 'RESCISAO' | 'COMISSAO' | 'ALTERACAO';
+  tipo: 'ADMISSÃO' | 'FALTA' | 'FÉRIAS' | 'FOLHA' | 'RESCISAO' | 'COMISSÃO' | 'ALTERACAO';
   data: DataISO;
   titulo: string;
   detalhe?: string | null;

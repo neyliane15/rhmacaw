@@ -22,7 +22,7 @@ rotasAuth.post('/login', (req, res) => {
   }
 
   const tenant = buscarTenant(usuario.tenantId);
-  if (!tenant) throw erroNaoAutenticado('Empresa do usuario nao encontrada.');
+  if (!tenant) throw erroNaoAutenticado('Empresa do usuário não encontrada.');
 
   const { token, expiraEm } = emitirToken({
     usuarioId: usuario.id,

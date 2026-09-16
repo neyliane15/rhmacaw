@@ -96,7 +96,7 @@ function garantirCompetenciaAberta(tenantId: string, ...datas: string[]): void {
     const folha = existeFolhaTravada(tenantId, competencia);
     if (folha) {
       throw erroConflito(
-        `A folha de ${competencia} esta ${folha.status}: reabra-a antes de alterar ferias nesta competencia.`,
+        `A folha de ${competencia} esta ${folha.status}: reabra-a antes de alterar férias nesta competência.`,
       );
     }
   }
@@ -107,7 +107,7 @@ export function programarFerias(tenantId: string, entrada: FeriasEntrada, usuari
   const regime = REGIMES_CONTRATO[colaborador.tipoContrato];
   if (!regime.temDecimoTerceiroEFerias) {
     throw erroNaoProcessavel(
-      `${colaborador.nome} tem contrato ${colaborador.tipoContrato}, que nao adquire ferias remuneradas. ${regime.fundamento}`,
+      `${colaborador.nome} tem contrato ${colaborador.tipoContrato}, que não adquire férias remuneradas. ${regime.fundamento}`,
     );
   }
   const resultado = simularFerias(tenantId, entrada);
@@ -123,7 +123,7 @@ export function programarFerias(tenantId: string, entrada: FeriasEntrada, usuari
     .listarFerias(tenantId, { colaboradorId: entrada.colaboradorId })
     .find((f) => f.status !== 'CANCELADA' && f.inicioGozo <= fim && f.fimGozo >= entrada.inicioGozo);
   if (conflito) {
-    throw erroConflito(`Ja existe periodo de ferias de ${conflito.inicioGozo} a ${conflito.fimGozo} para este colaborador.`);
+    throw erroConflito(`Ja existe período de férias de ${conflito.inicioGozo} a ${conflito.fimGozo} para este colaborador.`);
   }
 
   const ferias = repoFerias.criarFeriasNoBanco(tenantId, montarDados(entrada, resultado, entrada.status ?? 'PROGRAMADA'));
@@ -141,8 +141,8 @@ export function atualizarFerias(
   usuarioId: string | null,
 ): Ferias {
   const atual = repoFerias.buscarFerias(tenantId, id);
-  if (!atual) throw erroNaoEncontrado('Periodo de ferias');
-  if (atual.status === 'CONCLUIDA') throw erroConflito('Periodo de ferias CONCLUIDA nao pode ser alterado.');
+  if (!atual) throw erroNaoEncontrado('Período de férias');
+  if (atual.status === 'CONCLUIDA') throw erroConflito('Período de férias CONCLUIDA não pode ser alterado.');
 
   const mesclada: FeriasEntrada = {
     colaboradorId: entrada.colaboradorId ?? atual.colaboradorId,
@@ -164,15 +164,15 @@ export function atualizarFerias(
     id,
     montarDados(mesclada, resultado, mesclada.status ?? atual.status),
   );
-  if (!atualizada) throw erroNaoEncontrado('Periodo de ferias');
+  if (!atualizada) throw erroNaoEncontrado('Período de férias');
   registrar(tenantId, usuarioId, 'ferias:atualizar', 'ferias', id, { status: atualizada.status });
   return atualizada;
 }
 
 export function removerFerias(tenantId: string, id: string, usuarioId: string | null): void {
   const atual = repoFerias.buscarFerias(tenantId, id);
-  if (!atual) throw erroNaoEncontrado('Periodo de ferias');
-  if (atual.status === 'CONCLUIDA') throw erroConflito('Periodo de ferias CONCLUIDA nao pode ser excluido.');
+  if (!atual) throw erroNaoEncontrado('Período de férias');
+  if (atual.status === 'CONCLUIDA') throw erroConflito('Período de férias CONCLUIDA não pode ser excluido.');
   garantirCompetenciaAberta(tenantId, atual.inicioGozo, atual.fimGozo);
 
   repoFerias.removerFerias(tenantId, id);

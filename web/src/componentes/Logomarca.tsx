@@ -1,0 +1,22 @@
+/**
+ * Logomarca do RH Macaw: a arara em voo.
+ *
+ * Desenhada inline (nao `<img>`) para herdar a cor de quem a usa via
+ * `currentColor` — musgo sobre o creme, creme sobre a barra escura — e para nao
+ * piscar durante o carregamento. Sao cinco formas cheias em vez de um contorno
+ * unico: em 24px um contorno fino vira risco, formas cheias continuam legiveis.
+ * O mesmo caminho esta em `public/logo.svg`, que serve o favicon.
+ */
+export function Logomarca({ className = 'h-6 w-6' }: { className?: string }): JSX.Element {
+  return (
+    <svg viewBox="0 0 512 512" className={className} role="img" aria-label="RH Macaw" focusable="false">
+      <g fill="currentColor">
+        <path d="M118 104c-16 6-22 28-16 58c6 30 22 62 42 84c14 15 28 20 35 12c8-9 5-30-7-58c-13-30-33-64-48-80c-2-2-4-3-6-16z" />
+    <path d="M92 268c-14 4-18 18-8 28c11 11 34 15 56 11c19-4 30-13 28-24c-2-12-20-21-42-21c-13 0-25 2-34 6z" />
+    <path d="M150 262c24-10 66-13 122-8c74 7 152 20 196 30c14 3 19 13 8 19c-10 5-38 6-74 3c-66-6-150-18-206-22c-34-3-52-8-46-22z" />
+    <path d="M286 306c34 5 78 17 104 29c13 6 14 17 2 20c-13 3-42-4-70-16c-24-10-44-22-46-29c-2-6 3-6 10-4z" />
+    <path d="M196 292c-14 2-20 20-18 50c2 32 12 70 24 94c9 18 19 24 26 16c8-9 11-36 8-70c-3-34-12-70-22-84c-6-8-12-8-18-6z" />
+      </g>
+    </svg>
+  );
+}

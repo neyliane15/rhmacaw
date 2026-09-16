@@ -68,7 +68,7 @@ export function MoedaInput({
         }}
         aria-invalid={erro ? true : undefined}
         className={`campo num pl-8 ${alinharDireita ? 'text-right' : ''} ${emGrade ? 'px-2 py-1 text-sm' : ''} ${
-          erro ? 'campo-invalido' : ''
+          erro ? 'campo-inválido' : ''
         }`}
       />
     </div>

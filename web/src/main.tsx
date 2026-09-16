@@ -8,7 +8,7 @@ import { ProvedorTema } from './contextos/TemaContext.js';
 import './estilos.css';
 
 const raiz = document.getElementById('raiz');
-if (!raiz) throw new Error('Elemento #raiz nao encontrado no index.html.');
+if (!raiz) throw new Error('Elemento #raiz não encontrado no index.html.');
 
 createRoot(raiz).render(
   <StrictMode>

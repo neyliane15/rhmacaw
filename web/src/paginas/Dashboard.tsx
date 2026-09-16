@@ -12,7 +12,7 @@ import { IconeAtencao, IconeBanco, IconeCritico, IconeInfo, IconePessoas, IconeS
 import { useCompetencia } from '../contextos/CompetenciaContext.js';
 import { useRequisicao } from '../ganchos/useRequisicao.js';
 import { deslocarCompetencia, formatarNumero } from '../util/formato.js';
-import { ROTULO_STATUS_FOLHA, TOM_STATUS_FOLHA } from '../util/rotulos.js';
+import { ROTULO_STATUS_FOLHA, TOM_STATUS_FOLHA , ROTULO_NIVEL_ALERTA} from '../util/rotulos.js';
 
 const MESES_HISTORICO = 6;
 
@@ -34,9 +34,9 @@ export function Dashboard(): JSX.Element {
 
   const resumo = useRequisicao(() => apiRelatorios.dashboard(competencia), [competencia]);
 
-  // Evolucao mensal: uma unica chamada a `/relatorios/evolucao-folha`, que ja
+  // Evolução mensal: uma unica chamada a `/relatórios/evolucao-folha`, que ja
   // devolve a serie de 12 meses com zero nos meses sem folha. Antes o painel
-  // disparava uma requisicao por mes e engolia os 404 num try/catch.
+  // disparava uma requisicao por mês e engolia os 404 num try/catch.
   const historico = useRequisicao(
     async () => {
       const serie = await apiRelatorios.evolucaoFolha(competencia);
@@ -61,12 +61,12 @@ export function Dashboard(): JSX.Element {
     <div className="space-y-5">
       <CabecalhoPagina
         sobrancelha={rotuloCompetencia(competencia)}
-        titulo="Painel do mes"
-        descricao="Como esta a folha, o que ja foi pago e o que ainda precisa sair da conta."
+        titulo="Painel do mês"
+        descricao="Como está a folha, o que já foi pago e o que ainda precisa sair da conta."
         acoes={
           dados ? (
             <Badge tom={dados.folhaStatus === 'NAO_INICIADA' ? 'neutro' : TOM_STATUS_FOLHA[dados.folhaStatus]}>
-              Folha {dados.folhaStatus === 'NAO_INICIADA' ? 'nao iniciada' : ROTULO_STATUS_FOLHA[dados.folhaStatus]}
+              Folha {dados.folhaStatus === 'NAO_INICIADA' ? 'não iniciada' : ROTULO_STATUS_FOLHA[dados.folhaStatus]}
             </Badge>
           ) : null
         }
@@ -75,7 +75,7 @@ export function Dashboard(): JSX.Element {
       {resumo.erro ? (
         <Alerta
           nivel="critico"
-          titulo="Nao foi possivel carregar o painel"
+          titulo="Não foi possível carregar o painel"
           acao={
             <button type="button" onClick={resumo.recarregar} className="botao-secundario">
               Tentar de novo
@@ -89,7 +89,7 @@ export function Dashboard(): JSX.Element {
       {resumo.carregando && !dados ? (
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="cartao p-3.5">
+            <div key={i} className="cartão p-3.5">
               <Carregando linhas={2} />
             </div>
           ))}
@@ -102,32 +102,32 @@ export function Dashboard(): JSX.Element {
             <Indicador
               rotulo="Colaboradores ativos"
               valor={formatarNumero(dados.colaboradoresAtivos, 0)}
-              apoio={`${dados.admissoesNoMes} admissoes e ${dados.demissoesNoMes} demissoes no mes`}
+              apoio={`${dados.admissoesNoMes} admissões e ${dados.demissoesNoMes} demissões no mês`}
               para="/colaboradores"
               icone={<IconePessoas />}
             />
             <Indicador
-              rotulo="Em ferias"
+              rotulo="Em férias"
               valor={formatarNumero(dados.emFerias, 0)}
-              apoio={`${dados.feriasVencendo} periodos vencendo nos proximos 90 dias`}
+              apoio={`${dados.feriasVencendo} períodos vencendo nos próximos 90 dias`}
               para="/ferias"
             />
             <Indicador
-              rotulo="Faltas no mes"
+              rotulo="Faltas no mês"
               valor={formatarNumero(dados.faltasNoMes, 0)}
-              apoio="Dias descontaveis lancados na competencia"
+              apoio="Dias descontáveis lançados na competência"
               para="/faltas"
             />
             <Indicador
               rotulo="Custo da folha"
               valor={formatarBRL(dados.custoFolha)}
-              apoio={`Proventos do mes em ${dados.porCentroCusto.length} centros de custo`}
+              apoio={`Proventos do mês em ${dados.porCentroCusto.length} centros de custo`}
               para="/folha"
             />
             <Indicador
-              rotulo="Comissoes da semana"
+              rotulo="Comissões da semana"
               valor={formatarBRL(dados.totalComissoesSemana)}
-              apoio="Ja adiantado aos colaboradores"
+              apoio="Já adiantado aos colaboradores"
               para="/comissoes"
             />
             <Indicador
@@ -136,7 +136,7 @@ export function Dashboard(): JSX.Element {
               apoio={
                 dados.remessasPendentes > 0
                   ? `${dados.remessasPendentes} remessa(s) aguardando envio ao banco`
-                  : 'Liquido menos o que ja foi adiantado'
+                  : 'Líquido menos o que já foi adiantado'
               }
               trilho
               para="/banco"
@@ -171,18 +171,18 @@ export function Dashboard(): JSX.Element {
               }
             >
               {dadosGraficoCentro.length === 0 ? (
-                <EstadoVazio titulo="Sem custo apurado" descricao="Processe a folha desta competencia para ver o rateio." />
+                <EstadoVazio titulo="Sem custo apurado" descricao="Processe a folha desta competência para ver o rateio." />
               ) : (
                 <GraficoBarras dados={dadosGraficoCentro} altura={Math.max(160, dadosGraficoCentro.length * 54)} />
               )}
             </Figura>
 
             <Figura
-              titulo="Evolucao do custo mensal"
-              descricao={`Ultimos ${MESES_HISTORICO} meses de custo total de folha.`}
+              titulo="Evolução do custo mensal"
+              descricao={`Últimos ${MESES_HISTORICO} meses de custo total de folha.`}
               tabela={
                 <table className="w-full text-sm">
-                  <caption className="sr-only">Custo de folha por mes</caption>
+                  <caption className="sr-only">Custo de folha por mês</caption>
                   <tbody>
                     {(historico.dados ?? []).map((p) => (
                       <tr key={p.competencia} className="border-b border-[var(--borda)] last:border-0">
@@ -197,14 +197,14 @@ export function Dashboard(): JSX.Element {
               {historico.carregando ? (
                 <Carregando linhas={4} />
               ) : dadosGraficoEvolucao.length === 0 ? (
-                <EstadoVazio titulo="Sem historico" descricao="Ainda nao ha folhas processadas nos meses anteriores." />
+                <EstadoVazio titulo="Sem histórico" descricao="Ainda não ha folhas processadas nos meses anteriores." />
               ) : (
                 <GraficoLinhas dados={dadosGraficoEvolucao} series={[{ chave: 'custo', nome: 'Custo da folha' }]} />
               )}
             </Figura>
           </div>
 
-          <section className="cartao overflow-hidden">
+          <section className="cartão overflow-hidden">
             <header className="flex items-center justify-between gap-2 border-b border-[var(--borda)] bg-[var(--superficie-sutil)] px-3 py-2">
               <h2 className="sobrancelha">Alertas a resolver</h2>
               <span className="text-2xs text-[var(--texto-3)]">{dados.alertas.length} item(ns)</span>
@@ -232,7 +232,7 @@ export function Dashboard(): JSX.Element {
                           <span className="flex flex-wrap items-center gap-2">
                             <span className="text-sm font-semibold">{alerta.titulo}</span>
                             <Badge tom={nivelParaAlerta(alerta.nivel) === 'critico' ? 'critico' : nivelParaAlerta(alerta.nivel) === 'atencao' ? 'atencao' : 'info'}>
-                              {alerta.nivel}
+                              {ROTULO_NIVEL_ALERTA[alerta.nivel]}
                             </Badge>
                           </span>
                           <span className="mt-0.5 block text-xs text-[var(--texto-3)]">{alerta.detalhe}</span>
@@ -249,7 +249,7 @@ export function Dashboard(): JSX.Element {
           <div className="flex flex-wrap items-center gap-2 text-sm">
             <span className="text-[var(--texto-3)]">Atalhos:</span>
             <Link to="/comissoes" className="botao-secundario">
-              Fechar semana de comissao
+              Fechar semana de comissão
             </Link>
             <Link to="/folha" className="botao-secundario">
               Processar folha de {rotuloCompetencia(competencia)}
@@ -258,7 +258,7 @@ export function Dashboard(): JSX.Element {
               <IconeBanco /> Gerar pagamento no banco
             </Link>
             <button type="button" className="botao-fantasma" onClick={() => definir(deslocarCompetencia(competencia, -1))}>
-              Ver mes anterior
+              Ver mês anterior
             </button>
           </div>
         </>

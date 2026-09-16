@@ -32,11 +32,11 @@ export const erroValidacao = (mensagem: string, detalhes?: DetalheErro[]): ErroD
 export const erroNaoAutenticado = (mensagem = 'Credenciais ausentes ou invalidas.'): ErroDominio =>
   new ErroDominio(401, 'NAO_AUTENTICADO', mensagem);
 
-export const erroSemPermissao = (mensagem = 'Seu perfil nao permite esta operacao.'): ErroDominio =>
+export const erroSemPermissao = (mensagem = 'Seu perfil não permite esta operacao.'): ErroDominio =>
   new ErroDominio(403, 'SEM_PERMISSAO', mensagem);
 
 export const erroNaoEncontrado = (recurso: string): ErroDominio =>
-  new ErroDominio(404, 'NAO_ENCONTRADO', `${recurso} nao encontrado(a).`);
+  new ErroDominio(404, 'NAO_ENCONTRADO', `${recurso} não encontrado(a).`);
 
 /** 409: a operacao e valida, mas o estado atual do recurso nao a permite. */
 export const erroConflito = (mensagem: string): ErroDominio => new ErroDominio(409, 'CONFLITO', mensagem);

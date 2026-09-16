@@ -76,7 +76,7 @@ function carregarDados(): DadosSeed {
   for (const candidato of candidatos) {
     if (fs.existsSync(candidato)) return JSON.parse(fs.readFileSync(candidato, 'utf8')) as DadosSeed;
   }
-  throw new Error(`seed-dados.json nao encontrado. Procurado em: ${candidatos.join(', ')}`);
+  throw new Error(`seed-dados.json não encontrado. Procurado em: ${candidatos.join(', ')}`);
 }
 
 /* ------------------------------------------------------------------ *
@@ -435,7 +435,7 @@ export function executarSeed(): ResultadoSeed {
   }
 
   const folha = repoFolhas.detalharFolha(tenantId, rascunho.id);
-  if (!folha) throw new Error('Folha do seed nao pode ser recarregada.');
+  if (!folha) throw new Error('Folha do seed não pode ser recarregada.');
 
   const totalComissoes = somar(
     ...repoComissoes
@@ -467,7 +467,7 @@ function principal(): void {
   console.log(`Colaboradores ....... ${resultado.colaboradores}`);
   console.log(`Faltas (${COMPETENCIA_SEED}) ..... ${resultado.faltas}`);
   console.log(`Periodos comissao ... ${resultado.periodosComissao}`);
-  console.log(`Total comissoes ..... ${resultado.totalComissoes.toFixed(2)} (competencia ${COMPETENCIA_SEED})`);
+  console.log(`Total comissões ..... ${resultado.totalComissoes.toFixed(2)} (competência ${COMPETENCIA_SEED})`);
   console.log(`Folha ${COMPETENCIA_SEED} ........ ${resultado.folhaId}`);
   console.log(`  proventos ......... ${resultado.totalFolha.toFixed(2)}`);
   console.log(`  a transferir ...... ${resultado.totalTransferir.toFixed(2)}`);

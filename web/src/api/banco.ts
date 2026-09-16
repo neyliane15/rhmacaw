@@ -35,7 +35,7 @@ export function salvarConta(dados: ContaPagadora): Promise<ContaPagadora> {
   return requisitar<ContaPagadora>('/banco/conta', { metodo: 'PUT', corpo: dados });
 }
 
-/** Previa do lote: valida favorecidos e lista inconsistencias sem gravar nada. */
+/** Prévia do lote: valida favorecidos e lista inconsistências sem gravar nada. */
 export function previa(dados: EntradaPrevia): Promise<PreviaRemessa> {
   return requisitar<PreviaRemessa>('/banco/previa', { metodo: 'POST', corpo: dados });
 }

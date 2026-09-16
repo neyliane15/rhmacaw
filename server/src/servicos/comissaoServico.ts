@@ -29,13 +29,13 @@ export interface PedidoPeriodo {
 
 export function exigirPeriodo(tenantId: string, periodoId: string): PeriodoComissao {
   const periodo = repoComissoes.buscarPeriodo(tenantId, periodoId);
-  if (!periodo) throw erroNaoEncontrado('Periodo de comissao');
+  if (!periodo) throw erroNaoEncontrado('Período de comissão');
   return periodo;
 }
 
 function detalhar(tenantId: string, periodoId: string): PeriodoComissaoDetalhado {
   const detalhado = repoComissoes.detalharPeriodo(tenantId, periodoId);
-  if (!detalhado) throw erroNaoEncontrado('Periodo de comissao');
+  if (!detalhado) throw erroNaoEncontrado('Período de comissão');
   return detalhado;
 }
 
@@ -48,7 +48,7 @@ export function criarPeriodo(tenantId: string, pedido: PedidoPeriodo, usuarioId:
     throw erroNaoProcessavel('Semana ISO deve estar entre 1 e 53.');
   }
   if (repoComissoes.buscarPeriodoPorSemana(tenantId, pedido.ano, pedido.semana)) {
-    throw erroConflito(`Ja existe periodo para a semana ${pedido.semana}/${pedido.ano}.`);
+    throw erroConflito(`Ja existe período para a semana ${pedido.semana}/${pedido.ano}.`);
   }
 
   const intervalo = intervaloDaSemanaISO(pedido.ano, pedido.semana);
@@ -89,7 +89,7 @@ export function ratearPeriodo(tenantId: string, periodoId: string, usuarioId: st
   garantirEditavel(periodo);
 
   const elegiveis = participantes(tenantId, periodo);
-  if (elegiveis.length === 0) throw erroNaoProcessavel('Nenhum colaborador ativo elegivel ao rateio desta semana.');
+  if (elegiveis.length === 0) throw erroNaoProcessavel('Nenhum colaborador ativo elegível ao rateio desta semana.');
 
   // Ajustes ja lancados sao preservados: o rateio recalcula so a parte proporcional.
   const ajustes = new Map(repoComissoes.listarLancamentos(tenantId, periodoId).map((l) => [l.colaboradorId, l.ajuste]));
@@ -224,16 +224,16 @@ export function atualizarDadosPeriodo(
 }
 
 function garantirEditavel(periodo: PeriodoComissao): void {
-  if (periodo.status === 'PAGO') throw erroConflito('Periodo PAGO e imutavel (regra 1 do contrato).');
-  if (periodo.status === 'FECHADO') throw erroConflito('Periodo FECHADO: reabra antes de alterar os lancamentos.');
+  if (periodo.status === 'PAGO') throw erroConflito('Período PAGO e imutável (regra 1 do contrato).');
+  if (periodo.status === 'FECHADO') throw erroConflito('Período FECHADO: reabra antes de alterar os lançamentos.');
 }
 
 export function fecharPeriodo(tenantId: string, periodoId: string, usuarioId: string | null): PeriodoComissaoDetalhado {
   const periodo = exigirPeriodo(tenantId, periodoId);
-  if (periodo.status !== 'ABERTO') throw erroConflito(`Periodo ja esta ${periodo.status}.`);
+  if (periodo.status !== 'ABERTO') throw erroConflito(`Período ja esta ${periodo.status}.`);
 
   const lancamentos = repoComissoes.listarLancamentos(tenantId, periodoId);
-  if (lancamentos.length === 0) throw erroNaoProcessavel('Periodo sem lancamentos: rateie antes de fechar.');
+  if (lancamentos.length === 0) throw erroNaoProcessavel('Período sem lançamentos: rateie antes de fechar.');
 
   repoComissoes.atualizarPeriodo(tenantId, {
     ...periodo,
@@ -261,10 +261,10 @@ export function reabrirPeriodo(
   const periodo = exigirPeriodo(tenantId, periodoId);
 
   if (periodo.status === 'PAGO') {
-    if (!ehAdmin) throw erroConflito('Somente ADMIN pode reabrir um periodo PAGO.');
-    if (remessaAtiva) throw erroConflito('Cancele a remessa do periodo antes de reabri-lo.');
+    if (!ehAdmin) throw erroConflito('Somente ADMIN pode reabrir um período PAGO.');
+    if (remessaAtiva) throw erroConflito('Cancele a remessa do período antes de reabri-lo.');
   } else if (periodo.status !== 'FECHADO') {
-    throw erroConflito(`Periodo ${periodo.status} nao pode ser reaberto.`);
+    throw erroConflito(`Período ${periodo.status} não pode ser reaberto.`);
   }
 
   repoComissoes.atualizarPeriodo(tenantId, { ...periodo, status: 'ABERTO', fechadoEm: null, pagoEm: null });

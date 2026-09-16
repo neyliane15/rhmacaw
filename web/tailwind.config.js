@@ -2,11 +2,19 @@
  * Sistema de design do RH Macaw.
  *
  * Direcao: "ficha de folha" — uma ferramenta de escritorio densa, com espinha
- * tabular forte. O azul-arara e a cor estrutural (navegacao, cabecalho de
- * tabela, foco). O ouro e reservado ao TRILHO DE PAGAMENTO: so aparece onde o
- * dinheiro sai da empresa (valor a transferir, remessa, banco). Cores de status
- * nunca sao usadas como fundo de coluna, e o ouro nunca vira pilula de status —
- * papeis diferentes, formas diferentes.
+ * tabular forte, vestida com a identidade da marca.
+ *
+ * `arara` e o verde-musgo da logomarca: a cor estrutural (navegacao, cabecalho
+ * de tabela, foco). `areia` e o creme do fundo da logo, que sustenta as
+ * superficies em vez do cinza-azulado generico. O ouro segue reservado ao
+ * TRILHO DE PAGAMENTO: so aparece onde o dinheiro sai da empresa (valor a
+ * transferir, remessa, banco), e foi puxado para o ocre para conversar com o
+ * creme.
+ *
+ * `bom` deixou de ser um verde qualquer e virou esmeralda: com o musgo na
+ * navegacao, um verde de status proximo demais da marca confundiria "aprovado"
+ * com "elemento de interface". Cores de status nunca sao fundo de coluna, e o
+ * ouro nunca vira pilula de status — papeis diferentes, formas diferentes.
  */
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -16,50 +24,59 @@ export default {
     extend: {
       colors: {
         tinta: {
-          50: '#F4F7FA',
-          100: '#E8EDF2',
-          200: '#D6DDE5',
-          300: '#B3BFCC',
-          400: '#8393A6',
-          500: '#5C6B7E',
-          600: '#3D4A5C',
-          700: '#2B3644',
-          800: '#1E2631',
-          900: '#161C25',
-          950: '#10151C',
+          50: '#F8F7F4',
+          100: '#EFEDE7',
+          200: '#DFDBD1',
+          300: '#C0BAAC',
+          400: '#948D7E',
+          500: '#6B6558',
+          600: '#4C473D',
+          700: '#38342C',
+          800: '#272420',
+          900: '#1C1A17',
+          950: '#131211',
         },
         arara: {
-          50: '#EFF6FE',
-          100: '#CDE2FB',
-          200: '#9EC5F4',
-          300: '#86B6EF',
-          400: '#5598E7',
-          500: '#2A78D6',
-          600: '#256ABF',
-          700: '#1C5CAB',
-          800: '#184F95',
-          900: '#0D366B',
+          50: '#F6F7EC',
+          100: '#E8EBC8',
+          200: '#D2D795',
+          300: '#B7BE63',
+          400: '#9AA23C',
+          500: '#7E852B',
+          600: '#6E7324', // verde-musgo da logomarca
+          700: '#585C1F',
+          800: '#45491A',
+          900: '#2F3213',
+        },
+        // Creme do fundo da logomarca: sustenta as superficies do tema claro.
+        areia: {
+          50: '#FCFAF7',
+          100: '#F6F1E9',
+          200: '#EFE6DB', // creme da logomarca
+          300: '#E1D4C3',
+          400: '#CBB9A3',
+          500: '#AE9878',
         },
         ouro: {
-          50: '#FDF7EA',
-          100: '#F9EBCC',
-          200: '#F0D79B',
-          300: '#E6B85C',
-          400: '#CE9227',
-          500: '#B4761A',
-          600: '#8F5C12',
-          700: '#6B430B',
+          50: '#FDF6E7',
+          100: '#F8E7C2',
+          200: '#EFCE8B',
+          300: '#E3AC4A',
+          400: '#C9871B',
+          500: '#A96C13',
+          600: '#85530E',
+          700: '#633C09',
         },
         // Status: fixos, nunca tematizados, sempre acompanhados de icone/rotulo.
-        bom: '#0CA30C',
+        bom: '#0E8A5F', // esmeralda: nao se confunde com o musgo da marca
         aviso: '#FAB219',
         grave: '#EC835A',
         critico: '#D03B3B',
         // Series de grafico validadas (modo claro / escuro).
         serie: {
-          1: '#2A78D6',
+          1: '#6E7324',
           2: '#EB6834',
-          3: '#1BAF7A',
+          3: '#1C7FB8',
           4: '#EDA100',
           5: '#E87BA4',
           6: '#008300',

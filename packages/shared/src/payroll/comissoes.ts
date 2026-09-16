@@ -74,7 +74,7 @@ export function ratearComissoes(entrada: EntradaRateio): ResultadoRateio {
       totalDistribuido: 0,
       diferencaArredondamento: 0,
       linhas: [],
-      alertas: ['Nenhum participante no periodo: nada a distribuir.'],
+      alertas: ['Nenhum participante no período: nada a distribuir.'],
     };
   }
 

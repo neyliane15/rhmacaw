@@ -48,7 +48,7 @@ export function SeletorSemana({ ano, semana, aoMudar }: PropsSeletorSemana): JSX
           {formatarDataBR(inicio)} a {formatarDataBR(fim)}
         </span>
       </div>
-      <button type="button" aria-label="Proxima semana" onClick={() => deslocar(1)} className="px-2 text-[var(--texto-2)] hover:bg-[var(--superficie-sutil)]">
+      <button type="button" aria-label="Próxima semana" onClick={() => deslocar(1)} className="px-2 text-[var(--texto-2)] hover:bg-[var(--superficie-sutil)]">
         <IconeSeta />
       </button>
       {!ehAtual ? (

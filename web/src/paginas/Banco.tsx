@@ -35,7 +35,7 @@ import { ROTULO_LAYOUT, ROTULO_ORIGEM, ROTULO_STATUS_REMESSA, TOM_STATUS_REMESSA
 /** Proximo estado permitido no ciclo da remessa. */
 const PROXIMO: Partial<Record<StatusRemessa, { status: StatusRemessa; rotulo: string }>> = {
   GERADA: { status: 'ENVIADA', rotulo: 'Marcar como enviada' },
-  ENVIADA: { status: 'CONFIRMADA', rotulo: 'Confirmar credito' },
+  ENVIADA: { status: 'CONFIRMADA', rotulo: 'Confirmar crédito' },
 };
 
 type OrigemSelecionavel = Extract<OrigemRemessa, 'FOLHA' | 'COMISSAO_SEMANAL'>;
@@ -108,15 +108,15 @@ export function Banco(): JSX.Element {
 
   const colunas: Coluna<Remessa>[] = [
     {
-      chave: 'numero',
+      chave: 'número',
       titulo: 'NSA',
       largura: '4.5rem',
       valor: (r) => r.numeroRemessa,
       render: (r) => <span className="font-mono text-xs">{String(r.numeroRemessa).padStart(6, '0')}</span>,
-      titulo2: 'Numero sequencial da remessa no banco',
+      titulo2: 'Número sequencial da remessa no banco',
     },
     {
-      chave: 'descricao',
+      chave: 'descrição',
       titulo: 'Remessa',
       valor: (r) => r.descricao,
       render: (r) => (
@@ -161,7 +161,7 @@ export function Banco(): JSX.Element {
       ),
     },
     {
-      chave: 'acoes',
+      chave: 'ações',
       titulo: '',
       largura: '12rem',
       ordenavel: false,
@@ -202,7 +202,7 @@ export function Banco(): JSX.Element {
       <CabecalhoPagina
         sobrancelha="Tesouraria"
         titulo="Banco e remessas"
-        descricao="A ponte entre o relatorio e o credito na conta do colaborador."
+        descricao="A ponte entre o relatório e o crédito na conta do colaborador."
         acoes={
           <button type="button" className="botao-secundario" onClick={() => setConfigurando(true)}>
             <IconeEngrenagem /> Conta pagadora
@@ -215,7 +215,7 @@ export function Banco(): JSX.Element {
       {conta.erro ? (
         <Alerta
           nivel="atencao"
-          titulo="Conta pagadora nao configurada"
+          titulo="Conta pagadora não configurada"
           acao={
             <button type="button" className="botao-secundario" onClick={() => setConfigurando(true)}>
               Configurar
@@ -228,12 +228,12 @@ export function Banco(): JSX.Element {
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <Indicador rotulo="Remessas geradas" valor={formatarNumero(lista.length, 0)} />
-        <Indicador rotulo="Aguardando o banco" valor={formatarNumero(pendentes.length, 0)} apoio="Geradas ou enviadas, sem confirmacao" />
+        <Indicador rotulo="Aguardando o banco" valor={formatarNumero(pendentes.length, 0)} apoio="Geradas ou enviadas, sem confirmação" />
         <Indicador
           rotulo="Valor em transito"
           valor={formatarBRL(pendentes.reduce((s, r) => s + r.valorTotal, 0))}
           trilho
-          apoio="Ainda nao confirmado pelo banco"
+          apoio="Ainda não confirmado pelo banco"
         />
         <Indicador
           rotulo="Confirmado"
@@ -241,10 +241,10 @@ export function Banco(): JSX.Element {
         />
       </div>
 
-      <section className="cartao p-4">
+      <section className="cartão p-4">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <h2 className="sobrancelha">Nova remessa</h2>
-          <span className="text-xs text-[var(--texto-3)]">Somente folhas fechadas e semanas de comissao fechadas entram no lote.</span>
+          <span className="text-xs text-[var(--texto-3)]">Somente folhas fechadas e semanas de comissão fechadas entram no lote.</span>
         </div>
         <div className="grid gap-3 lg:grid-cols-[13rem_1fr_auto]">
           <CampoSelect
@@ -253,14 +253,14 @@ export function Banco(): JSX.Element {
             onChange={(e) => setOrigem(e.target.value as OrigemSelecionavel)}
             opcoes={[
               { valor: 'FOLHA', rotulo: 'Folha fechada' },
-              { valor: 'COMISSAO_SEMANAL', rotulo: 'Semana de comissao fechada' },
+              { valor: 'COMISSAO_SEMANAL', rotulo: 'Semana de comissão fechada' },
             ]}
           />
           <CampoSelect
             rotulo={origem === 'FOLHA' ? 'Folha' : 'Semana'}
             value={origemId}
             onChange={(e) => setOrigemId(e.target.value)}
-            vazio={fontes.length === 0 ? 'Nenhuma origem fechada disponivel' : undefined}
+            vazio={fontes.length === 0 ? 'Nenhuma origem fechada disponível' : undefined}
             opcoes={fontes.map((f) => ({ valor: f.id, rotulo: f.rotulo }))}
             dica={
               folhasFechadas.carregando || semanasFechadas.carregando
@@ -268,7 +268,7 @@ export function Banco(): JSX.Element {
                 : fontes.length === 0
                   ? origem === 'FOLHA'
                     ? 'Feche uma folha na tela de Folha para liberar o pagamento.'
-                    : 'Feche uma semana na tela de Comissoes para liberar o pagamento.'
+                    : 'Feche uma semana na tela de Comissões para liberar o pagamento.'
                   : undefined
             }
           />
@@ -288,15 +288,15 @@ export function Banco(): JSX.Element {
         erro={remessas.erro}
         denso
         busca
-        placeholderBusca="Buscar por descricao ou arquivo"
+        placeholderBusca="Buscar por descrição ou arquivo"
         legenda="Remessas bancarias"
-        ordemInicial={{ chave: 'numero', direcao: 'desc' }}
+        ordemInicial={{ chave: 'número', direcao: 'desc' }}
         aoClicarLinha={(r) => setDetalhe(r)}
         vazio={
           <EstadoVazio
             icone={<IconeBanco />}
             titulo="Nenhuma remessa gerada"
-            descricao="Feche uma folha ou uma semana de comissao e gere o primeiro lote de pagamento."
+            descricao="Feche uma folha ou uma semana de comissão e gere o primeiro lote de pagamento."
           />
         }
         filtros={
@@ -483,7 +483,7 @@ function ModalConta({
       aberto={aberto}
       aoFechar={aoFechar}
       titulo="Conta pagadora da empresa"
-      subtitulo="Dados que vao no header do arquivo CNAB e identificam o debito."
+      subtitulo="Dados que vao no header do arquivo CNAB e identificam o débito."
       rodape={
         <>
           <button type="button" className="botao-secundario" onClick={aoFechar}>
@@ -501,12 +501,12 @@ function ModalConta({
         <Carregando linhas={6} />
       ) : (
         <div className="space-y-5">
-          {acao.erro ? <Alerta nivel="critico" titulo="Nao foi possivel salvar">{acao.erro}</Alerta> : null}
+          {acao.erro ? <Alerta nivel="critico" titulo="Não foi possível salvar">{acao.erro}</Alerta> : null}
           <Secao titulo="Empresa" colunas={2}>
-            <CampoTexto rotulo="Razao social" value={form.nomeEmpresa} disabled={somenteLeitura} onChange={(e) => alterar('nomeEmpresa', e.target.value.toUpperCase())} />
+            <CampoTexto rotulo="Razão social" value={form.nomeEmpresa} disabled={somenteLeitura} onChange={(e) => alterar('nomeEmpresa', e.target.value.toUpperCase())} />
             <CampoTexto rotulo="CNPJ" mono value={mascararCNPJ(form.cnpj)} disabled={somenteLeitura} onChange={(e) => alterar('cnpj', somenteDigitos(e.target.value))} />
           </Secao>
-          <Secao titulo="Conta de debito" colunas={2}>
+          <Secao titulo="Conta de débito" colunas={2}>
             <CampoSelect
               rotulo="Banco"
               value={form.bancoCodigo}
@@ -516,15 +516,15 @@ function ModalConta({
               opcoes={(bancos.dados ?? []).map((b) => ({ valor: b.codigo, rotulo: `${b.codigo} — ${b.nome}` }))}
             />
             <CampoTexto
-              rotulo="Convenio / contrato de pagamento"
+              rotulo="Convênio / contrato de pagamento"
               mono
               value={form.convenio}
               disabled={somenteLeitura}
               onChange={(e) => alterar('convenio', e.target.value)}
-              dica="Codigo que o banco fornece para folha de pagamento."
+              dica="Código que o banco fornece para folha de pagamento."
             />
             <div className="grid grid-cols-[1fr_5rem] gap-2">
-              <CampoTexto rotulo="Agencia" mono value={form.agencia} disabled={somenteLeitura} onChange={(e) => alterar('agencia', somenteDigitos(e.target.value))} />
+              <CampoTexto rotulo="Agência" mono value={form.agencia} disabled={somenteLeitura} onChange={(e) => alterar('agencia', somenteDigitos(e.target.value))} />
               <CampoTexto rotulo="Digito" mono maxLength={1} value={form.agenciaDigito} disabled={somenteLeitura} onChange={(e) => alterar('agenciaDigito', e.target.value.slice(0, 1))} />
             </div>
             <div className="grid grid-cols-[1fr_5rem] gap-2">

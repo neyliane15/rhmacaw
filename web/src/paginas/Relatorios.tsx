@@ -24,15 +24,15 @@ import { formatarNumero, formatarPercentual, montarCSV } from '../util/formato.j
 import { ROTULO_STATUS_PERIODO } from '../util/rotulos.js';
 import type { ItemFolha } from '@rhmacaw/shared';
 
-type ChaveRelatorio = 'folha' | 'centro' | 'comissoes' | 'absenteismo' | 'movimentacao' | 'provisoes';
+type ChaveRelatorio = 'folha' | 'centro' | 'comissões' | 'absenteismo' | 'movimentacao' | 'provisões';
 
 const ABAS: { chave: ChaveRelatorio; rotulo: string }[] = [
-  { chave: 'folha', rotulo: 'Folha analitica' },
+  { chave: 'folha', rotulo: 'Folha analítica' },
   { chave: 'centro', rotulo: 'Custo por centro' },
-  { chave: 'comissoes', rotulo: 'Comissoes' },
+  { chave: 'comissões', rotulo: 'Comissões' },
   { chave: 'absenteismo', rotulo: 'Absenteismo' },
   { chave: 'movimentacao', rotulo: 'Movimentacao' },
-  { chave: 'provisoes', rotulo: 'Provisoes' },
+  { chave: 'provisões', rotulo: 'Provisões' },
 ];
 
 type LinhaProvisao = RelatorioProvisoes['linhas'][number];
@@ -44,17 +44,17 @@ export function Relatorios(): JSX.Element {
 
   const folha = useRequisicao(() => apiRelatorios.folhaAnalitica(competencia), [competencia], aba === 'folha');
   const centro = useRequisicao(() => apiRelatorios.custoCentroCusto(competencia), [competencia], aba === 'centro');
-  const comissoes = useRequisicao(() => apiRelatorios.comissoes(ano, competencia), [ano, competencia], aba === 'comissoes');
+  const comissoes = useRequisicao(() => apiRelatorios.comissoes(ano, competencia), [ano, competencia], aba === 'comissões');
   const absenteismo = useRequisicao(() => apiRelatorios.absenteismo(competencia), [competencia], aba === 'absenteismo');
   const movimentacao = useRequisicao(() => apiRelatorios.movimentacao(ano), [ano], aba === 'movimentacao');
-  const provisoes = useRequisicao(() => apiRelatorios.provisoes(competencia), [competencia], aba === 'provisoes');
+  const provisoes = useRequisicao(() => apiRelatorios.provisoes(competencia), [competencia], aba === 'provisões');
 
   return (
     <div className="space-y-4">
       <CabecalhoPagina
         sobrancelha={aba === 'movimentacao' ? `Ano ${ano}` : rotuloCompetencia(competencia)}
-        titulo="Relatorios"
-        descricao="Conferencia da folha, custo por unidade, comissoes, faltas, movimentacao e provisoes."
+        titulo="Relatórios"
+        descricao="Conferencia da folha, custo por unidade, comissões, faltas, movimentacao e provisões."
         acoes={<SeletorCompetencia valor={competencia} aoMudar={definir} compacto />}
       />
 
@@ -62,10 +62,10 @@ export function Relatorios(): JSX.Element {
 
       {aba === 'folha' ? <RelatorioFolha estado={folha} competencia={competencia} /> : null}
       {aba === 'centro' ? <RelatorioCentro estado={centro} competencia={competencia} /> : null}
-      {aba === 'comissoes' ? <RelatorioComissoes estado={comissoes} ano={ano} /> : null}
+      {aba === 'comissões' ? <RelatorioComissoes estado={comissoes} ano={ano} /> : null}
       {aba === 'absenteismo' ? <RelatorioAbsenteismo estado={absenteismo} competencia={competencia} /> : null}
       {aba === 'movimentacao' ? <RelatorioMovimentacao estado={movimentacao} ano={ano} /> : null}
-      {aba === 'provisoes' ? <RelatorioProvisoesTela estado={provisoes} competencia={competencia} /> : null}
+      {aba === 'provisões' ? <RelatorioProvisoesTela estado={provisoes} competencia={competencia} /> : null}
     </div>
   );
 }
@@ -115,7 +115,7 @@ function RelatorioFolha({ estado, competencia }: { estado: Estado<Awaited<Return
     { chave: 'descontos', titulo: 'Descontos', alinhar: 'direita', valor: (i) => i.totalDescontos, render: (i) => formatarBRL(i.totalDescontos), rodape: formatarBRL(totais?.totalDescontos ?? 0) },
     { chave: 'inss', titulo: 'INSS', alinhar: 'direita', valor: (i) => i.inss, render: (i) => formatarBRL(i.inss) },
     { chave: 'fgts', titulo: 'FGTS', alinhar: 'direita', valor: (i) => i.fgts, render: (i) => formatarBRL(i.fgts) },
-    { chave: 'liquido', titulo: 'Liquido', alinhar: 'direita', valor: (i) => i.salarioLiquido, render: (i) => <span className="font-semibold">{formatarBRL(i.salarioLiquido)}</span>, rodape: formatarBRL(totais?.totalLiquido ?? 0) },
+    { chave: 'líquido', titulo: 'Líquido', alinhar: 'direita', valor: (i) => i.salarioLiquido, render: (i) => <span className="font-semibold">{formatarBRL(i.salarioLiquido)}</span>, rodape: formatarBRL(totais?.totalLiquido ?? 0) },
     {
       chave: 'transferir',
       titulo: 'A transferir',
@@ -129,7 +129,7 @@ function RelatorioFolha({ estado, competencia }: { estado: Estado<Awaited<Return
 
   return (
     <Moldura
-      titulo="Folha analitica"
+      titulo="Folha analítica"
       descricao={`Todos os itens da folha de ${rotuloCompetencia(competencia)}, linha a linha.`}
       acoes={
         <>
@@ -141,7 +141,7 @@ function RelatorioFolha({ estado, competencia }: { estado: Estado<Awaited<Return
               baixarTexto(
                 `folha-analitica-${competencia}.csv`,
                 montarCSV(
-                  ['Colaborador', 'Funcao', 'Centro de custo', 'Proventos', 'Descontos', 'INSS', 'IRRF', 'FGTS', 'Liquido', 'A transferir'],
+                  ['Colaborador', 'Função', 'Centro de custo', 'Proventos', 'Descontos', 'INSS', 'IRRF', 'FGTS', 'Líquido', 'A transferir'],
                   itens.map((i) => [i.colaboradorNome, i.funcao, i.centroCusto, i.totalProventos, i.totalDescontos, i.inss, i.irrf, i.fgts, i.salarioLiquido, i.valorTransferir]),
                 ),
                 'text/csv;charset=utf-8',
@@ -166,8 +166,8 @@ function RelatorioFolha({ estado, competencia }: { estado: Estado<Awaited<Return
         denso
         comRodape
         agruparPor={(i) => i.centroCusto}
-        legenda="Folha analitica"
-        vazio={<EstadoVazio icone={<IconeRelatorio />} titulo="Sem folha nesta competencia" descricao="Processe a folha para gerar o relatorio." acao={<Link to="/folha" className="botao-primario">Ir para a folha</Link>} />}
+        legenda="Folha analítica"
+        vazio={<EstadoVazio icone={<IconeRelatorio />} titulo="Sem folha nesta competência" descricao="Processe a folha para gerar o relatório." acao={<Link to="/folha" className="botao-primario">Ir para a folha</Link>} />}
       />
     </Moldura>
   );
@@ -182,7 +182,7 @@ function RelatorioCentro({ estado, competencia }: { estado: Estado<Awaited<Retur
     { chave: 'colab', titulo: 'Colaboradores', alinhar: 'direita', valor: (l) => l.colaboradores },
     { chave: 'proventos', titulo: 'Proventos', alinhar: 'direita', valor: (l) => l.proventos, render: (l) => formatarBRL(l.proventos) },
     { chave: 'descontos', titulo: 'Descontos', alinhar: 'direita', valor: (l) => l.descontos, render: (l) => formatarBRL(l.descontos) },
-    { chave: 'liquido', titulo: 'Liquido', alinhar: 'direita', valor: (l) => l.liquido, render: (l) => formatarBRL(l.liquido) },
+    { chave: 'líquido', titulo: 'Líquido', alinhar: 'direita', valor: (l) => l.liquido, render: (l) => formatarBRL(l.liquido) },
     {
       chave: 'custo',
       titulo: 'Custo total',
@@ -205,7 +205,7 @@ function RelatorioCentro({ estado, competencia }: { estado: Estado<Awaited<Retur
           onClick={() =>
             baixarTexto(
               `custo-centro-custo-${competencia}.csv`,
-              montarCSV(['Centro de custo', 'Colaboradores', 'Proventos', 'Descontos', 'Liquido', 'Custo total'], linhas.map((l) => [l.centroCusto, l.colaboradores, l.proventos, l.descontos, l.liquido, l.custoTotal])),
+              montarCSV(['Centro de custo', 'Colaboradores', 'Proventos', 'Descontos', 'Líquido', 'Custo total'], linhas.map((l) => [l.centroCusto, l.colaboradores, l.proventos, l.descontos, l.liquido, l.custoTotal])),
               'text/csv;charset=utf-8',
             )
           }
@@ -215,7 +215,7 @@ function RelatorioCentro({ estado, competencia }: { estado: Estado<Awaited<Retur
       }
     >
       <div className="grid gap-4 lg:grid-cols-2">
-        <Figura titulo="Distribuicao do custo" descricao="Custo total por unidade na competencia.">
+        <Figura titulo="Distribuição do custo" descricao="Custo total por unidade na competencia.">
           {linhas.length === 0 ? (
             <EstadoVazio titulo="Sem dados" descricao="Nenhum custo apurado nesta competencia." />
           ) : (
@@ -236,7 +236,7 @@ function RelatorioComissoes({ estado, ano }: { estado: Estado<Awaited<ReturnType
 
   const colunas: Coluna<LinhaComissoes>[] = [
     { chave: 'nome', titulo: 'Colaborador', valor: (l) => l.colaboradorNome, render: (l) => <span className="font-medium">{l.colaboradorNome}</span> },
-    { chave: 'funcao', titulo: 'Funcao', valor: (l) => l.funcao ?? '', render: (l) => <span className="text-xs text-[var(--texto-3)]">{l.funcao ?? '—'}</span> },
+    { chave: 'funcao', titulo: 'Função', valor: (l) => l.funcao ?? '', render: (l) => <span className="text-xs text-[var(--texto-3)]">{l.funcao ?? '—'}</span> },
     { chave: 'semanas', titulo: 'Semanas', alinhar: 'direita', valor: (l) => l.semanas },
     { chave: 'pontos', titulo: 'Pontos', alinhar: 'direita', valor: (l) => l.pontos ?? 0, render: (l) => formatarNumero(l.pontos ?? 0, 1) },
     {
@@ -251,8 +251,8 @@ function RelatorioComissoes({ estado, ano }: { estado: Estado<Awaited<ReturnType
 
   return (
     <Moldura
-      titulo="Comissoes"
-      descricao={`Arrecadacao e rateio das semanas de ${ano}.`}
+      titulo="Comissões"
+      descricao={`Arrecadação e rateio das semanas de ${ano}.`}
       acoes={
         <>
           <button
@@ -262,7 +262,7 @@ function RelatorioComissoes({ estado, ano }: { estado: Estado<Awaited<ReturnType
             onClick={() =>
               baixarTexto(
                 `comissoes-${ano}.csv`,
-                montarCSV(['Colaborador', 'Funcao', 'Centro de custo', 'Semanas', 'Pontos', 'Total'], linhas.map((l) => [l.colaboradorNome, l.funcao ?? '', l.centroCusto ?? '', l.semanas, l.pontos ?? 0, l.total])),
+                montarCSV(['Colaborador', 'Função', 'Centro de custo', 'Semanas', 'Pontos', 'Total'], linhas.map((l) => [l.colaboradorNome, l.funcao ?? '', l.centroCusto ?? '', l.semanas, l.pontos ?? 0, l.total])),
                 'text/csv;charset=utf-8',
               )
             }
@@ -281,16 +281,16 @@ function RelatorioComissoes({ estado, ano }: { estado: Estado<Awaited<ReturnType
         <Indicador rotulo="Semanas apuradas" valor={formatarNumero(semanas.length, 0)} />
       </div>
 
-      <Tabela colunas={colunas} dados={linhas} chaveLinha={(l) => l.colaboradorId} carregando={estado.carregando} erro={estado.erro} busca denso comRodape legenda="Comissoes por colaborador" ordemInicial={{ chave: 'total', direcao: 'desc' }} vazio={<EstadoVazio titulo="Nenhuma comissao no ano" descricao="Abra e feche semanas na tela de Comissoes." />} />
+      <Tabela colunas={colunas} dados={linhas} chaveLinha={(l) => l.colaboradorId} carregando={estado.carregando} erro={estado.erro} busca denso comRodape legenda="Comissões por colaborador" ordemInicial={{ chave: 'total', direcao: 'desc' }} vazio={<EstadoVazio titulo="Nenhuma comissão no ano" descricao="Abra e feche semanas na tela de Comissões." />} />
 
       {semanas.length > 0 ? (
-        <div className="cartao overflow-hidden">
+        <div className="cartão overflow-hidden">
           <header className="border-b border-[var(--borda)] bg-[var(--superficie-sutil)] px-3 py-2">
             <h3 className="sobrancelha">Semanas apuradas</h3>
           </header>
           <div className="tabela-rolagem rolagem-fina">
             <table className="w-full text-sm">
-              <caption className="sr-only">Semanas de comissao</caption>
+              <caption className="sr-only">Semanas de comissão</caption>
               <thead>
                 <tr className="border-b border-[var(--borda)] text-left">
                   <th className="px-3 py-1.5 font-mono text-2xs uppercase text-[var(--texto-3)]">Semana</th>
@@ -368,8 +368,8 @@ function RelatorioAbsenteismo({ estado, competencia }: { estado: Estado<Awaited<
         </button>
       }
     >
-      <Indicador rotulo="Absenteismo geral" valor={formatarPercentual(estado.dados?.percentualGeral ?? 0)} apoio="Dias perdidos sobre dias uteis do mes" />
-      <Tabela colunas={colunas} dados={linhas} chaveLinha={(l) => l.colaboradorId} carregando={estado.carregando} erro={estado.erro} busca denso comRodape legenda="Absenteismo por colaborador" ordemInicial={{ chave: 'percentual', direcao: 'desc' }} vazio={<EstadoVazio titulo="Sem ocorrencias" descricao="Nenhuma falta lancada nesta competencia." />} />
+      <Indicador rotulo="Absenteismo geral" valor={formatarPercentual(estado.dados?.percentualGeral ?? 0)} apoio="Dias perdidos sobre dias úteis do mês" />
+      <Tabela colunas={colunas} dados={linhas} chaveLinha={(l) => l.colaboradorId} carregando={estado.carregando} erro={estado.erro} busca denso comRodape legenda="Absenteismo por colaborador" ordemInicial={{ chave: 'percentual', direcao: 'desc' }} vazio={<EstadoVazio titulo="Sem ocorrências" descricao="Nenhuma falta lançada nesta competencia." />} />
     </Moldura>
   );
 }
@@ -395,7 +395,7 @@ function RelatorioMovimentacao({ estado, ano }: { estado: Estado<Awaited<ReturnT
           onClick={() =>
             baixarTexto(
               `movimentacao-${ano}.csv`,
-              montarCSV(['Competencia', 'Admissoes', 'Demissoes', 'Saldo'], meses.map((m) => [m.competencia, m.admissoes, m.demissoes, m.saldo])),
+              montarCSV(['Competência', 'Admissões', 'Demissões', 'Saldo'], meses.map((m) => [m.competencia, m.admissoes, m.demissoes, m.saldo])),
               'text/csv;charset=utf-8',
             )
           }
@@ -405,32 +405,32 @@ function RelatorioMovimentacao({ estado, ano }: { estado: Estado<Awaited<ReturnT
       }
     >
       <div className="grid gap-3 sm:grid-cols-3">
-        <Indicador rotulo="Admissoes no ano" valor={formatarNumero(estado.dados?.totalAdmissoes ?? 0, 0)} />
-        <Indicador rotulo="Demissoes no ano" valor={formatarNumero(estado.dados?.totalDemissoes ?? 0, 0)} />
+        <Indicador rotulo="Admissões no ano" valor={formatarNumero(estado.dados?.totalAdmissoes ?? 0, 0)} />
+        <Indicador rotulo="Demissões no ano" valor={formatarNumero(estado.dados?.totalDemissoes ?? 0, 0)} />
         <Indicador rotulo="Saldo" valor={formatarNumero((estado.dados?.totalAdmissoes ?? 0) - (estado.dados?.totalDemissoes ?? 0), 0)} />
       </div>
 
-      {estado.erro ? <Alerta nivel="critico" titulo="Nao foi possivel carregar">{estado.erro}</Alerta> : null}
+      {estado.erro ? <Alerta nivel="critico" titulo="Não foi possível carregar">{estado.erro}</Alerta> : null}
 
-      <Figura titulo="Admissoes e demissoes por mes" descricao="Contagem de pessoas, nao valores." >
+      <Figura titulo="Admissões e demissões por mês" descricao="Contagem de pessoas, não valores." >
         {estado.carregando ? (
           <p className="py-8 text-center text-sm text-[var(--texto-3)]">Carregando…</p>
         ) : dadosGrafico.length === 0 ? (
-          <EstadoVazio titulo="Sem movimentacao" descricao="Nenhuma admissao ou demissao registrada no ano." />
+          <EstadoVazio titulo="Sem movimentacao" descricao="Nenhuma admissão ou demissão registrada no ano." />
         ) : (
           <GraficoMovimento dados={dadosGrafico} />
         )}
       </Figura>
 
-      <div className="cartao overflow-hidden">
+      <div className="cartão overflow-hidden">
         <div className="tabela-rolagem rolagem-fina">
           <table className="w-full text-sm">
             <caption className="sr-only">Movimentacao mensal</caption>
             <thead className="bg-[var(--superficie-sutil)]">
               <tr className="border-b border-[var(--borda-forte)] text-left">
-                <th className="px-3 py-1.5 font-mono text-2xs uppercase text-[var(--texto-3)]">Competencia</th>
-                <th className="px-3 py-1.5 text-right font-mono text-2xs uppercase text-[var(--texto-3)]">Admissoes</th>
-                <th className="px-3 py-1.5 text-right font-mono text-2xs uppercase text-[var(--texto-3)]">Demissoes</th>
+                <th className="px-3 py-1.5 font-mono text-2xs uppercase text-[var(--texto-3)]">Competência</th>
+                <th className="px-3 py-1.5 text-right font-mono text-2xs uppercase text-[var(--texto-3)]">Admissões</th>
+                <th className="px-3 py-1.5 text-right font-mono text-2xs uppercase text-[var(--texto-3)]">Demissões</th>
                 <th className="px-3 py-1.5 text-right font-mono text-2xs uppercase text-[var(--texto-3)]">Saldo</th>
               </tr>
             </thead>
@@ -460,17 +460,17 @@ function RelatorioProvisoesTela({ estado, competencia }: { estado: Estado<Relato
   const colunas: Coluna<LinhaProvisao>[] = [
     { chave: 'nome', titulo: 'Colaborador', valor: (l) => l.colaboradorNome, render: (l) => <span className="font-medium">{l.colaboradorNome}</span> },
     { chave: 'centro', titulo: 'Centro de custo', valor: (l) => l.centroCusto ?? '', render: (l) => <span className="text-xs text-[var(--texto-3)]">{l.centroCusto ?? '—'}</span> },
-    { chave: 'ferias', titulo: 'Ferias', alinhar: 'direita', valor: (l) => l.provisaoFerias, render: (l) => formatarBRL(l.provisaoFerias), rodape: formatarBRL(totais?.provisaoFerias ?? 0) },
-    { chave: 'terco', titulo: '1/3 ferias', alinhar: 'direita', valor: (l) => l.provisaoTercoFerias, render: (l) => formatarBRL(l.provisaoTercoFerias), rodape: formatarBRL(totais?.provisaoTercoFerias ?? 0) },
-    { chave: 'decimo', titulo: '13o', alinhar: 'direita', valor: (l) => l.provisaoDecimoTerceiro, render: (l) => formatarBRL(l.provisaoDecimoTerceiro), rodape: formatarBRL(totais?.provisaoDecimoTerceiro ?? 0) },
+    { chave: 'férias', titulo: 'Férias', alinhar: 'direita', valor: (l) => l.provisaoFerias, render: (l) => formatarBRL(l.provisaoFerias), rodape: formatarBRL(totais?.provisaoFerias ?? 0) },
+    { chave: 'terço', titulo: '1/3 férias', alinhar: 'direita', valor: (l) => l.provisaoTercoFerias, render: (l) => formatarBRL(l.provisaoTercoFerias), rodape: formatarBRL(totais?.provisaoTercoFerias ?? 0) },
+    { chave: 'décimo', titulo: '13o', alinhar: 'direita', valor: (l) => l.provisaoDecimoTerceiro, render: (l) => formatarBRL(l.provisaoDecimoTerceiro), rodape: formatarBRL(totais?.provisaoDecimoTerceiro ?? 0) },
     { chave: 'encargos', titulo: 'Encargos', alinhar: 'direita', valor: (l) => l.encargosSobreProvisoes, render: (l) => formatarBRL(l.encargosSobreProvisoes), rodape: formatarBRL(totais?.encargosSobreProvisoes ?? 0) },
     { chave: 'total', titulo: 'Total provisionado', alinhar: 'direita', valor: (l) => l.total, render: (l) => <span className="font-semibold">{formatarBRL(l.total)}</span>, rodape: formatarBRL(totais?.total ?? 0) },
   ];
 
   return (
     <Moldura
-      titulo="Provisoes"
-      descricao={`Ferias, 13o e encargos provisionados ate ${rotuloCompetencia(competencia)}.`}
+      titulo="Provisões"
+      descricao={`Férias, 13o e encargos provisionados até ${rotuloCompetencia(competencia)}.`}
       acoes={
         <button
           type="button"
@@ -479,7 +479,7 @@ function RelatorioProvisoesTela({ estado, competencia }: { estado: Estado<Relato
           onClick={() =>
             baixarTexto(
               `provisoes-${competencia}.csv`,
-              montarCSV(['Colaborador', 'Centro de custo', 'Ferias', '1/3 ferias', '13o', 'Encargos', 'Total'], linhas.map((l) => [l.colaboradorNome, l.centroCusto ?? '', l.provisaoFerias, l.provisaoTercoFerias, l.provisaoDecimoTerceiro, l.encargosSobreProvisoes, l.total])),
+              montarCSV(['Colaborador', 'Centro de custo', 'Férias', '1/3 férias', '13o', 'Encargos', 'Total'], linhas.map((l) => [l.colaboradorNome, l.centroCusto ?? '', l.provisaoFerias, l.provisaoTercoFerias, l.provisaoDecimoTerceiro, l.encargosSobreProvisoes, l.total])),
               'text/csv;charset=utf-8',
             )
           }
@@ -489,14 +489,14 @@ function RelatorioProvisoesTela({ estado, competencia }: { estado: Estado<Relato
       }
     >
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Indicador rotulo="Provisao de ferias" valor={formatarBRL((totais?.provisaoFerias ?? 0) + (totais?.provisaoTercoFerias ?? 0))} />
-        <Indicador rotulo="Provisao de 13o" valor={formatarBRL(totais?.provisaoDecimoTerceiro ?? 0)} />
+        <Indicador rotulo="Provisão de férias" valor={formatarBRL((totais?.provisaoFerias ?? 0) + (totais?.provisaoTercoFerias ?? 0))} />
+        <Indicador rotulo="Provisão de 13o" valor={formatarBRL(totais?.provisaoDecimoTerceiro ?? 0)} />
         <Indicador rotulo="Encargos" valor={formatarBRL(totais?.encargosSobreProvisoes ?? 0)} />
         <Indicador rotulo="Total provisionado" valor={formatarBRL(totais?.total ?? 0)} />
       </div>
-      <Tabela colunas={colunas} dados={linhas} chaveLinha={(l) => l.colaboradorId} carregando={estado.carregando} erro={estado.erro} busca denso comRodape agruparPor={(l) => l.centroCusto ?? 'SEM CENTRO DE CUSTO'} legenda="Provisoes por colaborador" vazio={<EstadoVazio titulo="Sem provisoes" descricao="Cadastre colaboradores ativos para apurar as provisoes." />} />
+      <Tabela colunas={colunas} dados={linhas} chaveLinha={(l) => l.colaboradorId} carregando={estado.carregando} erro={estado.erro} busca denso comRodape agruparPor={(l) => l.centroCusto ?? 'SEM CENTRO DE CUSTO'} legenda="Provisões por colaborador" vazio={<EstadoVazio titulo="Sem provisões" descricao="Cadastre colaboradores ativos para apurar as provisões." />} />
       <p className="text-xs text-[var(--texto-3)]">
-        Base: {hojeISO()} · a provisao considera os avos ja adquiridos por cada colaborador ate o fim da competencia.
+        Base: {hojeISO()} · a provisão considera os avos já adquiridos por cada colaborador até o fim da competência.
       </p>
     </Moldura>
   );

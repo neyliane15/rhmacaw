@@ -51,7 +51,7 @@ export function DecimoTerceiro(): JSX.Element {
 
   function exportar(): void {
     const csv = montarCSV(
-      ['Colaborador', 'Avos', 'Media comissoes', 'Base', 'Integral', '1a parcela', '2a bruta', 'INSS', 'IRRF', '2a liquida', 'Total liquido'],
+      ['Colaborador', 'Avos', 'Média comissões', 'Base', 'Integral', '1a parcela', '2a bruta', 'INSS', 'IRRF', '2a liquida', 'Total líquido'],
       linhas.map((l) => [
         l.colaboradorNome,
         l.avos,
@@ -82,8 +82,8 @@ export function DecimoTerceiro(): JSX.Element {
       rodape: `${linhas.length} colab.`,
     },
     {
-      chave: 'media',
-      titulo: 'Media comissoes',
+      chave: 'média',
+      titulo: 'Média comissões',
       alinhar: 'direita',
       valor: (l) => l.mediaComissoes,
       render: (l) => (l.mediaComissoes > 0 ? formatarBRL(l.mediaComissoes) : <span className="text-[var(--texto-3)]">—</span>),
@@ -116,7 +116,7 @@ export function DecimoTerceiro(): JSX.Element {
       valor: (l) => l.segundaParcelaLiquida,
       render: (l) => <span className="font-semibold text-ouro-600 dark:text-ouro-200">{formatarBRL(l.segundaParcelaLiquida)}</span>,
       rodape: formatarBRL(totais.segunda),
-      titulo2: 'Liquido da segunda parcela, ja com INSS e IRRF',
+      titulo2: 'Líquido da segunda parcela, já com INSS e IRRF',
     },
   ];
 
@@ -124,8 +124,8 @@ export function DecimoTerceiro(): JSX.Element {
     <div className="space-y-4">
       <CabecalhoPagina
         sobrancelha={`Gratificacao natalina ${ano}`}
-        titulo="Decimo terceiro"
-        descricao="Avos por colaborador, base com media de comissoes e as duas parcelas."
+        titulo="Décimo terceiro"
+        descricao="Avos por colaborador, base com média de comissões e as duas parcelas."
         acoes={
           <>
             <label>
@@ -145,7 +145,7 @@ export function DecimoTerceiro(): JSX.Element {
         }
       />
 
-      {acao.erro ? <Alerta nivel="critico" titulo="Nao foi possivel processar" aoFechar={acao.limparErro}>{acao.erro}</Alerta> : null}
+      {acao.erro ? <Alerta nivel="critico" titulo="Não foi possível processar" aoFechar={acao.limparErro}>{acao.erro}</Alerta> : null}
       {aviso ? <Alerta nivel="sucesso" aoFechar={() => setAviso(null)}>{aviso}</Alerta> : null}
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -155,7 +155,7 @@ export function DecimoTerceiro(): JSX.Element {
         <Indicador rotulo="2a parcela liquida" valor={formatarBRL(totais.segunda)} trilho apoio="O que sai da conta em dezembro" />
       </div>
 
-      <section className="cartao p-4">
+      <section className="cartão p-4">
         <h2 className="sobrancelha mb-3">Processar parcelas</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <CampoTexto
@@ -163,7 +163,7 @@ export function DecimoTerceiro(): JSX.Element {
             type="date"
             value={dataPrimeira}
             onChange={(e) => setDataPrimeira(e.target.value)}
-            dica="Ate 30 de novembro (art. 2o, Lei 4.749/65)."
+            dica="Até 30 de novembro (art. 2o, Lei 4.749/65)."
           />
           <div className="flex items-end">
             <button type="button" className="botao-primario w-full" onClick={() => processar(1)} disabled={!podeProcessar || acao.executando || linhas.length === 0}>
@@ -175,7 +175,7 @@ export function DecimoTerceiro(): JSX.Element {
             type="date"
             value={dataSegunda}
             onChange={(e) => setDataSegunda(e.target.value)}
-            dica="Ate 20 de dezembro, com INSS e IRRF."
+            dica="Até 20 de dezembro, com INSS e IRRF."
           />
           <div className="flex items-end">
             <button type="button" className="botao-primario w-full" onClick={() => processar(2)} disabled={!podeProcessar || acao.executando || linhas.length === 0}>
@@ -184,7 +184,7 @@ export function DecimoTerceiro(): JSX.Element {
           </div>
         </div>
         <p className="mt-2 text-xs text-[var(--texto-3)]">
-          Processar gera uma folha do tipo 13o na competencia correspondente. O fechamento e a remessa acontecem na tela de Folha.
+          Processar gera uma folha do tipo 13o na competência correspondente. O fechamento e a remessa acontecem na tela de Folha.
         </p>
       </section>
 
@@ -198,13 +198,13 @@ export function DecimoTerceiro(): JSX.Element {
         placeholderBusca="Buscar colaborador"
         denso
         comRodape
-        legenda="Decimo terceiro por colaborador"
+        legenda="Décimo terceiro por colaborador"
         ordemInicial={{ chave: 'nome', direcao: 'asc' }}
         vazio={
           <EstadoVazio
             icone={<IconePresente />}
             titulo={`Nenhum colaborador com direito a 13o em ${ano}`}
-            descricao="O calculo considera os colaboradores ativos com pelo menos um avo no ano."
+            descricao="O cálculo considera os colaboradores ativos com pelo menos um avo no ano."
           />
         }
       />

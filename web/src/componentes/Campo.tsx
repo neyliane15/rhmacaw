@@ -49,7 +49,7 @@ export function CampoTexto({ rotulo, dica, erro, className, mono, required, ...r
           required={required}
           aria-invalid={invalido || undefined}
           aria-describedby={invalido ? `${id}-erro` : undefined}
-          className={`campo ${mono ? 'font-mono' : ''} ${invalido ? 'campo-invalido' : ''}`}
+          className={`campo ${mono ? 'font-mono' : ''} ${invalido ? 'campo-inválido' : ''}`}
         />
       )}
     </Envolver>
@@ -74,7 +74,7 @@ export function CampoSelect({ rotulo, dica, erro, className, opcoes, vazio, requ
           id={id}
           required={required}
           aria-invalid={invalido || undefined}
-          className={`campo pr-7 ${invalido ? 'campo-invalido' : ''}`}
+          className={`campo pr-7 ${invalido ? 'campo-inválido' : ''}`}
         >
           {vazio !== undefined ? <option value="">{vazio}</option> : null}
           {opcoes.map((o) => (
@@ -98,7 +98,7 @@ type PropsArea = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'id'> & {
 export function CampoArea({ rotulo, dica, erro, className, required, ...resto }: PropsArea): JSX.Element {
   return (
     <Envolver rotulo={rotulo} dica={dica} erro={erro} obrigatorio={required} className={className}>
-      {(id, invalido) => <textarea {...resto} id={id} rows={resto.rows ?? 3} className={`campo resize-y ${invalido ? 'campo-invalido' : ''}`} />}
+      {(id, invalido) => <textarea {...resto} id={id} rows={resto.rows ?? 3} className={`campo resize-y ${invalido ? 'campo-inválido' : ''}`} />}
     </Envolver>
   );
 }

@@ -23,7 +23,7 @@ export type Tom = 'neutro' | 'positivo' | 'atencao' | 'critico' | 'info' | 'tril
 export const ROTULO_SITUACAO: Record<Situacao, string> = {
   ATIVO: 'Ativo',
   AFASTADO: 'Afastado',
-  FERIAS: 'Em ferias',
+  FERIAS: 'Em férias',
   PROCESSO: 'Em processo',
   DEMITIDO: 'Demitido',
 };
@@ -39,9 +39,9 @@ export const TOM_SITUACAO: Record<Situacao, Tom> = {
 export const ROTULO_CONTRATO: Record<TipoContrato, string> = {
   CLT: 'CLT',
   INTERMITENTE: 'Intermitente',
-  ESTAGIO: 'Estagio',
+  ESTAGIO: 'Estágio',
   PJ: 'PJ',
-  SOCIO: 'Socio',
+  SOCIO: 'Sócio',
 };
 
 export const ROTULO_FALTA: Record<TipoFalta, string> = {
@@ -96,9 +96,9 @@ export const ROTULO_CRITERIO: Record<CriterioRateio, string> = {
 };
 
 export const DESCRICAO_CRITERIO: Record<CriterioRateio, string> = {
-  PONTOS: 'Divide o liquido da semana na proporcao dos pontos de cada colaborador.',
+  PONTOS: 'Divide o líquido da semana na proporcao dos pontos de cada colaborador.',
   HORAS: 'Divide na proporcao das horas lancadas na semana.',
-  MANUAL: 'Voce digita o valor de cada um; o sistema so confere o total.',
+  MANUAL: 'Você digita o valor de cada um; o sistema so confere o total.',
   IGUALITARIO: 'Mesmo valor para todos os participantes da semana.',
 };
 
@@ -121,13 +121,13 @@ export const ROTULO_TIPO_FOLHA: Record<TipoFolha, string> = {
   ADIANTAMENTO: 'Adiantamento',
   DECIMO_TERCEIRO_1: '13o - 1a parcela',
   DECIMO_TERCEIRO_2: '13o - 2a parcela',
-  FERIAS: 'Ferias',
-  RESCISAO: 'Rescisao',
+  FERIAS: 'Férias',
+  RESCISAO: 'Rescisão',
 };
 
 export const ROTULO_MOTIVO: Record<MotivoRescisao, string> = {
   SEM_JUSTA_CAUSA: 'Dispensa sem justa causa',
-  PEDIDO_DEMISSAO: 'Pedido de demissao',
+  PEDIDO_DEMISSAO: 'Pedido de demissão',
   JUSTA_CAUSA: 'Dispensa por justa causa',
   ACORDO_484A: 'Acordo (art. 484-A)',
   TERMINO_CONTRATO: 'Termino de contrato',
@@ -150,9 +150,9 @@ export const ROTULO_LAYOUT: Record<LayoutBancario, string> = {
 
 export const ROTULO_ORIGEM: Record<OrigemRemessa, string> = {
   FOLHA: 'Folha de pagamento',
-  COMISSAO_SEMANAL: 'Comissao semanal',
-  RESCISAO: 'Rescisao',
-  FERIAS: 'Ferias',
+  COMISSAO_SEMANAL: 'Comissão semanal',
+  RESCISAO: 'Rescisão',
+  FERIAS: 'Férias',
 };
 
 export const ROTULO_STATUS_REMESSA: Record<StatusRemessa, string> = {
@@ -201,7 +201,7 @@ export const ROTULO_PAPEL: Record<Papel, string> = {
 };
 
 export const ROTULO_NIVEL_ALERTA = {
-  INFO: 'Informacao',
-  ATENCAO: 'Atencao',
+  INFO: 'Informação',
+  ATENCAO: 'Atenção',
   CRITICO: 'Critico',
 } as const;

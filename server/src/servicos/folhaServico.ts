@@ -48,9 +48,9 @@ export interface PedidoProcessamento {
  */
 export function alertasCriticos(item: Pick<ItemFolhaCompleto, 'valorTransferir' | 'salarioLiquido'>): string[] {
   const criticos: string[] = [];
-  if (item.salarioLiquido < 0) criticos.push('Liquido negativo: descontos superam os proventos.');
+  if (item.salarioLiquido < 0) criticos.push('Líquido negativo: descontos superam os proventos.');
   if (item.valorTransferir < 0) {
-    criticos.push('Valor a transferir negativo: comissoes adiantadas maiores que o liquido da folha.');
+    criticos.push('Valor a transferir negativo: comissões adiantadas maiores que o líquido da folha.');
   }
   return criticos;
 }
@@ -135,7 +135,7 @@ export function processarFolha(
   const existente = repoFolhas.buscarFolhaAtiva(tenantId, competencia, tipo);
   if (existente && existente.status !== 'RASCUNHO') {
     throw erroConflito(
-      `A folha ${tipo} de ${rotuloCompetencia(competencia)} esta ${existente.status} e nao pode ser reprocessada. Reabra antes.`,
+      `A folha ${tipo} de ${rotuloCompetencia(competencia)} esta ${existente.status} e não pode ser reprocessada. Reabra antes.`,
     );
   }
 
@@ -296,11 +296,11 @@ export function fecharFolha(
   usuarioId: string | null,
 ): FolhaCompleta {
   const folha = exigirFolha(tenantId, folhaId);
-  if (folha.status === 'PAGA') throw erroConflito('Folha PAGA e imutavel.');
+  if (folha.status === 'PAGA') throw erroConflito('Folha PAGA e imutável.');
   if (folha.status !== 'RASCUNHO') throw erroConflito(`Folha ja esta ${folha.status}.`);
 
   const itens = repoFolhas.listarItens(tenantId, folhaId);
-  if (itens.length === 0) throw erroNaoProcessavel('Folha sem itens: processe a competencia antes de fechar.');
+  if (itens.length === 0) throw erroNaoProcessavel('Folha sem itens: processe a competência antes de fechar.');
 
   const pendentes = itens
     .filter((i) => !i.alertasReconhecidos && alertasCriticos(i).length > 0)
@@ -308,7 +308,7 @@ export function fecharFolha(
 
   if (pendentes.length > 0 && !reconhecerAlertas) {
     throw erroConflito(
-      `${pendentes.length} item(ns) com alerta critico nao reconhecido. Corrija ou feche com reconhecerAlertas=true. ${pendentes.join(' | ')}`,
+      `${pendentes.length} item(ns) com alerta critico não reconhecido. Corrija ou feche com reconhecerAlertas=true. ${pendentes.join(' | ')}`,
     );
   }
 
@@ -327,8 +327,8 @@ export function fecharFolha(
 
 export function reabrirFolha(tenantId: string, folhaId: string, usuarioId: string | null): FolhaCompleta {
   const folha = exigirFolha(tenantId, folhaId);
-  if (folha.status === 'PAGA') throw erroConflito('Folha PAGA e imutavel: cancele a remessa antes de reabrir.');
-  if (folha.status !== 'FECHADA') throw erroConflito(`Folha ${folha.status} nao pode ser reaberta.`);
+  if (folha.status === 'PAGA') throw erroConflito('Folha PAGA e imutável: cancele a remessa antes de reabrir.');
+  if (folha.status !== 'FECHADA') throw erroConflito(`Folha ${folha.status} não pode ser reaberta.`);
 
   repoFolhas.atualizarFolha(tenantId, { ...folha, status: 'RASCUNHO', fechadoEm: null });
   registrar(tenantId, usuarioId, 'folha:reabrir', 'folha', folhaId, { competencia: folha.competencia });

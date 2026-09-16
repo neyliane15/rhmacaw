@@ -76,10 +76,10 @@ function verbasDaParcela(decimo: DecimoTerceiro, parcela: Parcela): Verba[] {
   });
 
   if (parcela === 1) {
-    return [verba('050', '13o salario - 1a parcela', 'PROVENTO', `${decimo.avos}/12`, decimo.primeiraParcela)];
+    return [verba('050', '13o salário - 1a parcela', 'PROVENTO', `${decimo.avos}/12`, decimo.primeiraParcela)];
   }
   const linhas: Verba[] = [
-    verba('051', '13o salario - 2a parcela', 'PROVENTO', `${decimo.avos}/12`, decimo.segundaParcelaBruta),
+    verba('051', '13o salário - 2a parcela', 'PROVENTO', `${decimo.avos}/12`, decimo.segundaParcelaBruta),
   ];
   if (decimo.inss > 0) linhas.push(verba('150', 'INSS sobre 13o', 'DESCONTO', 'integral', decimo.inss));
   if (decimo.irrf > 0) linhas.push(verba('151', 'IRRF sobre 13o', 'DESCONTO', 'exclusiva na fonte', decimo.irrf));
@@ -166,7 +166,7 @@ export function processarParcela(
           competencia,
           tipo,
           status: 'RASCUNHO',
-          descricao: `13o salario ${ano} - ${parcela}a parcela`,
+          descricao: `13o salário ${ano} - ${parcela}a parcela`,
           dataPagamento,
           totalProventos: 0,
           totalDescontos: 0,

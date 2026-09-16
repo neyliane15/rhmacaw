@@ -36,7 +36,7 @@ export function criarRoteador(): Router {
   api.use((req, res) => {
     const corpo: RespostaErro = {
       erro: 'ROTA_NAO_ENCONTRADA',
-      mensagem: `${req.method} ${req.originalUrl} nao existe nesta API.`,
+      mensagem: `${req.method} ${req.originalUrl} não existe nesta API.`,
     };
     res.status(404).json(corpo);
   });
@@ -71,13 +71,13 @@ export function tratadorDeErros(erro: unknown, _req: Request, res: Response, pro
 
   // JSON malformado no corpo: o body-parser do Express marca `type`.
   if (erro instanceof SyntaxError && 'body' in erro) {
-    res.status(400).json({ erro: 'VALIDACAO', mensagem: 'Corpo da requisicao nao e um JSON valido.' } satisfies RespostaErro);
+    res.status(400).json({ erro: 'VALIDACAO', mensagem: 'Corpo da requisicao não e um JSON válido.' } satisfies RespostaErro);
     return;
   }
 
   const mensagem = erro instanceof Error ? erro.message : 'Erro inesperado.';
   // Erro nao previsto: registra no console para investigacao e devolve 500.
-  console.error('[rhmacaw] erro nao tratado:', erro);
+  console.error('[rhmacaw] erro não tratado:', erro);
   const corpo: RespostaErro = {
     erro: 'ERRO_INTERNO',
     mensagem: config.ambiente === 'production' ? 'Erro interno no servidor.' : mensagem,

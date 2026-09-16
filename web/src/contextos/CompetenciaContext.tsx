@@ -10,7 +10,7 @@ interface ValorCompetencia {
 const Contexto = createContext<ValorCompetencia | null>(null);
 const CHAVE = 'rhmacaw.competencia';
 
-/** A competencia escolhida na topbar vale para dashboard, folha, faltas e relatorios. */
+/** A competência escolhida na topbar vale para dashboard, folha, faltas e relatórios. */
 export function ProvedorCompetencia({ children }: { children: ReactNode }): JSX.Element {
   const [competencia, setCompetencia] = useState<Competencia>(() => {
     try {

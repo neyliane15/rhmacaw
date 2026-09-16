@@ -8,7 +8,7 @@ interface ValorAuth {
   carregando: boolean;
   entrar: (email: string, senha: string) => Promise<void>;
   sair: () => void;
-  /** Checa uma permissao no formato `recurso:acao` contra o papel da sessao. */
+  /** Checa uma permissao no formato `recurso:ação` contra o papel da sessao. */
   pode: (permissao: string) => boolean;
   papel: Papel | null;
 }
@@ -21,7 +21,7 @@ function lerSessaoSalva(): SessaoUsuario | null {
     if (!bruto) return null;
     const sessao = JSON.parse(bruto) as SessaoUsuario;
     if (!sessao?.token) return null;
-    // Token vencido no armazenamento local nao vale revalidar.
+    // Token vencido no armazenamento local não vale revalidar.
     if (sessao.expiraEm && Date.parse(sessao.expiraEm) < Date.now()) return null;
     return sessao;
   } catch {

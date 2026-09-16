@@ -264,7 +264,7 @@ describe('item com valor a transferir negativo (regra 5 do contrato)', () => {
       .set('Authorization', auth())
       .send({ reconhecerAlertas: false });
     expect(fechar.status).toBe(409);
-    expect(fechar.body.mensagem).toContain('alerta critico nao reconhecido');
+    expect(fechar.body.mensagem).toContain('alerta critico não reconhecido');
   });
 
   it('deixa o item negativo fora do arquivo e o registra em inconsistencias', async () => {

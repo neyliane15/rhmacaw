@@ -49,7 +49,7 @@ rotasFerias.post('/', exigirPermissao('ferias:escrever'), (req, res) => {
 rotasFerias.get('/:id', exigirPermissao('ferias:ler'), (req, res) => {
   const { identidade } = sessaoDe(req);
   const ferias = repoFerias.buscarFerias(identidade.tenantId, param(req, 'id'));
-  if (!ferias) throw erroNaoEncontrado('Periodo de ferias');
+  if (!ferias) throw erroNaoEncontrado('Período de férias');
   res.json(ferias);
 });
 

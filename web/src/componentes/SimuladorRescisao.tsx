@@ -84,15 +84,15 @@ interface Props {
   aoFechar: () => void;
   colaborador: Colaborador;
   /** `cadastro` usa POST /colaboradores/:id/demitir para a previa. */
-  origem?: 'cadastro' | 'rescisoes';
+  origem?: 'cadastro' | 'rescisões';
   aoEfetivar?: (rescisao: Rescisao) => void;
 }
 
 /**
  * Simulador do TRCT: calcula e mostra verba a verba antes de gravar. Efetivar
- * e um segundo passo explicito — a previa nunca altera o cadastro.
+ * e um segundo passo explicito — a prévia nunca altera o cadastro.
  */
-export function SimuladorRescisao({ aberto, aoFechar, colaborador, origem = 'rescisoes', aoEfetivar }: Props): JSX.Element {
+export function SimuladorRescisao({ aberto, aoFechar, colaborador, origem = 'rescisões', aoEfetivar }: Props): JSX.Element {
   const hoje = hojeISO();
   const [motivo, setMotivo] = useState<MotivoRescisao>('SEM_JUSTA_CAUSA');
   const [tipoAviso, setTipoAviso] = useState<TipoAviso>('INDENIZADO');
@@ -185,10 +185,10 @@ export function SimuladorRescisao({ aberto, aoFechar, colaborador, origem = 'res
       }
     >
       <div className="space-y-4">
-        {acao.erro ? <Alerta nivel="critico" titulo="Nao foi possivel calcular">{acao.erro}</Alerta> : null}
+        {acao.erro ? <Alerta nivel="critico" titulo="Não foi possível calcular">{acao.erro}</Alerta> : null}
         {dataInvalida ? (
           <Alerta nivel="atencao" titulo="Datas invertidas">
-            A data de desligamento nao pode ser anterior a data do aviso.
+            A data de desligamento não pode ser anterior a data do aviso.
           </Alerta>
         ) : null}
 
@@ -213,7 +213,7 @@ export function SimuladorRescisao({ aberto, aoFechar, colaborador, origem = 'res
             onChange={(e) => setDataDesligamento(e.target.value)}
           />
           <CampoTexto
-            rotulo="Dias de ferias vencidas"
+            rotulo="Dias de férias vencidas"
             type="number"
             min={0}
             max={30}
@@ -221,17 +221,17 @@ export function SimuladorRescisao({ aberto, aoFechar, colaborador, origem = 'res
             onChange={(e) => setDiasFeriasVencidas(Number(e.target.value))}
           />
           <CampoTexto
-            rotulo="Faltas injustificadas no periodo"
+            rotulo="Faltas injustificadas no período"
             type="number"
             min={0}
             value={faltas}
             onChange={(e) => setFaltas(Number(e.target.value))}
-            dica="Reduz os dias de ferias proporcionais."
+            dica="Reduz os dias de férias proporcionais."
           />
           <MoedaInput rotulo="Saldo do FGTS depositado" valor={saldoFGTS} aoMudar={setSaldoFGTS} dica="Base da multa rescisoria." />
-          <MoedaInput rotulo="Media de comissoes (12 meses)" valor={mediaComissoes} aoMudar={setMediaComissoes} />
-          <MoedaInput rotulo="13o ja adiantado no ano" valor={decimoAdiantado} aoMudar={setDecimoAdiantado} />
-          <MoedaInput rotulo="Saldo de comissoes a pagar" valor={saldoComissoes} aoMudar={setSaldoComissoes} />
+          <MoedaInput rotulo="Média de comissoes (12 meses)" valor={mediaComissoes} aoMudar={setMediaComissoes} />
+          <MoedaInput rotulo="13o já adiantado no ano" valor={decimoAdiantado} aoMudar={setDecimoAdiantado} />
+          <MoedaInput rotulo="Saldo de comissões a pagar" valor={saldoComissoes} aoMudar={setSaldoComissoes} />
           <MoedaInput rotulo="Outros proventos" valor={outrosProventos} aoMudar={setOutrosProventos} />
           <MoedaInput rotulo="Outros descontos" valor={outrosDescontos} aoMudar={setOutrosDescontos} />
         </div>
@@ -247,21 +247,21 @@ export function SimuladorRescisao({ aberto, aoFechar, colaborador, origem = 'res
             <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
               <ResumoNumero rotulo="Total de proventos" valor={formatarBRL(previa.totalProventos)} />
               <ResumoNumero rotulo="Total de descontos" valor={formatarBRL(previa.totalDescontos)} />
-              <ResumoNumero rotulo="Liquido do TRCT" valor={formatarBRL(previa.liquido)} destaque />
+              <ResumoNumero rotulo="Líquido do TRCT" valor={formatarBRL(previa.liquido)} destaque />
               <ResumoNumero rotulo="Multa do FGTS" valor={formatarBRL(previa.multaFGTS)} />
             </div>
 
             <div className="flex flex-wrap gap-3 text-xs text-[var(--texto-3)]">
               <span>Aviso previo: {previa.diasAvisoPrevio} dias</span>
               {previa.prazoPagamento ? <span>Prazo de pagamento: {formatarDataBR(previa.prazoPagamento)}</span> : null}
-              <span>Seguro-desemprego: {previa.habilitaSeguroDesemprego ? 'habilitado' : 'nao habilitado'}</span>
+              <span>Seguro-desemprego: {previa.habilitaSeguroDesemprego ? 'habilitado' : 'não habilitado'}</span>
             </div>
 
             <TabelaVerbas verbas={previa.verbas} />
 
             {confirmando ? (
               <Alerta nivel="critico" titulo="Confirmar o desligamento?">
-                Gravar a rescisao muda a situacao de {colaborador.nome} para DEMITIDO e preenche a data de demissao. Essa acao nao se
+                Gravar a rescisão muda a situação de {colaborador.nome} para DEMITIDO e preenche a data de demissao. Essa ação não se
                 desfaz sozinha.
               </Alerta>
             ) : null}

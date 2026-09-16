@@ -27,15 +27,15 @@ interface Props {
   origem: OrigemRemessa;
   origemId: string;
   descricao: string;
-  /** Rota especifica do recurso (folha, periodo de comissao, rescisao). */
+  /** Rota especifica do recurso (folha, período de comissão, rescisão). */
   gerar: (dados: { layout: LayoutBancario; bancoCodigo: string; dataPagamento: DataISO }) => Promise<Remessa>;
   aoGerar?: (remessa: Remessa) => void;
   dataSugerida?: DataISO;
 }
 
 /**
- * A ponte relatorio -> banco. Sempre em dois passos: primeiro a previa
- * (`POST /banco/previa`, que nao grava nada), depois a geracao de verdade.
+ * A ponte relatório -> banco. Sempre em dois passos: primeiro a prévia
+ * (`POST /banco/prévia`, que não grava nada), depois a geracao de verdade.
  */
 export function ModalRemessa({ aberto, aoFechar, origem, origemId, descricao, gerar, aoGerar, dataSugerida }: Props): JSX.Element {
   const [layout, setLayout] = useState<LayoutBancario>('CNAB240');
@@ -97,7 +97,7 @@ export function ModalRemessa({ aberto, aoFechar, origem, origemId, descricao, ge
               Cancelar
             </button>
             <button type="button" className="botao-secundario" onClick={conferir} disabled={acao.executando || !bancoCodigo}>
-              {acao.executando && !previa ? <Girando rotulo="Conferindo" /> : 'Conferir previa'}
+              {acao.executando && !previa ? <Girando rotulo="Conferindo" /> : 'Conferir prévia'}
             </button>
             <button
               type="button"
@@ -112,11 +112,11 @@ export function ModalRemessa({ aberto, aoFechar, origem, origemId, descricao, ge
       }
     >
       <div className="space-y-4">
-        <TrilhoPagamento etapa={gerada ? 'gerada' : previa ? 'previa' : 'origem'} />
+        <TrilhoPagamento etapa={gerada ? 'gerada' : previa ? 'prévia' : 'origem'} />
 
-        {acao.erro ? <Alerta nivel="critico" titulo="Nao foi possivel continuar">{acao.erro}</Alerta> : null}
+        {acao.erro ? <Alerta nivel="critico" titulo="Não foi possível continuar">{acao.erro}</Alerta> : null}
         {conta.erro ? (
-          <Alerta nivel="atencao" titulo="Conta pagadora nao configurada">
+          <Alerta nivel="atencao" titulo="Conta pagadora não configurada">
             Configure a conta da empresa na tela do banco antes de gerar o arquivo. {conta.erro}
           </Alerta>
         ) : null}
@@ -153,7 +153,7 @@ export function ModalRemessa({ aberto, aoFechar, origem, origemId, descricao, ge
         </div>
 
         {layout === 'PIX_CSV' && !bancoSuportaPix ? (
-          <Alerta nivel="atencao" titulo="Este banco nao aceita PIX em lote">
+          <Alerta nivel="atencao" titulo="Este banco não aceita PIX em lote">
             Escolha o layout CNAB 240 ou outro banco para este pagamento.
           </Alerta>
         ) : null}
@@ -161,7 +161,7 @@ export function ModalRemessa({ aberto, aoFechar, origem, origemId, descricao, ge
         {gerada ? (
           <Alerta nivel="sucesso" titulo={`Remessa ${gerada.numeroRemessa} gerada`}>
             {gerada.quantidadePagamentos} pagamento(s), total de {formatarBRL(gerada.valorTotal)}. Arquivo{' '}
-            <span className="font-mono">{gerada.nomeArquivo}</span> disponivel na tela do banco.
+            <span className="font-mono">{gerada.nomeArquivo}</span> disponível na tela do banco.
           </Alerta>
         ) : null}
 
@@ -169,7 +169,7 @@ export function ModalRemessa({ aberto, aoFechar, origem, origemId, descricao, ge
           <div className="space-y-3">
             <div className="grid gap-2 sm:grid-cols-3">
               <div className="rounded-md border border-[var(--borda)] bg-[var(--superficie-sutil)] px-3 py-2">
-                <p className="sobrancelha">Favorecidos validos</p>
+                <p className="sobrancelha">Favorecidos válidos</p>
                 <p className="num mt-0.5 font-display text-lg font-semibold">{validos.length}</p>
               </div>
               <div className="trilho rounded-md px-3 py-2">
@@ -183,7 +183,7 @@ export function ModalRemessa({ aberto, aoFechar, origem, origemId, descricao, ge
                   invalidos.length > 0 ? 'border-critico/45 bg-critico/[0.07]' : 'border-[var(--borda)] bg-[var(--superficie-sutil)]'
                 }`}
               >
-                <p className="sobrancelha">Inconsistencias</p>
+                <p className="sobrancelha">Inconsistências</p>
                 <p className={`num mt-0.5 font-display text-lg font-semibold ${invalidos.length > 0 ? 'text-critico' : ''}`}>
                   {invalidos.length}
                 </p>
@@ -207,9 +207,9 @@ export function ModalRemessa({ aberto, aoFechar, origem, origemId, descricao, ge
                   <thead className="sticky top-0 bg-[var(--superficie-sutil)]">
                     <tr className="border-b border-[var(--borda-forte)] text-left">
                       <th className="px-2.5 py-1.5 font-mono text-2xs uppercase tracking-wide text-[var(--texto-3)]">Favorecido</th>
-                      <th className="px-2.5 py-1.5 font-mono text-2xs uppercase tracking-wide text-[var(--texto-3)]">Credito em</th>
+                      <th className="px-2.5 py-1.5 font-mono text-2xs uppercase tracking-wide text-[var(--texto-3)]">Crédito em</th>
                       <th className="px-2.5 py-1.5 text-right font-mono text-2xs uppercase tracking-wide text-[var(--texto-3)]">Valor</th>
-                      <th className="px-2.5 py-1.5 font-mono text-2xs uppercase tracking-wide text-[var(--texto-3)]">Situacao</th>
+                      <th className="px-2.5 py-1.5 font-mono text-2xs uppercase tracking-wide text-[var(--texto-3)]">Situação</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -248,7 +248,7 @@ export function ModalRemessa({ aberto, aoFechar, origem, origemId, descricao, ge
           </div>
         ) : !gerada ? (
           <p className="rounded-md border border-dashed border-[var(--borda-forte)] px-3 py-6 text-center text-sm text-[var(--texto-3)]">
-            Escolha o layout e o banco e clique em <strong>Conferir previa</strong>. Nada e gravado ate voce confirmar.
+            Escolha o layout e o banco e clique em <strong>Conferir prévia</strong>. Nada e gravado até voce confirmar.
           </p>
         ) : null}
       </div>

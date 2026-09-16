@@ -19,7 +19,7 @@ import { ROTULO_AVISO, ROTULO_MOTIVO, ROTULO_STATUS_FOLHA, TOM_STATUS_FOLHA } fr
 
 export function Rescisoes(): JSX.Element {
   const { pode } = useAuth();
-  const podeCriar = pode('rescisoes:criar');
+  const podeCriar = pode('rescisões:criar');
   const podeBanco = pode('banco:gerar');
 
   const [simulando, setSimulando] = useState<Colaborador | null>(null);
@@ -54,8 +54,8 @@ export function Rescisoes(): JSX.Element {
     { chave: 'descontos', titulo: 'Descontos', alinhar: 'direita', valor: (r) => r.totalDescontos, render: (r) => formatarBRL(r.totalDescontos) },
     { chave: 'multa', titulo: 'Multa FGTS', alinhar: 'direita', valor: (r) => r.multaFGTS, render: (r) => formatarBRL(r.multaFGTS), rodape: formatarBRL(totais.multa) },
     {
-      chave: 'liquido',
-      titulo: 'Liquido do TRCT',
+      chave: 'líquido',
+      titulo: 'Líquido do TRCT',
       alinhar: 'direita',
       classe: 'trilho',
       valor: (r) => r.liquido,
@@ -64,7 +64,7 @@ export function Rescisoes(): JSX.Element {
     },
     { chave: 'status', titulo: 'Status', largura: '7.5rem', valor: (r) => r.status, render: (r) => <Badge tom={TOM_STATUS_FOLHA[r.status]}>{ROTULO_STATUS_FOLHA[r.status]}</Badge> },
     {
-      chave: 'acoes',
+      chave: 'ações',
       titulo: '',
       largura: '9rem',
       ordenavel: false,
@@ -88,7 +88,7 @@ export function Rescisoes(): JSX.Element {
     <div className="space-y-4">
       <CabecalhoPagina
         sobrancelha="Desligamentos"
-        titulo="Rescisoes"
+        titulo="Rescisões"
         descricao="Simule o TRCT verba a verba antes de efetivar e pague o acerto pelo banco."
         acoes={
           podeCriar ? (
@@ -100,9 +100,9 @@ export function Rescisoes(): JSX.Element {
       />
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        <Indicador rotulo="Rescisoes registradas" valor={formatarNumero(rescisoes.length, 0)} />
+        <Indicador rotulo="Rescisões registradas" valor={formatarNumero(rescisoes.length, 0)} />
         <Indicador rotulo="Multa do FGTS acumulada" valor={formatarBRL(totais.multa)} />
-        <Indicador rotulo="Liquido de TRCT" valor={formatarBRL(totais.liquido)} trilho />
+        <Indicador rotulo="Líquido de TRCT" valor={formatarBRL(totais.liquido)} trilho />
       </div>
 
       <Tabela
@@ -115,13 +115,13 @@ export function Rescisoes(): JSX.Element {
         placeholderBusca="Buscar por colaborador"
         denso
         comRodape
-        legenda="Rescisoes efetivadas"
+        legenda="Rescisões efetivadas"
         ordemInicial={{ chave: 'desligamento', direcao: 'desc' }}
         aoClicarLinha={(r) => setDetalhe(r)}
         vazio={
           <EstadoVazio
             icone={<IconeSaida />}
-            titulo="Nenhuma rescisao registrada"
+            titulo="Nenhuma rescisão registrada"
             descricao="Quando um desligamento acontecer, simule o TRCT aqui antes de efetivar."
             acao={
               podeCriar ? (
@@ -137,13 +137,13 @@ export function Rescisoes(): JSX.Element {
       <Modal
         aberto={escolhendo}
         aoFechar={() => setEscolhendo(false)}
-        titulo="Quem sera desligado?"
+        titulo="Quem será desligado?"
         subtitulo="Escolha um colaborador ativo para abrir o simulador."
       >
         {ativos.carregando ? (
           <p className="py-6 text-center text-sm text-[var(--texto-3)]">Carregando colaboradores…</p>
         ) : ativos.erro ? (
-          <Alerta nivel="critico" titulo="Nao foi possivel listar">{ativos.erro}</Alerta>
+          <Alerta nivel="critico" titulo="Não foi possível listar">{ativos.erro}</Alerta>
         ) : (
           <ul className="divide-y divide-[var(--borda)]">
             {(ativos.dados?.itens ?? []).map((c) => (
@@ -175,7 +175,7 @@ export function Rescisoes(): JSX.Element {
           aberto
           aoFechar={() => setSimulando(null)}
           colaborador={simulando}
-          origem="rescisoes"
+          origem="rescisões"
           aoEfetivar={() => lista.recarregar()}
         />
       ) : null}
@@ -211,12 +211,12 @@ export function Rescisoes(): JSX.Element {
             <div className="grid gap-2 sm:grid-cols-4">
               <MiniTRCT rotulo="Proventos" valor={formatarBRL(detalhe.totalProventos)} />
               <MiniTRCT rotulo="Descontos" valor={formatarBRL(detalhe.totalDescontos)} />
-              <MiniTRCT rotulo="Liquido" valor={formatarBRL(detalhe.liquido)} destaque />
+              <MiniTRCT rotulo="Líquido" valor={formatarBRL(detalhe.liquido)} destaque />
               <MiniTRCT rotulo="Multa FGTS" valor={formatarBRL(detalhe.multaFGTS)} />
             </div>
             <p className="text-xs text-[var(--texto-3)]">
               Aviso {ROTULO_AVISO[detalhe.tipoAviso].toLowerCase()} de {detalhe.diasAvisoPrevio} dias · seguro-desemprego{' '}
-              {detalhe.habilitaSeguroDesemprego ? 'habilitado' : 'nao habilitado'} · saldo de FGTS {formatarBRL(detalhe.saldoFGTS)}
+              {detalhe.habilitaSeguroDesemprego ? 'habilitado' : 'não habilitado'} · saldo de FGTS {formatarBRL(detalhe.saldoFGTS)}
             </p>
             <TabelaVerbas verbas={detalhe.verbas} legenda="Verbas do TRCT" />
           </div>

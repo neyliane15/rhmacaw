@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Alerta } from '../componentes/Alerta.js';
+import { Logomarca } from '../componentes/Logomarca.js';
 import { Girando } from '../componentes/Carregando.js';
 import { useAuth } from '../contextos/AuthContext.js';
 import { useTema } from '../contextos/TemaContext.js';
@@ -11,9 +12,9 @@ const CREDENCIAIS_SEED = { email: 'admin@rhmacaw.com.br', senha: 'Macaw@2025' };
 
 /** Etapas do fluxo que o produto resolve — o argumento da tela de entrada. */
 const FLUXO = [
-  { rotulo: 'Semana de comissao', nota: 'gorjeta rateada por pontos' },
-  { rotulo: 'Folha do mes', nota: 'INSS, IRRF, faltas e DSR' },
-  { rotulo: 'Valor a transferir', nota: 'liquido menos adiantamentos' },
+  { rotulo: 'Semana de comissão', nota: 'gorjeta rateada por pontos' },
+  { rotulo: 'Folha do mês', nota: 'INSS, IRRF, faltas e DSR' },
+  { rotulo: 'Valor a transferir', nota: 'líquido menos adiantamentos' },
   { rotulo: 'Remessa no banco', nota: 'CNAB 240 ou PIX em lote' },
 ];
 
@@ -60,10 +61,12 @@ export function Login(): JSX.Element {
         />
         <div className="relative">
           <div className="flex items-center gap-3">
-            <span className="grid h-10 w-10 place-items-center rounded-lg bg-ouro-300 font-display text-xl font-bold text-arara-900">R</span>
+            <span className="grid h-12 w-12 place-items-center rounded-xl bg-areia-200 text-arara-600">
+              <Logomarca className="h-9 w-9" />
+            </span>
             <div className="leading-tight">
               <p className="font-display text-xl font-semibold tracking-tight">RH Macaw</p>
-              <p className="font-mono text-2xs uppercase tracking-[0.18em] text-ouro-200">Gestao de pessoas e folha</p>
+              <p className="font-mono text-2xs uppercase tracking-[0.18em] text-ouro-200">Gestão de pessoas e folha</p>
             </div>
           </div>
         </div>
@@ -72,10 +75,10 @@ export function Login(): JSX.Element {
           <h1 className="font-display text-4xl font-semibold leading-[1.05] tracking-tight">
             Do rateio da gorjeta
             <br />
-            <span className="text-ouro-300">ate o credito na conta.</span>
+            <span className="text-ouro-300">até o crédito na conta.</span>
           </h1>
           <p className="mt-4 max-w-md text-base leading-relaxed text-arara-100/85">
-            O RH Macaw fecha a semana de comissao, processa a folha do restaurante e gera o arquivo que o banco aceita — sem
+            O RH Macaw fecha a semana de comissão, processa a folha do restaurante e gera o arquivo que o banco aceita — sem
             planilha no meio do caminho.
           </p>
 
@@ -91,7 +94,7 @@ export function Login(): JSX.Element {
         </div>
 
         <p className="relative font-mono text-2xs uppercase tracking-[0.15em] text-arara-200/60">
-          CLT · Intermitente · PJ · Socio · Estagio — todos na mesma folha
+          CLT · Intermitente · PJ · Sócio · Estágio — todos na mesma folha
         </p>
       </section>
 
@@ -113,7 +116,7 @@ export function Login(): JSX.Element {
           </div>
 
           <form onSubmit={enviar} className="space-y-4" noValidate>
-            {erro ? <Alerta nivel="critico" titulo="Nao foi possivel entrar">{erro}</Alerta> : null}
+            {erro ? <Alerta nivel="critico" titulo="Não foi possível entrar">{erro}</Alerta> : null}
 
             <div>
               <label htmlFor="email" className="rotulo">
@@ -126,7 +129,7 @@ export function Login(): JSX.Element {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="voce@restaurante.com.br"
+                placeholder="você@restaurante.com.br"
                 className="campo"
               />
             </div>
@@ -152,7 +155,7 @@ export function Login(): JSX.Element {
           </form>
 
           <div className="mt-6 rounded-md border border-dashed border-ouro-300 bg-ouro-50 p-3 text-xs dark:border-ouro-500 dark:bg-ouro-700/15">
-            <p className="sobrancelha text-ouro-600 dark:text-ouro-200">Ambiente de demonstracao</p>
+            <p className="sobrancelha text-ouro-600 dark:text-ouro-200">Ambiente de demonstração</p>
             <p className="mt-1 text-[var(--texto-2)]">
               O seed cria um administrador com estas credenciais:
             </p>

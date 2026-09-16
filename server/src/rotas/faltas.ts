@@ -19,7 +19,7 @@ function garantirCompetenciaAberta(tenantId: string, data: string): void {
   const folha = existeFolhaTravada(tenantId, competencia);
   if (folha) {
     throw erroConflito(
-      `A folha de ${competencia} esta ${folha.status}: reabra-a antes de lancar ou alterar faltas nesta competencia.`,
+      `A folha de ${competencia} esta ${folha.status}: reabra-a antes de lancar ou alterar faltas nesta competência.`,
     );
   }
 }
@@ -40,7 +40,7 @@ rotasFaltas.get('/', exigirPermissao('faltas:ler'), (req, res) => {
 rotasFaltas.get('/resumo', exigirPermissao('faltas:ler'), (req, res) => {
   const { identidade } = sessaoDe(req);
   const competencia = query(req, 'competencia');
-  if (!competencia) throw erroValidacao('Informe a competencia (YYYY-MM).');
+  if (!competencia) throw erroValidacao('Informe a competência (YYYY-MM).');
   if (!ehCompetencia(competencia)) {
     throw erroValidacao('Competencia invalida.', [{ campo: 'competencia', mensagem: 'Use o formato YYYY-MM.' }]);
   }
@@ -84,7 +84,7 @@ rotasFaltas.post('/', exigirPermissao('faltas:escrever'), (req, res) => {
     throw erroNaoEncontrado('Colaborador');
   }
   if (dados.tipo === 'ATRASO' && !dados.horas) {
-    throw erroValidacao('Informe as horas do atraso.', [{ campo: 'horas', mensagem: 'Obrigatorio para ATRASO.' }]);
+    throw erroValidacao('Informe as horas do atraso.', [{ campo: 'horas', mensagem: 'Obrigatório para ATRASO.' }]);
   }
 
   const falta = repoFaltas.criarFalta(identidade.tenantId, {

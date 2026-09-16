@@ -84,9 +84,9 @@ function formularioVazio(): Formulario {
 const ABAS = [
   { chave: 'pessoais', rotulo: 'Dados pessoais' },
   { chave: 'contrato', rotulo: 'Contrato' },
-  { chave: 'beneficios', rotulo: 'Beneficios' },
+  { chave: 'benefícios', rotulo: 'Benefícios' },
   { chave: 'bancarios', rotulo: 'Bancarios' },
-  { chave: 'historico', rotulo: 'Historico' },
+  { chave: 'histórico', rotulo: 'Histórico' },
 ];
 
 const BANCOS = listarBancos();
@@ -115,7 +115,7 @@ export function ColaboradorForm(): JSX.Element {
     setForm({ ...resto, matricula });
   }, [registro.dados]);
 
-  const historico = useRequisicao(() => apiColaboradores.historico(id as string), [id], !novo && aba === 'historico');
+  const historico = useRequisicao(() => apiColaboradores.historico(id as string), [id], !novo && aba === 'histórico');
 
   function alterar<K extends keyof Formulario>(campo: K, valor: Formulario[K]): void {
     setForm((atual) => ({ ...atual, [campo]: valor }));
@@ -127,15 +127,15 @@ export function ColaboradorForm(): JSX.Element {
   const validacao = useMemo(() => {
     const encontrados: Record<string, string> = {};
     if (!form.nome.trim()) encontrados.nome = 'Informe o nome completo.';
-    if (!cpfValido(form.cpf)) encontrados.cpf = 'CPF invalido — confira os digitos.';
-    if (form.pis && !pisValido(form.pis)) encontrados.pis = 'PIS/PASEP invalido.';
-    if (!form.funcao.trim()) encontrados.funcao = 'Informe a funcao exercida.';
+    if (!cpfValido(form.cpf)) encontrados.cpf = 'CPF inválido — confira os digitos.';
+    if (form.pis && !pisValido(form.pis)) encontrados.pis = 'PIS/PASEP inválido.';
+    if (!form.funcao.trim()) encontrados.funcao = 'Informe a função exercida.';
     if (!form.centroCusto.trim()) encontrados.centroCusto = 'Informe o centro de custo.';
     if (!form.admissao) encontrados.admissao = 'Informe a data de admissao.';
     if (ehIntermitente) {
       if (!form.salarioHora || form.salarioHora <= 0) encontrados.salarioHora = 'Intermitente precisa de valor por hora.';
     } else if (form.salarioBase <= 0) {
-      encontrados.salarioBase = 'Informe o salario base.';
+      encontrados.salarioBase = 'Informe o salário base.';
     }
     if (form.cargaHorariaMensal <= 0) encontrados.cargaHorariaMensal = 'Carga horaria mensal deve ser maior que zero.';
     if (form.tipoPix && form.chavePix && !chavePixValida(form.tipoPix, form.chavePix)) {
@@ -187,7 +187,7 @@ export function ColaboradorForm(): JSX.Element {
 
   if (!novo && registro.carregando && !registro.dados) {
     return (
-      <div className="cartao p-4">
+      <div className="cartão p-4">
         <Carregando linhas={8} />
       </div>
     );
@@ -195,7 +195,7 @@ export function ColaboradorForm(): JSX.Element {
 
   if (!novo && registro.erro) {
     return (
-      <Alerta nivel="critico" titulo="Colaborador nao encontrado" acao={<Link to="/colaboradores" className="botao-secundario">Voltar</Link>}>
+      <Alerta nivel="critico" titulo="Colaborador não encontrado" acao={<Link to="/colaboradores" className="botao-secundario">Voltar</Link>}>
         {registro.erro}
       </Alerta>
     );
@@ -215,7 +215,7 @@ export function ColaboradorForm(): JSX.Element {
               </span>
             </span>
           ) : (
-            'Cadastro completo: dados pessoais, contrato, beneficios e conta para pagamento.'
+            'Cadastro completo: dados pessoais, contrato, benefícios e conta para pagamento.'
           )
         }
         acoes={
@@ -228,7 +228,7 @@ export function ColaboradorForm(): JSX.Element {
                 <IconeLixeira /> Excluir
               </button>
             ) : null}
-            {!novo && registro.dados && registro.dados.situacao !== 'DEMITIDO' && pode('rescisoes:criar') ? (
+            {!novo && registro.dados && registro.dados.situacao !== 'DEMITIDO' && pode('rescisões:criar') ? (
               <button type="button" className="botao-perigo" onClick={() => setDemitindo(true)}>
                 <IconeSaida /> Demitir
               </button>
@@ -237,8 +237,8 @@ export function ColaboradorForm(): JSX.Element {
         }
       />
 
-      {acao.erro ? <Alerta nivel="critico" titulo="Nao foi possivel salvar">{acao.erro}</Alerta> : null}
-      {salvo ? <Alerta nivel="sucesso" titulo="Cadastro salvo">As alteracoes valem a partir da proxima folha processada.</Alerta> : null}
+      {acao.erro ? <Alerta nivel="critico" titulo="Não foi possível salvar">{acao.erro}</Alerta> : null}
+      {salvo ? <Alerta nivel="sucesso" titulo="Cadastro salvo">As alteracoes valem a partir da próxima folha processada.</Alerta> : null}
       {Object.keys(erros).length > 0 ? (
         <Alerta nivel="atencao" titulo="Confira os campos destacados">
           {Object.values(erros).join(' ')}
@@ -255,7 +255,7 @@ export function ColaboradorForm(): JSX.Element {
       />
 
       <form onSubmit={enviar} noValidate className="space-y-5">
-        <div className="cartao p-4">
+        <div className="cartão p-4">
           {aba === 'pessoais' ? (
             <Secao titulo="Identificacao" descricao="CPF e PIS validados pelos digitos verificadores — o CNAB rejeita o lote com CPF errado.">
               <CampoTexto
@@ -305,7 +305,7 @@ export function ColaboradorForm(): JSX.Element {
                 dica={novo ? 'Deixe em branco para o sistema gerar.' : undefined}
               />
               <CampoArea
-                rotulo="Observacoes"
+                rotulo="Observações"
                 value={form.observacoes ?? ''}
                 disabled={somenteLeitura}
                 onChange={(e) => alterar('observacoes', e.target.value)}
@@ -316,9 +316,9 @@ export function ColaboradorForm(): JSX.Element {
 
           {aba === 'contrato' ? (
             <div className="space-y-6">
-              <Secao titulo="Vinculo">
+              <Secao titulo="Vínculo">
                 <CampoTexto
-                  rotulo="Funcao"
+                  rotulo="Função"
                   required
                   value={form.funcao}
                   disabled={somenteLeitura}
@@ -350,14 +350,14 @@ export function ColaboradorForm(): JSX.Element {
                   opcoes={TIPOS_CONTRATO.map((t) => ({ valor: t, rotulo: ROTULO_CONTRATO[t] }))}
                 />
                 <CampoSelect
-                  rotulo="Situacao"
+                  rotulo="Situação"
                   value={form.situacao}
                   disabled={somenteLeitura}
                   onChange={(e) => alterar('situacao', e.target.value as Situacao)}
                   opcoes={SITUACOES.map((s) => ({ valor: s, rotulo: ROTULO_SITUACAO[s] }))}
                 />
                 <CampoTexto
-                  rotulo="Data de admissao"
+                  rotulo="Data de admissão"
                   type="date"
                   required
                   value={form.admissao}
@@ -367,7 +367,7 @@ export function ColaboradorForm(): JSX.Element {
                 />
               </Secao>
 
-              <Secao titulo="Remuneracao">
+              <Secao titulo="Remuneração">
                 {ehIntermitente ? (
                   <MoedaInput
                     rotulo="Valor por hora"
@@ -375,11 +375,11 @@ export function ColaboradorForm(): JSX.Element {
                     aoMudar={(v) => alterar('salarioHora', v)}
                     desabilitado={somenteLeitura}
                     erro={erros.salarioHora}
-                    dica="Contrato intermitente nao tem salario mensal fixo."
+                    dica="Contrato intermitente não tem salário mensal fixo."
                   />
                 ) : (
                   <MoedaInput
-                    rotulo="Salario base mensal"
+                    rotulo="Salário base mensal"
                     valor={form.salarioBase}
                     aoMudar={(v) => alterar('salarioBase', v)}
                     desabilitado={somenteLeitura}
@@ -394,7 +394,7 @@ export function ColaboradorForm(): JSX.Element {
                   disabled={somenteLeitura}
                   onChange={(e) => alterar('cargaHorariaMensal', Number(e.target.value))}
                   erro={erros.cargaHorariaMensal}
-                  dica="Base do valor da hora extra. Jornada padrao: 220h."
+                  dica="Base do valor da hora extra. Jornada padrão: 220h."
                 />
                 <div className="rounded-md border border-[var(--borda)] bg-[var(--superficie-sutil)] px-3 py-2">
                   <p className="sobrancelha">Valor da hora</p>
@@ -403,18 +403,18 @@ export function ColaboradorForm(): JSX.Element {
                       ehIntermitente ? (form.salarioHora ?? 0) : form.cargaHorariaMensal > 0 ? form.salarioBase / form.cargaHorariaMensal : 0,
                     )}
                   </p>
-                  <p className="mt-0.5 text-xs text-[var(--texto-3)]">Calculado a partir do salario e da jornada.</p>
+                  <p className="mt-0.5 text-xs text-[var(--texto-3)]">Calculado a partir do salário e da jornada.</p>
                 </div>
               </Secao>
             </div>
           ) : null}
 
-          {aba === 'beneficios' ? (
+          {aba === 'benefícios' ? (
             <div className="space-y-6">
               <Secao titulo="Vale-transporte" colunas={2}>
                 <CampoCheck
                   rotulo="Recebe vale-transporte"
-                  descricao="O desconto e limitado a 6% do salario base."
+                  descricao="O desconto e limitado a 6% do salário base."
                   marcado={form.valeTransporte}
                   desabilitado={somenteLeitura}
                   aoMudar={(v) => alterar('valeTransporte', v)}
@@ -438,13 +438,13 @@ export function ColaboradorForm(): JSX.Element {
                   onChange={(e) => alterar('dependentesIRRF', Number(e.target.value))}
                 />
                 <CampoTexto
-                  rotulo="Dependentes para salario-familia"
+                  rotulo="Dependentes para salário-familia"
                   type="number"
                   min={0}
                   value={form.dependentesSalarioFamilia}
                   disabled={somenteLeitura}
                   onChange={(e) => alterar('dependentesSalarioFamilia', Number(e.target.value))}
-                  dica="Filhos ate 14 anos, dentro do teto da remuneracao."
+                  dica="Filhos até 14 anos, dentro do teto da remuneração."
                 />
                 <CampoSelect
                   rotulo="Insalubridade"
@@ -453,20 +453,20 @@ export function ColaboradorForm(): JSX.Element {
                   onChange={(e) => alterar('insalubridadePercentual', e.target.value ? Number(e.target.value) : null)}
                   vazio="Sem insalubridade"
                   opcoes={[
-                    { valor: '10', rotulo: 'Grau minimo — 10%' },
+                    { valor: '10', rotulo: 'Grau mínimo — 10%' },
                     { valor: '20', rotulo: 'Grau medio — 20%' },
-                    { valor: '40', rotulo: 'Grau maximo — 40%' },
+                    { valor: '40', rotulo: 'Grau máximo — 40%' },
                   ]}
                 />
                 <CampoCheck
                   rotulo="Periculosidade (30%)"
-                  descricao="Adicional sobre o salario base."
+                  descricao="Adicional sobre o salário base."
                   marcado={form.periculosidade}
                   desabilitado={somenteLeitura}
                   aoMudar={(v) => alterar('periculosidade', v)}
                 />
                 <CampoTexto
-                  rotulo="Pontos de comissao"
+                  rotulo="Pontos de comissão"
                   type="number"
                   min={0}
                   step="0.5"
@@ -482,10 +482,10 @@ export function ColaboradorForm(): JSX.Element {
           {aba === 'bancarios' ? (
             <div className="space-y-6">
               <Alerta nivel="info" titulo="Estes dados alimentam a remessa bancaria">
-                Sem conta ou chave PIX valida, o colaborador entra na lista de inconsistencias e fica de fora do lote.
+                Sem conta ou chave PIX valida, o colaborador entra na lista de inconsistências e fica de fora do lote.
               </Alerta>
 
-              <Secao titulo="Conta para credito">
+              <Secao titulo="Conta para crédito">
                 <CampoSelect
                   rotulo="Banco"
                   value={form.bancoCodigo ?? ''}
@@ -496,7 +496,7 @@ export function ColaboradorForm(): JSX.Element {
                 />
                 <div className="grid grid-cols-[1fr_5rem] gap-2">
                   <CampoTexto
-                    rotulo="Agencia"
+                    rotulo="Agência"
                     mono
                     inputMode="numeric"
                     value={form.agencia ?? ''}
@@ -539,7 +539,7 @@ export function ColaboradorForm(): JSX.Element {
                 />
               </Secao>
 
-              <Secao titulo="Chave PIX" descricao="Usada no layout PIX em lote, quando a empresa nao tem convenio de folha.">
+              <Secao titulo="Chave PIX" descricao="Usada no layout PIX em lote, quando a empresa não tem convênio de folha.">
                 <CampoSelect
                   rotulo="Tipo de chave"
                   value={form.tipoPix ?? ''}
@@ -556,24 +556,24 @@ export function ColaboradorForm(): JSX.Element {
                   onChange={(e) => alterar('chavePix', e.target.value || null)}
                   erro={erros.chavePix}
                   placeholder={form.tipoPix ? EXEMPLO_PIX[form.tipoPix] : 'Escolha o tipo primeiro'}
-                  dica={form.tipoPix === 'TELEFONE' ? 'Formato E.164: +55 seguido de DDD e numero.' : undefined}
+                  dica={form.tipoPix === 'TELEFONE' ? 'Formato E.164: +55 seguido de DDD e número.' : undefined}
                   className="sm:col-span-2"
                 />
               </Secao>
             </div>
           ) : null}
 
-          {aba === 'historico' ? (
+          {aba === 'histórico' ? (
             novo ? (
-              <EstadoVazio titulo="Sem historico ainda" descricao="Salve o cadastro para comecar a registrar a linha do tempo." />
+              <EstadoVazio titulo="Sem histórico ainda" descricao="Salve o cadastro para comecar a registrar a linha do tempo." />
             ) : historico.carregando ? (
               <Carregando linhas={6} />
             ) : historico.erro ? (
-              <Alerta nivel="critico" titulo="Nao foi possivel carregar o historico">
+              <Alerta nivel="critico" titulo="Não foi possível carregar o histórico">
                 {historico.erro}
               </Alerta>
             ) : (historico.dados ?? []).length === 0 ? (
-              <EstadoVazio titulo="Nada registrado" descricao="Faltas, ferias, folhas e rescisao aparecem aqui conforme acontecem." />
+              <EstadoVazio titulo="Nada registrado" descricao="Faltas, férias, folhas e rescisão aparecem aqui conforme acontecem." />
             ) : (
               <ol className="relative space-y-0 border-l-2 border-[var(--borda)] pl-4">
                 {(historico.dados ?? []).map((evento, i) => (
@@ -595,7 +595,7 @@ export function ColaboradorForm(): JSX.Element {
           ) : null}
         </div>
 
-        {aba !== 'historico' && !somenteLeitura ? (
+        {aba !== 'histórico' && !somenteLeitura ? (
           <div className="sticky bottom-0 flex flex-wrap items-center justify-end gap-2 rounded-lg border border-[var(--borda)] bg-[var(--superficie)]/95 px-3 py-2.5 backdrop-blur">
             <p className="mr-auto text-xs text-[var(--texto-3)]">
               {Object.keys(validacao).length > 0
@@ -638,8 +638,8 @@ export function ColaboradorForm(): JSX.Element {
         }
       >
         <p className="text-sm text-[var(--texto-2)]">
-          A exclusao so e permitida enquanto o colaborador nao tiver folha vinculada. Se ele ja entrou em alguma folha, use{' '}
-          <strong>Demitir</strong> — o historico precisa ser preservado.
+          A exclusao so e permitida enquanto o colaborador não tiver folha vinculada. Se ele já entrou em alguma folha, use{' '}
+          <strong>Demitir</strong> — o histórico precisa ser preservado.
         </p>
       </Modal>
 

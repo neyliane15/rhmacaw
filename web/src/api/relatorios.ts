@@ -39,7 +39,7 @@ export function provisoes(competencia: Competencia): Promise<RelatorioProvisoes>
 }
 
 /**
- * Serie de 12 meses ate a competencia informada, numa unica chamada. Substitui
+ * Serie de 12 meses até a competência informada, numa unica chamada. Substitui
  * o leque de requisicoes paralelas a `custo-centro-custo` que o painel fazia.
  */
 export function evolucaoFolha(competencia: Competencia): Promise<PontoEvolucaoFolha[]> {

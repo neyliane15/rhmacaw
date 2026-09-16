@@ -94,7 +94,7 @@ interface Origem {
 function contaDoTenant(tenantId: string): ContaPagadora {
   const conta = repoConta.buscarContaPagadora(tenantId);
   if (!conta) {
-    throw erroNaoProcessavel('Conta pagadora da empresa nao configurada. Preencha em /api/banco/conta.');
+    throw erroNaoProcessavel('Conta pagadora da empresa não configurada. Preencha em /api/banco/conta.');
   }
   return conta;
 }
@@ -144,7 +144,7 @@ function origemFolha(tenantId: string, folhaId: string, exigirFechada: boolean):
     }
     const colaborador = cadastros.get(item.colaboradorId);
     if (!colaborador) {
-      inconsistencias.push(`${item.colaboradorNome}: cadastro nao encontrado.`);
+      inconsistencias.push(`${item.colaboradorNome}: cadastro não encontrado.`);
       continue;
     }
     favorecidos.push(
@@ -162,9 +162,9 @@ function origemFolha(tenantId: string, folhaId: string, exigirFechada: boolean):
 
 function origemComissao(tenantId: string, periodoId: string, exigirFechado: boolean): Origem {
   const periodo = repoComissoes.buscarPeriodo(tenantId, periodoId);
-  if (!periodo) throw erroNaoEncontrado('Periodo de comissao');
+  if (!periodo) throw erroNaoEncontrado('Período de comissão');
   if (exigirFechado && periodo.status !== 'FECHADO') {
-    throw erroConflito(`Periodo ${periodo.status}: a remessa exige um periodo FECHADO.`);
+    throw erroConflito(`Período ${periodo.status}: a remessa exige um período FECHADO.`);
   }
 
   const cadastros = new Map(repoColaboradores.listarTodos(tenantId).map((c) => [c.id, c]));
@@ -174,7 +174,7 @@ function origemComissao(tenantId: string, periodoId: string, exigirFechado: bool
   for (const lancamento of repoComissoes.listarLancamentos(tenantId, periodoId)) {
     const colaborador = cadastros.get(lancamento.colaboradorId);
     if (!colaborador) {
-      inconsistencias.push(`${lancamento.colaboradorId}: cadastro nao encontrado.`);
+      inconsistencias.push(`${lancamento.colaboradorId}: cadastro não encontrado.`);
       continue;
     }
     if (lancamento.valor <= 0) {
@@ -187,7 +187,7 @@ function origemComissao(tenantId: string, periodoId: string, exigirFechado: bool
   }
 
   return {
-    descricao: `Comissoes da semana ${periodo.semana}/${periodo.ano}`,
+    descricao: `Comissões da semana ${periodo.semana}/${periodo.ano}`,
     favorecidos,
     inconsistencias,
     concluir: (dataPagamento) => comissaoServico.marcarComoPago(tenantId, periodo, dataPagamento),
@@ -197,21 +197,21 @@ function origemComissao(tenantId: string, periodoId: string, exigirFechado: bool
 function origemRescisao(tenantId: string, rescisaoId: string): Origem {
   const rescisao = repoRescisoes.buscarRescisao(tenantId, rescisaoId);
   if (!rescisao) throw erroNaoEncontrado('Rescisao');
-  if (rescisao.status === 'PAGA') throw erroConflito('Rescisao ja paga.');
+  if (rescisao.status === 'PAGA') throw erroConflito('Rescisão ja paga.');
 
   const colaborador = repoColaboradores.buscarColaborador(tenantId, rescisao.colaboradorId);
-  if (!colaborador) throw erroNaoEncontrado('Colaborador da rescisao');
+  if (!colaborador) throw erroNaoEncontrado('Colaborador da rescisão');
 
   const inconsistencias: string[] = [];
   const favorecidos: FavorecidoRemessa[] = [];
   if (rescisao.liquido > 0) {
     favorecidos.push(favorecidoDe(colaborador, rescisao.liquido, `TRCT${rescisao.dataDesligamento.replace(/-/g, '')}`));
   } else {
-    inconsistencias.push(`${rescisao.colaboradorNome}: TRCT com liquido ${formatarBRL(rescisao.liquido)} — nada a pagar.`);
+    inconsistencias.push(`${rescisao.colaboradorNome}: TRCT com líquido ${formatarBRL(rescisao.liquido)} — nada a pagar.`);
   }
 
   return {
-    descricao: `Rescisao de ${rescisao.colaboradorNome} (${rescisao.dataDesligamento})`,
+    descricao: `Rescisão de ${rescisao.colaboradorNome} (${rescisao.dataDesligamento})`,
     favorecidos,
     inconsistencias,
     concluir: () => rescisaoServico.marcarComoPaga(tenantId, rescisao.id),
@@ -220,22 +220,22 @@ function origemRescisao(tenantId: string, rescisaoId: string): Origem {
 
 function origemFerias(tenantId: string, feriasId: string): Origem {
   const ferias = repoFerias.buscarFerias(tenantId, feriasId);
-  if (!ferias) throw erroNaoEncontrado('Periodo de ferias');
-  if (ferias.status === 'CANCELADA') throw erroConflito('Periodo de ferias CANCELADA nao gera pagamento.');
+  if (!ferias) throw erroNaoEncontrado('Período de férias');
+  if (ferias.status === 'CANCELADA') throw erroConflito('Período de férias CANCELADA não gera pagamento.');
 
   const colaborador = repoColaboradores.buscarColaborador(tenantId, ferias.colaboradorId);
-  if (!colaborador) throw erroNaoEncontrado('Colaborador das ferias');
+  if (!colaborador) throw erroNaoEncontrado('Colaborador das férias');
 
   const inconsistencias: string[] = [];
   const favorecidos: FavorecidoRemessa[] = [];
   if (ferias.liquido > 0) {
     favorecidos.push(favorecidoDe(colaborador, ferias.liquido, `FER${ferias.inicioGozo.replace(/-/g, '')}`));
   } else {
-    inconsistencias.push(`${colaborador.nome}: recibo de ferias com liquido ${formatarBRL(ferias.liquido)}.`);
+    inconsistencias.push(`${colaborador.nome}: recibo de férias com líquido ${formatarBRL(ferias.liquido)}.`);
   }
 
   return {
-    descricao: `Ferias de ${colaborador.nome} a partir de ${ferias.inicioGozo}`,
+    descricao: `Férias de ${colaborador.nome} a partir de ${ferias.inicioGozo}`,
     favorecidos,
     inconsistencias,
     // O recibo de ferias nao muda de status ao ser pago: o ciclo PROGRAMADA ->
@@ -302,7 +302,7 @@ function executarGeracao<T>(operacao: () => T): T {
     return operacao();
   } catch (erro) {
     if (erro instanceof ErroDominio) throw erro;
-    throw erroNaoProcessavel(erro instanceof Error ? erro.message : 'Nao foi possivel gerar o arquivo da remessa.');
+    throw erroNaoProcessavel(erro instanceof Error ? erro.message : 'Não foi possível gerar o arquivo da remessa.');
   }
 }
 
@@ -321,7 +321,7 @@ function gerarArquivo(
       const banco = bancoPorCodigo(pedido.bancoCodigo);
       if (pedido.usarPix && banco && !banco.suportaPix) {
         throw erroNaoProcessavel(
-          `${banco.nome} nao aceita lote PIX no CNAB 240. ${banco.observacao ?? ''}`.trim(),
+          `${banco.nome} não aceita lote PIX no CNAB 240. ${banco.observacao ?? ''}`.trim(),
         );
       }
       const resultado = executarGeracao(() =>
@@ -345,7 +345,7 @@ function gerarArquivo(
     case 'PIX_CSV': {
       const validacoes = validarFavorecidos(favorecidos, true);
       const validos = validacoes.filter((v) => v.erros.length === 0).map((v) => v.favorecido);
-      if (validos.length === 0) throw erroNaoProcessavel('Nenhum favorecido com chave PIX valida.');
+      if (validos.length === 0) throw erroNaoProcessavel('Nenhum favorecido com chave PIX válida.');
       return {
         conteudo: gerarPixCSV(validos, pedido.dataPagamento, descricao),
         nomeArquivo: montarNomeArquivo(pedido.bancoCodigo, numeroRemessa, pedido.dataPagamento, 'PIX').replace('.REM', '.csv'),
@@ -370,7 +370,7 @@ function gerarArquivo(
       // OFX e formato de extrato (banco -> empresa); nao existe remessa OFX de
       // pagamento. Manter a opcao no enum e recusar aqui evita gerar um arquivo
       // que nenhum banco aceitaria.
-      throw erroNaoProcessavel('OFX e um formato de extrato bancario e nao pode ser usado como remessa de pagamento.');
+      throw erroNaoProcessavel('OFX e um formato de extrato bancario e não pode ser usado como remessa de pagamento.');
   }
 }
 
@@ -380,7 +380,7 @@ function gerarArquivo(
  */
 export function gerarRemessa(tenantId: string, pedido: PedidoRemessa, usuarioId: string | null): Remessa {
   if (!bancoPorCodigo(pedido.bancoCodigo)) {
-    throw erroNaoProcessavel(`Banco ${pedido.bancoCodigo} nao suportado na geracao de remessa.`);
+    throw erroNaoProcessavel(`Banco ${pedido.bancoCodigo} não suportado na geracao de remessa.`);
   }
 
   const ativa = repoRemessas.buscarRemessaAtiva(tenantId, pedido.origem, pedido.origemId);
@@ -458,7 +458,7 @@ export function alterarStatus(
   if (!remessa) throw erroNaoEncontrado('Remessa');
 
   if (!TRANSICOES[remessa.status].includes(novoStatus)) {
-    throw erroConflito(`Transicao ${remessa.status} -> ${novoStatus} nao permitida.`);
+    throw erroConflito(`Transicao ${remessa.status} -> ${novoStatus} não permitida.`);
   }
 
   const atualizada: Remessa = {

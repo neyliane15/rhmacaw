@@ -41,7 +41,7 @@ interface LinhaEditavel {
 
 export function Comissoes(): JSX.Element {
   const { pode } = useAuth();
-  const podeEditar = pode('comissoes:editar');
+  const podeEditar = pode('comissões:editar');
   const podeBanco = pode('banco:gerar');
   const inicial = semanaISO(hojeISO());
 
@@ -64,7 +64,7 @@ export function Comissoes(): JSX.Element {
     Boolean(periodoDaSemana?.id),
   );
 
-  // Carrega os parametros e a grade a partir do periodo vindo da API.
+  // Carrega os parametros e a grade a partir do período vindo da API.
   useEffect(() => {
     const dados = detalhe.dados;
     if (!dados) return;
@@ -130,7 +130,7 @@ export function Comissoes(): JSX.Element {
 
   async function aplicarParametros(): Promise<void> {
     if (!periodo) return;
-    // A semana ja existe: `POST /periodos` devolveria 409. Quem altera valor
+    // A semana já existe: `POST /períodos` devolveria 409. Quem altera valor
     // arrecadado, retencao e criterio de um periodo aberto e o PUT.
     const atualizado = await acao.executar(() =>
       apiComissoes.atualizarPeriodo(periodo.id, { valorArrecadado, percentualRetencao, criterioRateio: criterio }),
@@ -166,7 +166,7 @@ export function Comissoes(): JSX.Element {
     );
     if (atualizado) {
       detalhe.definir(atualizado);
-      setAviso('Lancamentos gravados.');
+      setAviso('Lançamentos gravados.');
     }
   }
 
@@ -193,8 +193,8 @@ export function Comissoes(): JSX.Element {
     <div className="space-y-4">
       <CabecalhoPagina
         sobrancelha={`Semana ${String(semana).padStart(2, '0')} de ${ano} · ${formatarDataBR(inicio)} a ${formatarDataBR(fim)}`}
-        titulo="Comissoes da semana"
-        descricao="Arrecadacao da casa rateada entre a equipe e adiantada antes do fechamento da folha."
+        titulo="Comissões da semana"
+        descricao="Arrecadação da casa rateada entre a equipe e adiantada antes do fechamento da folha."
         acoes={
           <>
             <SeletorSemana ano={ano} semana={semana} aoMudar={(a, s) => { setAno(a); setSemana(s); setAviso(null); }} />
@@ -207,26 +207,26 @@ export function Comissoes(): JSX.Element {
       {aviso ? <Alerta nivel="sucesso" aoFechar={() => setAviso(null)}>{aviso}</Alerta> : null}
 
       {periodos.erro ? (
-        <Alerta nivel="critico" titulo="Nao foi possivel carregar as semanas">
+        <Alerta nivel="critico" titulo="Não foi possível carregar as semanas">
           {periodos.erro}
         </Alerta>
       ) : null}
 
       {periodos.carregando ? (
-        <div className="cartao p-4">
+        <div className="cartão p-4">
           <Carregando linhas={5} />
         </div>
       ) : !periodoDaSemana ? (
-        <section className="cartao p-4">
+        <section className="cartão p-4">
           <EstadoVazio
             icone={<IconeMoedas />}
-            titulo={`Semana ${String(semana).padStart(2, '0')} ainda nao foi aberta`}
-            descricao="Informe a arrecadacao da semana e o criterio de rateio para abrir o periodo."
+            titulo={`Semana ${String(semana).padStart(2, '0')} ainda não foi aberta`}
+            descricao="Informe a arrecadação da semana e o critério de rateio para abrir o periodo."
           />
           <div className="mx-auto grid max-w-2xl gap-3 sm:grid-cols-3">
             <MoedaInput rotulo="Valor arrecadado na semana" valor={valorArrecadado} aoMudar={setValorArrecadado} />
             <CampoTexto
-              rotulo="Retencao da casa (%)"
+              rotulo="Retenção da casa (%)"
               type="number"
               min={0}
               max={100}
@@ -235,7 +235,7 @@ export function Comissoes(): JSX.Element {
               onChange={(e) => setPercentualRetencao(Number(e.target.value))}
             />
             <CampoSelect
-              rotulo="Criterio de rateio"
+              rotulo="Critério de rateio"
               value={criterio}
               onChange={(e) => setCriterio(e.target.value as CriterioRateio)}
               opcoes={CRITERIOS_RATEIO.map((c) => ({ valor: c, rotulo: ROTULO_CRITERIO[c] }))}
@@ -250,7 +250,7 @@ export function Comissoes(): JSX.Element {
           </div>
         </section>
       ) : detalhe.carregando && !periodo ? (
-        <div className="cartao p-4">
+        <div className="cartão p-4">
           <Carregando linhas={6} />
         </div>
       ) : periodo ? (
@@ -259,7 +259,7 @@ export function Comissoes(): JSX.Element {
             <TrilhoPagamento etapa={periodo.status === 'PAGO' ? 'gerada' : 'origem'} compacto />
           ) : null}
 
-          <section className="cartao p-4">
+          <section className="cartão p-4">
             <h2 className="sobrancelha mb-3">Parametros da semana</h2>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <MoedaInput
@@ -269,7 +269,7 @@ export function Comissoes(): JSX.Element {
                 desabilitado={!aberto || !podeEditar}
               />
               <CampoTexto
-                rotulo="Retencao da casa (%)"
+                rotulo="Retenção da casa (%)"
                 type="number"
                 min={0}
                 max={100}
@@ -280,7 +280,7 @@ export function Comissoes(): JSX.Element {
                 dica={`Retido: ${formatarBRL(previa.valorRetido)}`}
               />
               <CampoSelect
-                rotulo="Criterio de rateio"
+                rotulo="Critério de rateio"
                 value={criterio}
                 disabled={!aberto || !podeEditar}
                 onChange={(e) => setCriterio(e.target.value as CriterioRateio)}
@@ -297,13 +297,13 @@ export function Comissoes(): JSX.Element {
               </div>
             </div>
             <p className="mt-2 text-xs text-[var(--texto-3)]">
-              Competencia da folha que absorve esta semana: <strong>{rotuloCompetencia(periodo.competencia)}</strong>.
+              Competência da folha que absorve esta semana: <strong>{rotuloCompetencia(periodo.competencia)}</strong>.
             </p>
           </section>
 
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <Indicador rotulo="Arrecadado" valor={formatarBRL(previa.valorArrecadado)} />
-            <Indicador rotulo="Retido pela casa" valor={formatarBRL(previa.valorRetido)} apoio={`${formatarNumero(percentualRetencao, 1)}% da arrecadacao`} />
+            <Indicador rotulo="Retido pela casa" valor={formatarBRL(previa.valorRetido)} apoio={`${formatarNumero(percentualRetencao, 1)}% da arrecadação`} />
             <Indicador rotulo="Distribuivel" valor={formatarBRL(previa.valorDistribuivel)} apoio={`${linhas.length} participante(s)`} />
             <Indicador
               rotulo="Total distribuido"
@@ -323,17 +323,17 @@ export function Comissoes(): JSX.Element {
             </Alerta>
           ))}
 
-          <section className="cartao overflow-hidden">
+          <section className="cartão overflow-hidden">
             <header className="flex flex-wrap items-center gap-2 border-b border-[var(--borda)] bg-[var(--superficie-sutil)] px-3 py-2">
               <h2 className="sobrancelha">Grade de participantes</h2>
               <span className="text-2xs text-[var(--texto-3)]">
-                {aberto ? 'Os valores recalculam enquanto voce digita.' : 'Semana fechada — grade somente leitura.'}
+                {aberto ? 'Os valores recalculam enquanto você digita.' : 'Semana fechada — grade somente leitura.'}
               </span>
               <div className="ml-auto flex flex-wrap items-center gap-2">
                 {aberto ? (
                   <>
                     <button type="button" className="botao-secundario" onClick={salvarLancamentos} disabled={!podeEditar || acao.executando}>
-                      {acao.executando ? <Girando rotulo="Gravando" /> : 'Salvar lancamentos'}
+                      {acao.executando ? <Girando rotulo="Gravando" /> : 'Salvar lançamentos'}
                     </button>
                     <button type="button" className="botao-primario" onClick={fecharSemana} disabled={!podeEditar || acao.executando || linhas.length === 0}>
                       Fechar semana
@@ -349,7 +349,7 @@ export function Comissoes(): JSX.Element {
                     </button>
                   </>
                 ) : (
-                  <Badge tom="positivo">Pago — periodo imutavel</Badge>
+                  <Badge tom="positivo">Pago — período imutavel</Badge>
                 )}
               </div>
             </header>
@@ -357,7 +357,7 @@ export function Comissoes(): JSX.Element {
             {linhas.length === 0 ? (
               <EstadoVazio
                 titulo="Nenhum participante na semana"
-                descricao="Use o botao Ratear para trazer os colaboradores ativos com pontos de comissao."
+                descricao="Use o botao Ratear para trazer os colaboradores ativos com pontos de comissão."
                 acao={
                   aberto ? (
                     <button type="button" className="botao-primario" onClick={ratearEntreAtivos} disabled={!podeEditar}>

@@ -5,6 +5,7 @@ import { useCompetencia } from '../contextos/CompetenciaContext.js';
 import { useTema } from '../contextos/TemaContext.js';
 import { ROTULO_PAPEL } from '../util/rotulos.js';
 import { iniciais } from '../util/formato.js';
+import { Logomarca } from './Logomarca.js';
 import { SeletorCompetencia } from './SeletorCompetencia.js';
 import {
   IconeBanco,
@@ -38,24 +39,24 @@ interface GrupoNav {
 
 const NAVEGACAO: GrupoNav[] = [
   {
-    titulo: 'Visao geral',
-    itens: [{ para: '/', rotulo: 'Painel', icone: <IconePainel />, permissao: 'relatorios:ler', fim: true }],
+    titulo: 'Visão geral',
+    itens: [{ para: '/', rotulo: 'Painel', icone: <IconePainel />, permissao: 'relatórios:ler', fim: true }],
   },
   {
     titulo: 'Pessoas',
     itens: [
       { para: '/colaboradores', rotulo: 'Colaboradores', icone: <IconePessoas />, permissao: 'colaboradores:ler' },
       { para: '/faltas', rotulo: 'Faltas e ponto', icone: <IconeCalendario />, permissao: 'faltas:ler' },
-      { para: '/ferias', rotulo: 'Ferias', icone: <IconePalmeira />, permissao: 'ferias:ler' },
+      { para: '/ferias', rotulo: 'Férias', icone: <IconePalmeira />, permissao: 'férias:ler' },
     ],
   },
   {
     titulo: 'Pagamento',
     itens: [
-      { para: '/comissoes', rotulo: 'Comissoes da semana', icone: <IconeMoedas />, permissao: 'comissoes:ler' },
+      { para: '/comissoes', rotulo: 'Comissões da semana', icone: <IconeMoedas />, permissao: 'comissões:ler' },
       { para: '/folha', rotulo: 'Folha', icone: <IconeFolha />, permissao: 'folha:ler' },
-      { para: '/decimo-terceiro', rotulo: 'Decimo terceiro', icone: <IconePresente />, permissao: 'folha:ler' },
-      { para: '/rescisoes', rotulo: 'Rescisoes', icone: <IconeSaida />, permissao: 'rescisoes:ler' },
+      { para: '/decimo-terceiro', rotulo: 'Décimo terceiro', icone: <IconePresente />, permissao: 'folha:ler' },
+      { para: '/rescisoes', rotulo: 'Rescisões', icone: <IconeSaida />, permissao: 'rescisões:ler' },
     ],
   },
   {
@@ -63,16 +64,16 @@ const NAVEGACAO: GrupoNav[] = [
     itens: [{ para: '/banco', rotulo: 'Banco e remessas', icone: <IconeBanco />, permissao: 'banco:ler' }],
   },
   {
-    titulo: 'Analise',
-    itens: [{ para: '/relatorios', rotulo: 'Relatorios', icone: <IconeRelatorio />, permissao: 'relatorios:ler' }],
+    titulo: 'Análise',
+    itens: [{ para: '/relatorios', rotulo: 'Relatórios', icone: <IconeRelatorio />, permissao: 'relatórios:ler' }],
   },
 ];
 
 function Marca(): JSX.Element {
   return (
     <div className="flex items-center gap-2.5">
-      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-md bg-arara-700 font-display text-base font-bold text-ouro-300">
-        R
+      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-areia-200 text-arara-600">
+        <Logomarca className="h-7 w-7" />
       </span>
       <span className="min-w-0 leading-tight">
         <span className="block font-display text-base font-semibold tracking-tight">RH Macaw</span>
@@ -170,7 +171,8 @@ export function Layout(): JSX.Element {
           <button type="button" onClick={() => setMenuAberto(true)} aria-label="Abrir menu" className="botao-fantasma px-2 py-1 text-lg lg:hidden">
             <IconeMenu />
           </button>
-          <div className="lg:hidden">
+          <div className="flex items-center gap-2 lg:hidden">
+            <Logomarca className="h-6 w-6 text-arara-600 dark:text-arara-300" />
             <span className="font-display text-base font-semibold">RH Macaw</span>
           </div>
 

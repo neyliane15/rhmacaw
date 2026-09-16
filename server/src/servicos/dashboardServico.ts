@@ -45,8 +45,8 @@ export function montarDashboard(tenantId: string, competencia: Competencia): Res
   if (!folha) {
     alertas.push({
       nivel: 'ATENCAO',
-      titulo: `Folha de ${rotuloCompetencia(competencia)} nao iniciada`,
-      detalhe: 'Nenhuma folha mensal foi processada nesta competencia.',
+      titulo: `Folha de ${rotuloCompetencia(competencia)} não iniciada`,
+      detalhe: 'Nenhuma folha mensal foi processada nesta competência.',
       acao: '/folha',
     });
   }
@@ -66,15 +66,15 @@ export function montarDashboard(tenantId: string, competencia: Competencia): Res
   if (vencidas.length > 0) {
     alertas.push({
       nivel: 'CRITICO',
-      titulo: `${vencidas.length} colaborador(es) com ferias vencidas`,
-      detalhe: 'Ferias vencidas sao devidas em dobro (art. 137 da CLT).',
+      titulo: `${vencidas.length} colaborador(es) com férias vencidas`,
+      detalhe: 'Férias vencidas sao devidas em dobro (art. 137 da CLT).',
       acao: '/ferias',
     });
   }
   if (vencendo.length > 0) {
     alertas.push({
       nivel: 'ATENCAO',
-      titulo: `${vencendo.length} periodo(s) de ferias vencem em ate 90 dias`,
+      titulo: `${vencendo.length} período(s) de férias vencem em até 90 dias`,
       detalhe: vencendo
         .slice(0, 5)
         .map((s) => `${s.colaboradorNome} (${s.limiteConcessivo})`)

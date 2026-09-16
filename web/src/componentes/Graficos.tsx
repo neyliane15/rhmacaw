@@ -132,7 +132,7 @@ export interface SerieLinha {
   nome: string;
 }
 
-/** Evolucao mensal. Uma unica escala de valor — nunca dois eixos y. */
+/** Evolução mensal. Uma unica escala de valor — nunca dois eixos y. */
 export function GraficoLinhas({
   dados,
   series,
@@ -179,7 +179,7 @@ export function GraficoLinhas({
   );
 }
 
-/** Barras verticais agrupadas para admissoes x demissoes (contagens, nao moeda). */
+/** Barras verticais agrupadas para admissoes x demissoes (contagens, não moeda). */
 export function GraficoMovimento({
   dados,
   altura = 220,
@@ -212,8 +212,8 @@ export function GraficoMovimento({
               );
             }}
           />
-          <Bar dataKey="admissoes" name="Admissoes" fill={SERIES[0]} radius={[4, 4, 0, 0]} stroke="var(--superficie)" strokeWidth={2} isAnimationActive={false} />
-          <Bar dataKey="demissoes" name="Demissoes" fill={SERIES[1]} radius={[4, 4, 0, 0]} stroke="var(--superficie)" strokeWidth={2} isAnimationActive={false} />
+          <Bar dataKey="admissões" name="Admissões" fill={SERIES[0]} radius={[4, 4, 0, 0]} stroke="var(--superficie)" strokeWidth={2} isAnimationActive={false} />
+          <Bar dataKey="demissões" name="Demissões" fill={SERIES[1]} radius={[4, 4, 0, 0]} stroke="var(--superficie)" strokeWidth={2} isAnimationActive={false} />
         </BarChart>
       </ResponsiveContainer>
       <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--texto-2)]">

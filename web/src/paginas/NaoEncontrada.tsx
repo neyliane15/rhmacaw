@@ -3,10 +3,10 @@ import { EstadoVazio } from '../componentes/EstadoVazio.js';
 
 export function NaoEncontrada(): JSX.Element {
   return (
-    <div className="cartao">
+    <div className="cartão">
       <EstadoVazio
-        titulo="Essa tela nao existe"
-        descricao="O endereco digitado nao corresponde a nenhuma area do RH Macaw."
+        titulo="Essa tela não existe"
+        descricao="O endereco digitado não corresponde a nenhuma area do RH Macaw."
         acao={
           <Link to="/" className="botao-primario">
             Voltar ao painel

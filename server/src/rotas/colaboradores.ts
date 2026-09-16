@@ -84,8 +84,8 @@ rotasColaboradores.get('/:id/historico', exigirPermissao('colaboradores:ler'), (
     eventos.push({
       data: ferias.inicioGozo,
       tipo: 'FERIAS',
-      titulo: `Ferias (${ferias.status})`,
-      detalhe: `${ferias.diasGozo} dias de gozo ate ${ferias.fimGozo}`,
+      titulo: `Férias (${ferias.status})`,
+      detalhe: `${ferias.diasGozo} dias de gozo até ${ferias.fimGozo}`,
       valor: ferias.liquido,
       referencia: ferias.id,
     });
@@ -95,7 +95,7 @@ rotasColaboradores.get('/:id/historico', exigirPermissao('colaboradores:ler'), (
       data: `${item.competencia}-01`,
       tipo: 'FOLHA',
       titulo: `Folha ${item.tipo} (${item.status})`,
-      detalhe: `Liquido ${item.salarioLiquido.toFixed(2)} / transferir ${item.valorTransferir.toFixed(2)}`,
+      detalhe: `Líquido ${item.salarioLiquido.toFixed(2)} / transferir ${item.valorTransferir.toFixed(2)}`,
       valor: item.valorTransferir,
       referencia: item.folhaId,
     });
@@ -104,8 +104,8 @@ rotasColaboradores.get('/:id/historico', exigirPermissao('colaboradores:ler'), (
     eventos.push({
       data: rescisao.dataDesligamento,
       tipo: 'RESCISAO',
-      titulo: `Rescisao - ${rescisao.motivo}`,
-      detalhe: `Liquido ${rescisao.liquido.toFixed(2)}`,
+      titulo: `Rescisão - ${rescisao.motivo}`,
+      detalhe: `Líquido ${rescisao.liquido.toFixed(2)}`,
       valor: rescisao.liquido,
       referencia: rescisao.id,
     });
@@ -177,7 +177,7 @@ rotasColaboradores.delete('/:id', exigirPermissao('colaboradores:escrever'), (re
   const vinculos = repoColaboradores.contarItensDeFolha(identidade.tenantId, colaborador.id);
   if (vinculos > 0) {
     throw erroConflito(
-      `${colaborador.nome} tem ${vinculos} lancamento(s) em folha e nao pode ser excluido. Registre a rescisao em vez de excluir.`,
+      `${colaborador.nome} tem ${vinculos} lancamento(s) em folha e não pode ser excluido. Registre a rescisão em vez de excluir.`,
     );
   }
 

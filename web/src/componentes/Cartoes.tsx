@@ -12,7 +12,7 @@ export interface PropsIndicador {
   tom?: 'neutro' | 'critico';
 }
 
-/** Ficha de indicador: rotulo pequeno em cima, numero grande, apoio embaixo. */
+/** Ficha de indicador: rotulo pequeno em cima, número grande, apoio embaixo. */
 export function Indicador({ rotulo, valor, apoio, trilho = false, para, icone, tom = 'neutro' }: PropsIndicador): JSX.Element {
   const conteudo = (
     <>

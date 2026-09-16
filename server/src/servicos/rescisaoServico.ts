@@ -110,7 +110,7 @@ export function simularRescisao(tenantId: string, pedido: PedidoRescisao): Resul
 export function efetivarRescisao(tenantId: string, pedido: PedidoRescisao, usuarioId: string | null): Rescisao {
   const colaborador = exigirColaborador(tenantId, pedido.colaboradorId);
   if (colaborador.situacao === 'DEMITIDO') {
-    throw erroConflito(`${colaborador.nome} ja consta como DEMITIDO desde ${colaborador.demissao ?? 'data nao informada'}.`);
+    throw erroConflito(`${colaborador.nome} ja consta como DEMITIDO desde ${colaborador.demissao ?? 'data não informada'}.`);
   }
   if (pedido.dataDesligamento < pedido.dataAviso) {
     throw erroConflito('Data de desligamento anterior a data do aviso.');

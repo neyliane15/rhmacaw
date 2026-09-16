@@ -72,7 +72,7 @@ export const REGIMES_CONTRATO: Record<TipoContrato, RegimeContrato> = {
     temSalarioFamilia: true,
     perdeDSR: false, // sem jornada fixa nao ha semana de referencia para o DSR
     temDecimoTerceiroEFerias: true,
-    fundamento: 'Art. 452-A da CLT: empregado com todos os direitos, pago por periodo convocado.',
+    fundamento: 'Art. 452-A da CLT: empregado com todos os direitos, pago por período convocado.',
   },
   SOCIO: {
     inss: 'PRO_LABORE',
@@ -82,7 +82,7 @@ export const REGIMES_CONTRATO: Record<TipoContrato, RegimeContrato> = {
     temSalarioFamilia: false,
     perdeDSR: false,
     temDecimoTerceiroEFerias: false,
-    fundamento: 'Pro-labore: contribuinte individual, 11% ate o teto (Lei 10.666/2003). Sem FGTS, 13o ou ferias.',
+    fundamento: 'Pro-labore: contribuinte individual, 11% até o teto (Lei 10.666/2003). Sem FGTS, 13o ou férias.',
   },
   ESTAGIO: {
     inss: 'NENHUM',
@@ -92,7 +92,7 @@ export const REGIMES_CONTRATO: Record<TipoContrato, RegimeContrato> = {
     temSalarioFamilia: false,
     perdeDSR: false,
     temDecimoTerceiroEFerias: false,
-    fundamento: 'Lei 11.788/2008: estagio nao cria vinculo empregaticio. Bolsa sem INSS e sem FGTS; recesso no lugar de ferias.',
+    fundamento: 'Lei 11.788/2008: estágio não cria vínculo empregaticio. Bolsa sem INSS e sem FGTS; recesso no lugar de férias.',
   },
   PJ: {
     inss: 'NENHUM',
@@ -102,7 +102,7 @@ export const REGIMES_CONTRATO: Record<TipoContrato, RegimeContrato> = {
     temSalarioFamilia: false,
     perdeDSR: false,
     temDecimoTerceiroEFerias: false,
-    fundamento: 'Prestador pessoa juridica: paga-se contra nota fiscal, sem retencao na folha.',
+    fundamento: 'Prestador pessoa juridica: paga-se contra nota fiscal, sem retenção na folha.',
   },
 };
 
@@ -288,8 +288,8 @@ export function calcularFolhaMensal(entrada: EntradaFolha): ResultadoFolha {
   if (contratoSuspenso) {
     alertas.push(
       colaborador.situacao === 'AFASTADO'
-        ? 'Contrato suspenso por afastamento: nenhum salario foi apurado. Se o afastamento comecou nesta competencia, lance os 15 primeiros dias como evento avulso.'
-        : 'Vinculo sub judice ou com desligamento em tramite: pagamento sobrestado. Libere a situacao para ATIVO ou processe a rescisao quando houver definicao.',
+        ? 'Contrato suspenso por afastamento: nenhum salário foi apurado. Se o afastamento comecou nesta competência, lance os 15 primeiros dias como evento avulso.'
+        : 'Vínculo sub judice ou com desligamento em trâmite: pagamento sobrestado. Libere a situação para ATIVO ou processe a rescisão quando houver definicao.',
     );
   }
 
@@ -454,7 +454,7 @@ export function calcularFolhaMensal(entrada: EntradaFolha): ResultadoFolha {
   const valorTransferir = arredondar(salarioLiquido - comissoesAdiantadas);
 
   const fgts = regime.temFGTS ? calcularFGTS(baseFGTS) : 0;
-  if (regime.temFGTS) verbas.push(verba('900', 'FGTS do mes (informativo)', 'INFORMATIVA', '8%', fgts));
+  if (regime.temFGTS) verbas.push(verba('900', 'FGTS do mês (informativo)', 'INFORMATIVA', '8%', fgts));
 
   if (valorTransferir < 0) {
     alertas.push(

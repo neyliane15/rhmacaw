@@ -68,7 +68,7 @@ export function Faltas(): JSX.Element {
     return mapa;
   }, [faltas]);
 
-  // Grade do mes comecando na segunda-feira (semana ISO).
+  // Grade do mês comecando na segunda-feira (semana ISO).
   const grade = useMemo(() => {
     const primeiro = primeiroDiaDaCompetencia(competencia);
     const total = diasNoMes(competencia);
@@ -136,7 +136,7 @@ export function Faltas(): JSX.Element {
     { chave: 'horas', titulo: 'Horas', alinhar: 'direita', largura: '5rem', valor: (f) => f.horas ?? 0, render: (f) => (f.horas ? formatarNumero(f.horas, 1) : '—') },
     { chave: 'justificativa', titulo: 'Justificativa', valor: (f) => f.justificativa ?? '', render: (f) => <span className="text-xs text-[var(--texto-3)]">{f.justificativa || '—'}</span> },
     {
-      chave: 'acoes',
+      chave: 'ações',
       titulo: '',
       largura: '3rem',
       ordenavel: false,
@@ -166,7 +166,7 @@ export function Faltas(): JSX.Element {
       <CabecalhoPagina
         sobrancelha={rotuloCompetencia(competencia)}
         titulo="Faltas e ponto"
-        descricao="Ocorrencias do mes, com o desconto e o DSR que a folha vai aplicar."
+        descricao="Ocorrências do mês, com o desconto e o DSR que a folha vai aplicar."
         acoes={
           <>
             <SeletorCompetencia valor={competencia} aoMudar={definir} compacto />
@@ -182,14 +182,14 @@ export function Faltas(): JSX.Element {
       {acao.erro ? <Alerta nivel="critico" titulo="Operacao recusada" aoFechar={acao.limparErro}>{acao.erro}</Alerta> : null}
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Indicador rotulo="Colaboradores com ocorrencia" valor={formatarNumero(totais.colaboradores, 0)} />
-        <Indicador rotulo="Dias de falta" valor={formatarNumero(totais.dias, 0)} apoio="Somente tipos descontaveis entram no calculo" />
+        <Indicador rotulo="Colaboradores com ocorrência" valor={formatarNumero(totais.colaboradores, 0)} />
+        <Indicador rotulo="Dias de falta" valor={formatarNumero(totais.dias, 0)} apoio="Somente tipos descontaveis entram no cálculo" />
         <Indicador rotulo="DSR perdido" valor={formatarNumero(totais.dsr, 0)} apoio="Domingos e feriados na semana da falta" />
         <Indicador rotulo="Desconto estimado" valor={formatarBRL(totais.valor)} apoio="Antes do fechamento da folha" />
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,22rem)_1fr]">
-        <section className="cartao p-3">
+        <section className="cartão p-3">
           <header className="mb-2 flex items-center justify-between">
             <h2 className="sobrancelha">Calendario de {rotuloCompetencia(competencia)}</h2>
             <IconeCalendario className="text-[var(--texto-3)]" />
@@ -214,7 +214,7 @@ export function Faltas(): JSX.Element {
                       type="button"
                       disabled={!podeEditar}
                       onClick={() => setLancando(data)}
-                      title={doDia.length > 0 ? doDia.map((f) => `${nomePorId.get(f.colaboradorId) ?? ''}: ${ROTULO_FALTA[f.tipo]}`).join('\n') : 'Lancar ocorrencia'}
+                      title={doDia.length > 0 ? doDia.map((f) => `${nomePorId.get(f.colaboradorId) ?? ''}: ${ROTULO_FALTA[f.tipo]}`).join('\n') : 'Lançar ocorrência'}
                       className={`aspect-square rounded border p-1 text-left transition-colors ${
                         doDia.length === 0
                           ? 'border-[var(--borda)] hover:bg-[var(--superficie-sutil)]'
@@ -254,7 +254,7 @@ export function Faltas(): JSX.Element {
           legenda="Resumo de faltas por colaborador"
           busca
           placeholderBusca="Buscar colaborador no resumo"
-          vazio={<EstadoVazio titulo="Nenhuma falta nesta competencia" descricao="Mes limpo — nada a descontar na folha." />}
+          vazio={<EstadoVazio titulo="Nenhuma falta nesta competência" descricao="Mês limpo — nada a descontar na folha." />}
         />
       </div>
 
@@ -265,13 +265,13 @@ export function Faltas(): JSX.Element {
         carregando={lista.carregando}
         erro={lista.erro}
         denso
-        legenda="Ocorrencias lancadas"
+        legenda="Ocorrências lancadas"
         aoClicarLinha={podeEditar ? (f) => setEditando(f) : undefined}
         ordemInicial={{ chave: 'data', direcao: 'desc' }}
         vazio={
           <EstadoVazio
-            titulo="Nenhuma ocorrencia lancada"
-            descricao="Clique num dia do calendario ou use o botao de lancar ocorrencia."
+            titulo="Nenhuma ocorrência lançada"
+            descricao="Clique num dia do calendario ou use o botao de lançar ocorrência."
             acao={
               podeEditar ? (
                 <button type="button" className="botao-primario" onClick={() => setLancando(primeiroDiaDaCompetencia(competencia))}>
@@ -295,7 +295,7 @@ export function Faltas(): JSX.Element {
               </select>
             </label>
             <label>
-              <span className="sr-only">Tipo de ocorrencia</span>
+              <span className="sr-only">Tipo de ocorrência</span>
               <select value={tipo} onChange={(e) => setTipo(e.target.value as TipoFalta | '')} className="campo w-auto">
                 <option value="">Todos os tipos</option>
                 {TIPOS_FALTA.map((t) => (
@@ -373,7 +373,7 @@ function ModalLancamento({
     <Modal
       aberto
       aoFechar={aoFechar}
-      titulo={falta ? 'Editar ocorrencia' : 'Lancar ocorrencia'}
+      titulo={falta ? 'Editar ocorrência' : 'Lançar ocorrência'}
       subtitulo={`Data escolhida: ${formatarDataBR(dataFalta)}`}
       rodape={
         <>
@@ -381,13 +381,13 @@ function ModalLancamento({
             Cancelar
           </button>
           <button type="button" className="botao-primario" onClick={salvar} disabled={acao.executando || !colaboradorId}>
-            {acao.executando ? <Girando rotulo="Salvando" /> : falta ? 'Salvar alteracoes' : 'Lancar'}
+            {acao.executando ? <Girando rotulo="Salvando" /> : falta ? 'Salvar alteracoes' : 'Lançar'}
           </button>
         </>
       }
     >
       <div className="space-y-3">
-        {acao.erro ? <Alerta nivel="critico" titulo="Nao foi possivel salvar a ocorrencia">{acao.erro}</Alerta> : null}
+        {acao.erro ? <Alerta nivel="critico" titulo="Não foi possível salvar a ocorrência">{acao.erro}</Alerta> : null}
         <CampoSelect
           rotulo="Colaborador"
           required
@@ -403,7 +403,7 @@ function ModalLancamento({
             value={tipo}
             onChange={(e) => setTipo(e.target.value as TipoFalta)}
             opcoes={TIPOS_FALTA.map((t) => ({ valor: t, rotulo: ROTULO_FALTA[t] }))}
-            dica={tipo === 'FALTA' || tipo === 'SUSPENSAO' ? 'Desconta o dia e o DSR da semana.' : 'Nao gera desconto de DSR.'}
+            dica={tipo === 'FALTA' || tipo === 'SUSPENSAO' ? 'Desconta o dia e o DSR da semana.' : 'Não gera desconto de DSR.'}
           />
         </div>
         {tipo === 'ATRASO' ? (
@@ -422,7 +422,7 @@ function ModalLancamento({
           rotulo="Documento"
           value={documento}
           onChange={(e) => setDocumento(e.target.value)}
-          dica="Numero do atestado, protocolo ou CID, quando houver."
+          dica="Número do atestado, protocolo ou CID, quando houver."
         />
       </div>
     </Modal>

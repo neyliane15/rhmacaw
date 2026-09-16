@@ -41,7 +41,7 @@ export function autenticar(req: Request, _res: Response, next: NextFunction): vo
 
   const identidade = verificarToken(token);
   if (!identidade) {
-    next(erroNaoAutenticado('Token invalido ou expirado.'));
+    next(erroNaoAutenticado('Token inválido ou expirado.'));
     return;
   }
 
@@ -49,13 +49,13 @@ export function autenticar(req: Request, _res: Response, next: NextFunction): vo
   // depender da expiracao do token que ele ja tem em maos.
   const usuario = buscarUsuario(identidade.tenantId, identidade.usuarioId);
   if (!usuario || !usuario.ativo) {
-    next(erroNaoAutenticado('Usuario inativo ou inexistente.'));
+    next(erroNaoAutenticado('Usuário inativo ou inexistente.'));
     return;
   }
 
   const tenant = buscarTenant(identidade.tenantId);
   if (!tenant) {
-    next(erroNaoAutenticado('Empresa do token nao encontrada.'));
+    next(erroNaoAutenticado('Empresa do token não encontrada.'));
     return;
   }
 
@@ -75,7 +75,7 @@ export function exigirPermissao(acao: string) {
       return;
     }
     if (!temPermissao(sessao.identidade.papel, acao)) {
-      next(erroSemPermissao(`O papel ${sessao.identidade.papel} nao tem a permissao "${acao}".`));
+      next(erroSemPermissao(`O papel ${sessao.identidade.papel} não tem a permissao "${acao}".`));
       return;
     }
     next();
