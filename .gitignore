@@ -1,0 +1,14 @@
+node_modules/
+dist/
+build/
+coverage/
+*.log
+.env
+.env.local
+data/*.db
+data/*.db-*
+data/exports/
+.DS_Store
+.vite/
+tsconfig.tsbuildinfo
+*.tsbuildinfo

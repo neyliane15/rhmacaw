@@ -1,0 +1,24 @@
+{
+  "name": "rhmacaw",
+  "private": true,
+  "version": "1.0.0",
+  "description": "RH Macaw — Micro SaaS de gestao de pessoas e folha de pagamento",
+  "type": "module",
+  "workspaces": ["packages/shared", "server", "web"],
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "npm run build -w @rhmacaw/shared && npm run build -w @rhmacaw/server && npm run build -w @rhmacaw/web",
+    "dev": "concurrently -n api,web -c cyan,magenta \"npm run dev -w @rhmacaw/server\" \"npm run dev -w @rhmacaw/web\"",
+    "seed": "npm run seed -w @rhmacaw/server",
+    "start": "npm run start -w @rhmacaw/server",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc -b --pretty false"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "concurrently": "^9.1.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

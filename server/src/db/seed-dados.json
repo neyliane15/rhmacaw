@@ -1,0 +1,728 @@
+{
+  "competencia": "2025-08",
+  "origem": "FOLHA_AGOSTO_-_PG.xlsx",
+  "colaboradores": [
+    {
+      "nome": "ALESSANDRO GURGEL DE ANDRADE ALVES",
+      "funcao": "ASS DE MANUTENCAO",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 2215.97,
+      "salarioHora": null,
+      "valeTransporte": false,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "ALEPH SOUZA CORDOVIL",
+      "funcao": "GARÇOM",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 2035,
+      "salarioHora": null,
+      "valeTransporte": true,
+      "faltasAgosto": 1,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "ALTAIR JUNIOR SALGUEIRO VELASCO",
+      "funcao": "SUB CHEFE DE COZINHA",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 2634.34,
+      "salarioHora": null,
+      "valeTransporte": false,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "CHRISTIANO MEDONÇA BARBOSA",
+      "funcao": "GARÇOM",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 2035,
+      "salarioHora": null,
+      "valeTransporte": true,
+      "faltasAgosto": 4,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "FABIO EMANOEL MOREIRA DE NOVAES",
+      "funcao": "GARÇOM",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "AFASTADO",
+      "salarioBase": 2035,
+      "salarioHora": null,
+      "valeTransporte": true,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "FELIPE DINIZ RODRIGUES DO NASCIMENTO",
+      "funcao": "CUMIM",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 1967,
+      "salarioHora": null,
+      "valeTransporte": true,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "GABRIEL DE MOURA MEIRELLES",
+      "funcao": "AUX DE COZINHA",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 1967,
+      "salarioHora": null,
+      "valeTransporte": true,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "GISLANE RODRIGUES DOS SANTOS SILVA",
+      "funcao": "AUX DE COZINHA",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 1967,
+      "salarioHora": null,
+      "valeTransporte": true,
+      "faltasAgosto": 1,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "JAIR DOS SANTOS BEZERRA JUNIOR",
+      "funcao": "GARÇOM",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 2035,
+      "salarioHora": null,
+      "valeTransporte": false,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "KELVIN KESLEY SANTOS DE FREITAS",
+      "funcao": "BARMAN",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 2035,
+      "salarioHora": null,
+      "valeTransporte": false,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "LARISSA CRISTINA FERREIRA DA SILVA",
+      "funcao": "COZINHEIRA",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 2428.9,
+      "salarioHora": null,
+      "valeTransporte": true,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "LUCAS NUNES RODRIGUES",
+      "funcao": "MAITRE",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 2428.9,
+      "salarioHora": null,
+      "valeTransporte": true,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "LUIS FABIANO CASTELLAR JUNQUEIRA PEREIRA",
+      "funcao": "SUB GERENTE",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 2428.9,
+      "salarioHora": null,
+      "valeTransporte": false,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "LUSINETE DOS SANTOS SIMPLICIO",
+      "funcao": "CHEF DE PARTIDA",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 2531.62,
+      "salarioHora": null,
+      "valeTransporte": true,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "MANOEL VICTOR DA SILVA MATOS",
+      "funcao": "GARÇOM",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 2035,
+      "salarioHora": null,
+      "valeTransporte": true,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "MARCUS VINICIUS DE OLIVEIRA DE SOUZA",
+      "funcao": "ASG",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 1844,
+      "salarioHora": null,
+      "valeTransporte": true,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "MARIA EDUARDA GARCIA CAMPOS SALLES",
+      "funcao": "MAITRE",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "PROCESSO",
+      "salarioBase": 2428.9,
+      "salarioHora": null,
+      "valeTransporte": true,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "MARLON WILLISON VIANA BASTOS",
+      "funcao": "GARÇOM",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 2035,
+      "salarioHora": null,
+      "valeTransporte": true,
+      "faltasAgosto": 1,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "MATHEUS BARBOSA CARVALHO DE OLIVEIRA",
+      "funcao": "AUX DE COZINHA",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "PROCESSO",
+      "salarioBase": 1967,
+      "salarioHora": null,
+      "valeTransporte": false,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "MATHEUS KEPSON DE SOUZA LOURENÇO",
+      "funcao": "GARÇOM",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 2035,
+      "salarioHora": null,
+      "valeTransporte": true,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "NATTALIA SOUZA DA SILVA",
+      "funcao": "RECEPCIONISTA",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 2092,
+      "salarioHora": null,
+      "valeTransporte": true,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "NILFRAN RODRIGUES ALMEIDA",
+      "funcao": "GERENTE",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 3688.29,
+      "salarioHora": null,
+      "valeTransporte": false,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "PAMELA NASCIMENTO MORAES",
+      "funcao": "SUB CHEFE DE COZINHA",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 2634.34,
+      "salarioHora": null,
+      "valeTransporte": false,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "RAFAELA SILVA DE OLIVEIRA",
+      "funcao": "ASG",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 1844,
+      "salarioHora": null,
+      "valeTransporte": false,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "RHUAN MARTINS PEREIRA",
+      "funcao": "GARÇOM",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 2035,
+      "salarioHora": null,
+      "valeTransporte": false,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "RUAN MONTEIRO BRAGA SALES",
+      "funcao": "ESTOQUISTA",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 2035,
+      "salarioHora": null,
+      "valeTransporte": true,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "SUELLEN PEREIRA CARLOS DE OLIVEIRA",
+      "funcao": "CUMIM",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 1967,
+      "salarioHora": null,
+      "valeTransporte": true,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "THAYSA DE FREITAS NUNES",
+      "funcao": "LIDER DE EQUIPE ASG",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 1967,
+      "salarioHora": null,
+      "valeTransporte": true,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "UESLEY FRANCLIN DA SILVA",
+      "funcao": "GARÇOM",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 2035,
+      "salarioHora": null,
+      "valeTransporte": true,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "WESLLEY PEREIRA DE SOUZA",
+      "funcao": "BARMAN",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 2035,
+      "salarioHora": null,
+      "valeTransporte": false,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "YURI DA SILVA RODRIGUES",
+      "funcao": "CHEFE DE BAR",
+      "centroCusto": "FOLHA TOKITO",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 2092,
+      "salarioHora": null,
+      "valeTransporte": true,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "ALINE PORTO SENRA",
+      "funcao": "CUMIN",
+      "centroCusto": "FOLHA CENTRAL",
+      "tipoContrato": "INTERMITENTE",
+      "situacao": "ATIVO",
+      "salarioBase": 0,
+      "salarioHora": 8.94,
+      "valeTransporte": true,
+      "faltasAgosto": 105,
+      "horasTrabalhadas": 105.5
+    },
+    {
+      "nome": "ANA CLAUDIA FERREIRA RODRIGUES",
+      "funcao": "AUX DE COZINHA",
+      "centroCusto": "FOLHA CENTRAL",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 1967,
+      "salarioHora": null,
+      "valeTransporte": true,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "CESAR AUGUSTO GARCIA",
+      "funcao": "AUX DE COZINHA",
+      "centroCusto": "FOLHA CENTRAL",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 1967,
+      "salarioHora": null,
+      "valeTransporte": false,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "MILENY DOS SANTOS AZEVEDO",
+      "funcao": "AUX SERV GERAIS",
+      "centroCusto": "FOLHA CENTRAL",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 1844,
+      "salarioHora": null,
+      "valeTransporte": true,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "JANA LACERDA NASCIMENTO DOS SANTOS",
+      "funcao": "CHEF DE PARTIDA",
+      "centroCusto": "FOLHA CENTRAL",
+      "tipoContrato": "CLT",
+      "situacao": "ATIVO",
+      "salarioBase": 2531.62,
+      "salarioHora": null,
+      "valeTransporte": false,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "GABRIEL",
+      "funcao": "MARKETING",
+      "centroCusto": "ADMINISTRATIVO",
+      "tipoContrato": "PJ",
+      "situacao": "ATIVO",
+      "salarioBase": 5000,
+      "salarioHora": null,
+      "valeTransporte": false,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "GABRIEL HAURET",
+      "funcao": "OPERACIONAL",
+      "centroCusto": "ADMINISTRATIVO",
+      "tipoContrato": "SOCIO",
+      "situacao": "ATIVO",
+      "salarioBase": 10000,
+      "salarioHora": null,
+      "valeTransporte": false,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "PEDRO LANNES",
+      "funcao": "ADMINISTRADOR",
+      "centroCusto": "ADMINISTRATIVO",
+      "tipoContrato": "SOCIO",
+      "situacao": "ATIVO",
+      "salarioBase": 7298.2,
+      "salarioHora": null,
+      "valeTransporte": false,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    },
+    {
+      "nome": "ARTHUR",
+      "funcao": "ESTAGIÁRIO",
+      "centroCusto": "ADMINISTRATIVO",
+      "tipoContrato": "ESTAGIO",
+      "situacao": "ATIVO",
+      "salarioBase": 938,
+      "salarioHora": null,
+      "valeTransporte": false,
+      "faltasAgosto": 0,
+      "horasTrabalhadas": null
+    }
+  ],
+  "referenciaFolha": [
+    {
+      "nome": "ALESSANDRO GURGEL DE ANDRADE ALVES",
+      "comissoes": 579.52,
+      "liquido": 3351.47,
+      "transferir": 2771.95
+    },
+    {
+      "nome": "ALEPH SOUZA CORDOVIL",
+      "comissoes": 422.01,
+      "liquido": 1641.27,
+      "transferir": 1219.26
+    },
+    {
+      "nome": "ALTAIR JUNIOR SALGUEIRO VELASCO",
+      "comissoes": 811.33,
+      "liquido": 3096.66,
+      "transferir": 2285.33
+    },
+    {
+      "nome": "CHRISTIANO MEDONÇA BARBOSA",
+      "comissoes": 390.07,
+      "liquido": 1872.99,
+      "transferir": 1482.92
+    },
+    {
+      "nome": "FABIO EMANOEL MOREIRA DE NOVAES",
+      "comissoes": 0,
+      "liquido": 0,
+      "transferir": 0
+    },
+    {
+      "nome": "FELIPE DINIZ RODRIGUES DO NASCIMENTO",
+      "comissoes": 347.71,
+      "liquido": 2012.69,
+      "transferir": 1664.98
+    },
+    {
+      "nome": "GABRIEL DE MOURA MEIRELLES",
+      "comissoes": 231.81,
+      "liquido": 1907.22,
+      "transferir": 1675.41
+    },
+    {
+      "nome": "GISLANE RODRIGUES DOS SANTOS SILVA",
+      "comissoes": 231.81,
+      "liquido": 1851.48,
+      "transferir": 1619.67
+    },
+    {
+      "nome": "JAIR DOS SANTOS BEZERRA JUNIOR",
+      "comissoes": 459.58,
+      "liquido": 1288.48,
+      "transferir": 828.9
+    },
+    {
+      "nome": "KELVIN KESLEY SANTOS DE FREITAS",
+      "comissoes": 344.69,
+      "liquido": 1187.4,
+      "transferir": 842.71
+    },
+    {
+      "nome": "LARISSA CRISTINA FERREIRA DA SILVA",
+      "comissoes": 0,
+      "liquido": 1416.87,
+      "transferir": 1416.87
+    },
+    {
+      "nome": "LUCAS NUNES RODRIGUES",
+      "comissoes": 753.38,
+      "liquido": 1746.95,
+      "transferir": 993.57
+    },
+    {
+      "nome": "LUIS FABIANO CASTELLAR JUNQUEIRA PEREIRA",
+      "comissoes": 927.24,
+      "liquido": 3590.73,
+      "transferir": 2663.49
+    },
+    {
+      "nome": "LUSINETE DOS SANTOS SIMPLICIO",
+      "comissoes": 579.52,
+      "liquido": 2128.77,
+      "transferir": 1549.25
+    },
+    {
+      "nome": "MANOEL VICTOR DA SILVA MATOS",
+      "comissoes": 205.78,
+      "liquido": 0,
+      "transferir": -205.78
+    },
+    {
+      "nome": "MARCUS VINICIUS DE OLIVEIRA DE SOUZA",
+      "comissoes": 198.81,
+      "liquido": 662.42,
+      "transferir": 463.61
+    },
+    {
+      "nome": "MARIA EDUARDA GARCIA CAMPOS SALLES",
+      "comissoes": 0,
+      "liquido": 0,
+      "transferir": 0
+    },
+    {
+      "nome": "MARLON WILLISON VIANA BASTOS",
+      "comissoes": 342.67,
+      "liquido": 2029.36,
+      "transferir": 1686.69
+    },
+    {
+      "nome": "MATHEUS BARBOSA CARVALHO DE OLIVEIRA",
+      "comissoes": 0,
+      "liquido": 0,
+      "transferir": 0
+    },
+    {
+      "nome": "MATHEUS KEPSON DE SOUZA LOURENÇO",
+      "comissoes": 579.52,
+      "liquido": 2281.44,
+      "transferir": 1701.92
+    },
+    {
+      "nome": "NATTALIA SOUZA DA SILVA",
+      "comissoes": 347.71,
+      "liquido": 2118.94,
+      "transferir": 1771.23
+    },
+    {
+      "nome": "NILFRAN RODRIGUES ALMEIDA",
+      "comissoes": 1390.86,
+      "liquido": 5245.29,
+      "transferir": 3854.43
+    },
+    {
+      "nome": "PAMELA NASCIMENTO MORAES",
+      "comissoes": 562.82,
+      "liquido": 2745.41,
+      "transferir": 2182.59
+    },
+    {
+      "nome": "RAFAELA SILVA DE OLIVEIRA",
+      "comissoes": 0,
+      "liquido": 1277.49,
+      "transferir": 1277.49
+    },
+    {
+      "nome": "RHUAN MARTINS PEREIRA",
+      "comissoes": 695.43,
+      "liquido": 1838.53,
+      "transferir": 1143.1
+    },
+    {
+      "nome": "RUAN MONTEIRO BRAGA SALES",
+      "comissoes": 463.62,
+      "liquido": 2904.42,
+      "transferir": 2440.8
+    },
+    {
+      "nome": "SUELLEN PEREIRA CARLOS DE OLIVEIRA",
+      "comissoes": 394.77,
+      "liquido": 1386.04,
+      "transferir": 991.27
+    },
+    {
+      "nome": "THAYSA DE FREITAS NUNES",
+      "comissoes": 347.71,
+      "liquido": 1314.06,
+      "transferir": 966.35
+    },
+    {
+      "nome": "UESLEY FRANCLIN DA SILVA",
+      "comissoes": 413.62,
+      "liquido": 1247.95,
+      "transferir": 834.33
+    },
+    {
+      "nome": "WESLLEY PEREIRA DE SOUZA",
+      "comissoes": 405.67,
+      "liquido": 2123.23,
+      "transferir": 1717.56
+    },
+    {
+      "nome": "YURI DA SILVA RODRIGUES",
+      "comissoes": 579.52,
+      "liquido": 2329.89,
+      "transferir": 1750.37
+    },
+    {
+      "nome": "ALINE PORTO SENRA",
+      "comissoes": 164.86,
+      "liquido": 1485.46,
+      "transferir": 1320.6
+    },
+    {
+      "nome": "ANA CLAUDIA FERREIRA RODRIGUES",
+      "comissoes": 0,
+      "liquido": 1478.08,
+      "transferir": 1478.08
+    },
+    {
+      "nome": "CESAR AUGUSTO GARCIA",
+      "comissoes": 0,
+      "liquido": 1421.47,
+      "transferir": 1421.47
+    },
+    {
+      "nome": "MILENY DOS SANTOS AZEVEDO",
+      "comissoes": 0,
+      "liquido": 1726.8,
+      "transferir": 1726.8
+    },
+    {
+      "nome": "JANA LACERDA NASCIMENTO DOS SANTOS",
+      "comissoes": 490,
+      "liquido": 2797.18,
+      "transferir": 3287.18
+    },
+    {
+      "nome": "GABRIEL",
+      "comissoes": 0,
+      "liquido": 0,
+      "transferir": 5000
+    },
+    {
+      "nome": "GABRIEL HAURET",
+      "comissoes": 10000,
+      "liquido": 0,
+      "transferir": 0
+    },
+    {
+      "nome": "PEDRO LANNES",
+      "comissoes": 1512.06,
+      "liquido": 0,
+      "transferir": 5786.14
+    },
+    {
+      "nome": "ARTHUR",
+      "comissoes": 0,
+      "liquido": 0,
+      "transferir": 938
+    }
+  ]
+}
