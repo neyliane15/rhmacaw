@@ -23,7 +23,9 @@
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
+    "@types/sql.js": "^1.4.11",
     "concurrently": "^9.1.2",
+    "sql.js": "^1.14.2",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8"
   }

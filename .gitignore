@@ -12,3 +12,5 @@ data/exports/
 .vite/
 tsconfig.tsbuildinfo
 *.tsbuildinfo
+dist-demo/
+.tsbuild/

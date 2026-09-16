@@ -15,6 +15,17 @@ export type Banco = Database.Database;
 
 let instancia: Banco | null = null;
 
+/**
+ * Injeta uma conexao ja pronta, no lugar de abrir um arquivo.
+ *
+ * Serve a demonstracao que roda no navegador, onde o SQLite e a versao
+ * compilada para WebAssembly e nao existe disco. Em producao nunca e chamada:
+ * `obterBanco` segue abrindo o arquivo normalmente.
+ */
+export function __definirBanco(externo: unknown): void {
+  instancia = externo as Banco;
+}
+
 /** Abre (ou reaproveita) a conexao e garante que o schema esta aplicado. */
 export function obterBanco(): Banco {
   if (instancia) return instancia;

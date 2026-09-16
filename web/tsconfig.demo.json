@@ -1,0 +1,53 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "jsx": "react-jsx",
+    "rootDir": "..",
+    "noEmit": true,
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "types": [
+      "vite/client",
+      "node"
+    ],
+    "paths": {
+      "@rhmacaw/shared": [
+        "../packages/shared/src/index.ts"
+      ],
+      "node:path": [
+        "./src/demo/shims/path.ts"
+      ],
+      "node:fs": [
+        "./src/demo/shims/fs.ts"
+      ],
+      "node:url": [
+        "./src/demo/shims/url.ts"
+      ],
+      "node:os": [
+        "./src/demo/shims/os.ts"
+      ],
+      "express": [
+        "./src/demo/shims/express.ts"
+      ],
+      "jsonwebtoken": [
+        "./src/demo/shims/jwt.ts"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*",
+    "../server/src/**/*",
+    "../packages/shared/src/**/*"
+  ],
+  "exclude": [
+    "../server/src/__tests__/**",
+    "../packages/shared/src/__tests__/**",
+    "../server/src/index.ts"
+  ]
+}
